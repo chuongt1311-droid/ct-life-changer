@@ -93,7 +93,7 @@ A "day" is keyed by local date and runs **04:00 → 04:00** in the settings time
 ### 5.2 Templates and blocks
 
 - One **template per weekday** (Mon–Sun), editable. Seeded from the 4-week program: Mon push+neck, Tue handstand/recovery, Wed legs+core+neck, Thu pull, Fri–Sun rest; plus sleep window, meals, deep-work blocks, and rest blocks CT defines.
-- **Block** fields: `title`, `kind` (`anchor | task | training | rest | buffer`), `priority` (1 = lowest … 5 = highest), `start`, `end`, `minMinutes` (how far it can shrink; default = full duration for anchors, 50% for tasks, 15 min for rest), optional `window` (`earliestStart`, `latestEnd`) for movable anchors, `checklist` (e.g. the day's exercises), `status` (`planned | active | done | partial | skipped | missed | dropped`), `source` (`template | manual | urgent | guard`).
+- **Block** fields: `title`, `kind` (`task | training | rest | buffer | routine`), `anchor` (boolean — any kind can be an anchor, e.g. a training or deep-work block), `priority` (1 = lowest … 5 = highest), `start`, `end`, `minMinutes` (how far it can shrink; default = full duration for anchors, 50% for tasks, 15 min for rest), optional `window` (`earliestStart`, `latestEnd`) for movable anchors, `checklist` (e.g. the day's exercises), `status` (`planned | active | done | partial | skipped | missed | dropped`), `source` (`template | manual | urgent | guard`).
 - **Anchors** are never dropped by the planner. A fixed anchor keeps its time; a windowed anchor may move within its window. If a window has fully passed, the anchor is marked `missed` and surfaced to CT rather than silently dropped.
 - Every evening (at evening-review time), tomorrow's plan is generated: `buildDay(template, tomorrow, guard.adjustments)`. If no plan exists for a date when its 04:00 day boundary arrives (e.g. the evening form was skipped), the cron tick generates it.
 
@@ -122,12 +122,12 @@ Reflow events:
 
 Deterministic; same input → same output.
 
-1. Take all blocks with `status ∈ {planned, active}` ending after `now`. Blocks already done/partial/skipped are untouched.
+1. Take all blocks with `status ∈ {planned, active}` ending after `now`. Blocks already done/partial/skipped are untouched. A block running at `now` (start ≤ now < end) stays in place, except for the `late`, `urgent` and `lowEnergy` events, which re-place it.
 2. Apply the event (table above).
 3. Place anchors: fixed anchors at their times; windowed anchors at their original time if free, else the earliest free time inside their window, else mark `missed`.
 4. Compute free intervals from `max(now, wake)` to the start of the wind-down anchor (bedtime − 60 min).
-5. Place flexible blocks (task, training without fixed time, rest, buffer) **in their original order** into free intervals.
-6. If they don't fit: shrink blocks toward `minMinutes`, lowest priority first (ties: later-in-day first), until they fit or all are at minimum.
+5. Place flexible (non-anchor) blocks **in their original order** into free intervals. Each block stays at its original start (or later, if pushed) and moves earlier only as far as needed for the rest of the day to fit (backward pass computes latest feasible starts, forward pass places).
+6. If they don't fit: shrink blocks to `minMinutes`, one block per step, lowest priority first (ties: later-in-day first), until they fit or all are at minimum. (v1: shrunk blocks are not re-grown after a later drop.)
 7. Still don't fit: drop blocks, lowest priority first (ties: later-in-day first), until they fit.
 8. Return new blocks + `diff[]` entries `{blockId, change: kept|moved|shrunk|dropped|missed, from, to, reason}`.
 
@@ -263,7 +263,8 @@ Seeded at first run from an onboarding form (one field per section; `observedPat
 
 - **Scheduler:** Supabase `pg_cron` every minute → `pg_net` POST to `/api/cron/tick` (with `CRON_SECRET`) → server loads today's blocks, rest sessions, sent log → `dueNudges(...)` → Web Push → record in `nudges_sent`.
 - **Types:** `morning` (wake time), `transition` (block end), `restWarning` (rest end − 5), `reentry` (rest end), `reentryFollowUp` (rest end + 10 if not acked, once), `evening` (bedtime − 60), `welcomeBack` (after 2 silent days, once).
-- **Cap:** `nudgeDailyCap` (default 8). When the cap would be exceeded, priority is morning = evening = re-entry > reentryFollowUp > transition > restWarning; lower-priority nudges are skipped.
+- **Cap:** `nudgeDailyCap` (default 8). When the cap would be exceeded, priority is morning = evening = re-entry > reentryFollowUp > transition > restWarning; lower-priority nudges are skipped. One slot is always kept in reserve for the evening nudge until it has been sent.
+- **Pause:** after the welcome-back nudge (§5.9), all nudges pause until CT's next check-in.
 - **Quiet hours:** no nudges inside the sleep window.
 - **Dedup:** a nudge is uniquely keyed by (date, type, blockId); never sent twice.
 - **iOS specifics:** push works only when the PWA is installed to the Home Screen and permission is granted from a user gesture. If no valid subscription exists, the Today screen shows a persistent "Nudges are off — tap to enable" banner.
@@ -275,7 +276,7 @@ Seeded at first run from an onboarding form (one field per section; `observedPat
 | `settings` (1 row) | timezone, wakeTime, bedtime, model, monthlyCapUsd, nudgeDailyCap, deepWorkDailyCapMin, thresholds jsonb, crisisContacts jsonb |
 | `templates` | weekday (0–6), blocks jsonb |
 | `plans` | date PK, state, flags jsonb, adjustments jsonb, overridden bool |
-| `blocks` | id, date, title, kind, priority, start, end, minMinutes, windowStart, windowEnd, checklist jsonb, status, source |
+| `blocks` | id, date, title, kind, anchor, priority, start, end, minMinutes, windowStart, windowEnd, tags text[], checklist jsonb, recoveryVariant jsonb, status, source |
 | `checkins` | id, date, type (morning / evening), sections jsonb, privateKeys text[], createdAt |
 | `rest_sessions` | id, date, blockId?, activity, planned bool, startedAt, endedAt, reentryAckAt |
 | `unplanned_indulgence` | id, date, activity, minutes |
