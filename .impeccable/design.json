@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-12T00:00:00Z",
+  "title": "Design System: Life Changer — Performance Department",
+  "extensions": {
+    "colorMeta": {
+      "pitch-900": { "role": "neutral", "displayName": "Night Pitch", "canonical": "#0B1016", "tonalRamp": ["#05080B", "#0B1016", "#101822", "#131C26", "#1A2530", "#24313E", "#3A4B5C", "#7D91A1"] },
+      "pitch-800": { "role": "neutral", "displayName": "Desk Navy", "canonical": "#101822", "tonalRamp": ["#05080B", "#0B1016", "#101822", "#131C26", "#1A2530", "#24313E", "#3A4B5C", "#8EA1B0"] },
+      "pitch-700": { "role": "neutral", "displayName": "Department Slate", "canonical": "#131C26", "tonalRamp": ["#080C10", "#0E141B", "#131C26", "#1A2530", "#24313E", "#31414F", "#5B7183", "#A9BCCB"] },
+      "pitch-600": { "role": "neutral", "displayName": "Raised Slate", "canonical": "#1A2530", "tonalRamp": ["#090D11", "#101822", "#1A2530", "#24313E", "#31414F", "#46596A", "#7D91A1", "#C3D2DC"] },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "#24313E", "tonalRamp": ["#0B1016", "#131C26", "#1B2531", "#24313E", "#31414F", "#46596A", "#7D91A1", "#C3D2DC"] },
+      "line-soft": { "role": "neutral", "displayName": "Soft Hairline", "canonical": "#1B2531", "tonalRamp": ["#080C10", "#0F161E", "#1B2531", "#24313E", "#31414F", "#46596A", "#7D91A1", "#C3D2DC"] },
+      "ink": { "role": "neutral", "displayName": "Cool White", "canonical": "#E8EEF2", "tonalRamp": ["#1B2531", "#31414F", "#5B7183", "#7D91A1", "#A9BCCB", "#C6D4DE", "#E8EEF2", "#F7FAFC"] },
+      "ink-2": { "role": "neutral", "displayName": "Readable Slate", "canonical": "#A9BCCB", "tonalRamp": ["#1B2531", "#2E3A44", "#46596A", "#5B7183", "#7D91A1", "#A9BCCB", "#C6D4DE", "#EDF3F7"] },
+      "ink-3": { "role": "neutral", "displayName": "Quiet Slate", "canonical": "#7D91A1", "tonalRamp": ["#161E27", "#24313E", "#31414F", "#46596A", "#5B7183", "#7D91A1", "#A9BCCB", "#D6E2EA"] },
+      "gold": { "role": "primary", "displayName": "Floodlit Gold", "canonical": "#F5C542", "tonalRamp": ["#2A2008", "#3B3013", "#5C4715", "#8A6E1E", "#B89229", "#D8AE33", "#F5C542", "#FFD661"] },
+      "gold-dim": { "role": "primary", "displayName": "Banked Gold", "canonical": "#8A6E1E", "tonalRamp": ["#1A1408", "#2A2008", "#3B3013", "#5C4715", "#8A6E1E", "#B89229", "#F5C542", "#FFE49A"] },
+      "read-ok": { "role": "secondary", "displayName": "Ready Green", "canonical": "#3DDC84", "tonalRamp": ["#061A0F", "#0B2C1A", "#12492C", "#1A6E43", "#25955B", "#30B972", "#3DDC84", "#8DF0BA"] },
+      "read-warn": { "role": "secondary", "displayName": "Drifting Amber", "canonical": "#FFB020", "tonalRamp": ["#2B1D03", "#402B05", "#5E4008", "#8A5D0C", "#B57A12", "#DE961A", "#FFB020", "#FFD285"] },
+      "read-stop": { "role": "secondary", "displayName": "Stop Red", "canonical": "#FF4D5E", "tonalRamp": ["#2E0A0F", "#450F16", "#66161F", "#8E1F2B", "#B62A38", "#DC3A49", "#FF4D5E", "#FF9AA4"] },
+      "phase-first-light": { "role": "tertiary", "displayName": "First Light Ground", "canonical": "#16202B", "tonalRamp": ["#070A0E", "#0B1016", "#101822", "#16202B", "#1F2C39", "#2B3B4A", "#45596B", "#8EA1B0"] },
+      "phase-day": { "role": "tertiary", "displayName": "Day Ground", "canonical": "#131C26", "tonalRamp": ["#060A0D", "#0B1016", "#101822", "#131C26", "#1A2530", "#24313E", "#3E5163", "#8EA1B0"] },
+      "phase-dusk": { "role": "tertiary", "displayName": "Dusk Ground", "canonical": "#18202C", "tonalRamp": ["#070A0E", "#0C1118", "#121A24", "#18202C", "#212C3B", "#2E3D4F", "#47596F", "#8FA0B4"] },
+      "phase-night": { "role": "tertiary", "displayName": "Night Ground", "canonical": "#0B1016", "tonalRamp": ["#03060A", "#070A0E", "#0B1016", "#101822", "#131C26", "#1A2530", "#31414F", "#7D91A1"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The one enormous element per screen: next-session name, OVR. Top third only." },
+      "headline": { "displayName": "Headline", "purpose": "The when-line under the display: countdown and time window." },
+      "title": { "displayName": "Title", "purpose": "Attribute values, ramp-step names." },
+      "subtitle": { "displayName": "Subtitle", "purpose": "Row voice: bar names, session names, field labels, chips, button text." },
+      "body": { "displayName": "Body", "purpose": "Everything the department says in sentences. Measure capped 52-68ch." },
+      "body-small": { "displayName": "Body Small", "purpose": "Sub-lines, notes, hints." },
+      "label": { "displayName": "Label", "purpose": "Placards, tags, nav, medallion counts, synthetic marker. Always uppercase at 0.11em." }
+    },
+    "shadows": [
+      { "name": "lift", "value": "0 6px 18px -6px rgba(0, 0, 0, 0.65)", "purpose": "The gold main action and medallion discs." },
+      { "name": "lift-card", "value": "0 10px 30px -10px rgba(0, 0, 0, 0.8)", "purpose": "The player card strip only." },
+      { "name": "tier-inset-gold", "value": "inset 0 0 0 1px rgba(245,197,66,0.35)", "purpose": "Gold-tier medallion edge material, layered over lift." },
+      { "name": "tier-inset-hof", "value": "inset 0 0 0 2px rgba(245,197,66,0.5)", "purpose": "Hall-of-Fame medallion edge material, layered over lift." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The single easing curve for every transition and animation." },
+      { "name": "duration-control", "value": "120ms - 220ms", "purpose": "Button, chip and card-strip state changes." },
+      { "name": "duration-phase", "value": "900ms", "purpose": "Day-phase ground crossfade." },
+      { "name": "settle", "value": "settle 620ms cubic-bezier(0.16, 1, 0.3, 1) both — opacity 0 to 1, translateY(10px) to 0, blur(6px) to 0", "purpose": "The card strip arriving on load. One of only two authored moments." },
+      { "name": "lift-row", "value": "lift-row 1600ms cubic-bezier(0.16, 1, 0.3, 1) 380ms both — background rgba(245,197,66,0) to 0.16 to 0", "purpose": "A gold wash across an attribute row that levelled up. The second authored moment." },
+      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce collapses all animation and transition to 0.01ms", "purpose": "Non-negotiable; shipped in the token layer." }
+    ],
+    "breakpoints": [
+      { "name": "design-base", "value": "390px" },
+      { "name": "shell", "value": "430px" },
+      { "name": "desk", "value": "900px" },
+      { "name": "desk-max", "value": "1040px" }
+    ],
+    "materials": [
+      { "name": "zebra", "value": "repeating-linear-gradient(-45deg, rgba(11,16,22,0.55) 0 5px, transparent 5px 11px)", "purpose": "Overload material. Laid over a red load fill and over a grinding tag; never decorative." },
+      { "name": "focus-ring", "value": "outline: 2px solid #F5C542; outline-offset: 2px; border-radius: 2px", "purpose": "Global focus-visible treatment." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Main Action",
+      "kind": "button",
+      "refersTo": "button-main",
+      "description": "The single gold action per screen, in the sticky thumb bar.",
+      "html": "<button class=\"ds-btn ds-btn-main\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M19 14.5A8 8 0 0 1 9.5 5a8 8 0 1 0 9.5 9.5Z\"/></svg>Start rest</button>",
+      "css": ".ds-btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 16px; border-radius: 3px; border: 1px solid #24313E; background: #131C26; color: #E8EEF2; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: background 180ms cubic-bezier(0.16,1,0.3,1), border-color 180ms cubic-bezier(0.16,1,0.3,1), transform 120ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-main { background: #F5C542; border-color: #F5C542; color: #17120A; font-weight: 700; box-shadow: 0 6px 18px -6px rgba(0,0,0,0.65); } .ds-btn-main:hover { background: #FFD661; border-color: #FFD661; } .ds-btn:active { transform: translateY(1px); } .ds-btn:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-icon { width: 20px; height: 20px; }"
+    },
+    {
+      "name": "Secondary Action",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "The non-committing action beside the main one.",
+      "html": "<button class=\"ds-btn ds-btn-2\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 7h9l-2.5-2.5M20 17h-9l2.5 2.5M4 7l2.5 2.5M20 17l-2.5-2.5\"/></svg>Day changed</button>",
+      "css": ".ds-btn-2 { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 16px; border-radius: 3px; border: 1px solid #24313E; background: #131C26; color: #E8EEF2; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: background 180ms cubic-bezier(0.16,1,0.3,1), border-color 180ms cubic-bezier(0.16,1,0.3,1), transform 120ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-2:hover { background: #1A2530; border-color: #31414F; } .ds-btn-2:active { transform: translateY(1px); } .ds-btn-2:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-icon { width: 20px; height: 20px; }"
+    },
+    {
+      "name": "Readiness Tag",
+      "kind": "chip",
+      "refersTo": "tag-drifting",
+      "description": "The guard-state reading: ready, drifting, depleted, grinding, neutral.",
+      "html": "<span class=\"ds-tag\" data-state=\"ready\">Ready</span> <span class=\"ds-tag\" data-state=\"drifting\">Drifting</span> <span class=\"ds-tag\" data-state=\"depleted\">Depleted</span> <span class=\"ds-tag\" data-state=\"grinding\">Injury risk</span> <span class=\"ds-tag\" data-state=\"neutral\">Anchor</span>",
+      "css": ".ds-tag { display: inline-flex; align-items: center; gap: 8px; padding: 3px 12px 2px; border-radius: 2px; border: 1px solid; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; white-space: nowrap; } .ds-tag[data-state=\"ready\"] { color: #3DDC84; border-color: rgba(61,220,132,0.45); background: rgba(61,220,132,0.08); } .ds-tag[data-state=\"drifting\"] { color: #FFB020; border-color: rgba(255,176,32,0.45); background: rgba(255,176,32,0.08); } .ds-tag[data-state=\"depleted\"] { color: #FF4D5E; border-color: rgba(255,77,94,0.45); background: rgba(255,77,94,0.08); } .ds-tag[data-state=\"grinding\"] { color: #FF4D5E; border-color: rgba(255,77,94,0.55); background-image: repeating-linear-gradient(-45deg, rgba(11,16,22,0.55) 0 5px, transparent 5px 11px); } .ds-tag[data-state=\"neutral\"] { color: #A9BCCB; border-color: #24313E; }"
+    },
+    {
+      "name": "Player Card Strip",
+      "kind": "card",
+      "refersTo": "cardstrip",
+      "description": "The whole player in one row: OVR, form arrow, readiness tag. The only gold-bordered object.",
+      "html": "<a class=\"ds-cardstrip\" href=\"#\" aria-label=\"Player card: overall 58, good form and rising, drifting\"><span class=\"ds-ovr\"><b>58</b><span>OVR</span></span><span class=\"ds-form\" data-dir=\"up\"><svg class=\"ds-arrow\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 19V6M6 12l6-6 6 6\"/></svg><span class=\"ds-form-label\">Good form</span></span><span class=\"ds-tag\" data-state=\"drifting\">Drifting</span></a>",
+      "css": ".ds-cardstrip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 12px 16px; background: linear-gradient(180deg, #1C242E 0%, #141B24 100%); border: 1px solid #8A6E1E; border-radius: 6px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.8); color: #E8EEF2; text-decoration: none; transition: border-color 220ms cubic-bezier(0.16,1,0.3,1), transform 220ms cubic-bezier(0.16,1,0.3,1); animation: ds-settle 620ms cubic-bezier(0.16,1,0.3,1) both; } @keyframes ds-settle { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } } .ds-cardstrip:hover { border-color: #F5C542; transform: translateY(-1px); } .ds-cardstrip:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-ovr { display: flex; align-items: baseline; gap: 8px; } .ds-ovr b { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 700; font-size: 2.5rem; line-height: 1; letter-spacing: -0.02em; color: #F5C542; font-variant-numeric: tabular-nums; } .ds-ovr span { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; color: #7D91A1; } .ds-form { display: flex; align-items: center; gap: 8px; min-width: 0; } .ds-arrow { width: 20px; height: 20px; flex: none; } .ds-form-label { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-form[data-dir=\"up\"] .ds-arrow, .ds-form[data-dir=\"up\"] .ds-form-label { color: #3DDC84; } .ds-form[data-dir=\"flat\"] .ds-arrow, .ds-form[data-dir=\"flat\"] .ds-form-label { color: #A9BCCB; } .ds-form[data-dir=\"down\"] .ds-arrow, .ds-form[data-dir=\"down\"] .ds-form-label { color: #FFB020; } .ds-tag { display: inline-flex; padding: 3px 12px 2px; border-radius: 2px; border: 1px solid rgba(255,176,32,0.45); background: rgba(255,176,32,0.08); color: #FFB020; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; white-space: nowrap; }"
+    },
+    {
+      "name": "Session Load Bars",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "The day's load readings. Fill colour is the reading; the value is always written in words too.",
+      "html": "<ul class=\"ds-load\"><li data-read=\"ok\"><span class=\"ds-bar-name\">Body</span><span class=\"ds-bar-val\">1 of 2 sessions</span><span class=\"ds-track\"><span class=\"ds-fill\" style=\"width:50%\"></span></span></li><li data-read=\"warn\"><span class=\"ds-bar-name\">Work &amp; growth</span><span class=\"ds-bar-val\">4h 10m · 40m over plan</span><span class=\"ds-track\"><span class=\"ds-fill\" style=\"width:88%\"></span></span></li><li data-read=\"over\"><span class=\"ds-bar-name\">Screen after 22:00</span><span class=\"ds-bar-val\">3 nights this week</span><span class=\"ds-track\"><span class=\"ds-fill\" style=\"width:100%\"></span></span></li></ul>",
+      "css": ".ds-load { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; } .ds-load li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: baseline; } .ds-bar-name { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.02em; color: #E8EEF2; } .ds-bar-val { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-size: 0.875rem; color: #7D91A1; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; } .ds-track { grid-column: 1 / -1; height: 6px; border-radius: 1px; background: #1B2531; overflow: hidden; } .ds-fill { display: block; height: 100%; background: #7D91A1; } .ds-load li[data-read=\"ok\"] .ds-fill { background: #3DDC84; } .ds-load li[data-read=\"warn\"] .ds-fill { background: #FFB020; } .ds-load li[data-read=\"over\"] .ds-fill { background: #FF4D5E; background-image: repeating-linear-gradient(-45deg, rgba(11,16,22,0.55) 0 5px, transparent 5px 11px); }"
+    },
+    {
+      "name": "Badge Medallion",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Cumulative-total badges with tier edges. Unearned badges are shown unlit, never hidden.",
+      "html": "<ul class=\"ds-medals\"><li class=\"ds-medal\" data-tier=\"gold\"><span class=\"ds-disc\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3.5\" y=\"5.5\" width=\"17\" height=\"13\" rx=\"1.5\"/><path d=\"M8 5.5v13M16 5.5v13M3.5 12h17\"/></svg></span><span class=\"ds-m-name\">Night off</span><span class=\"ds-m-count\">40 total</span></li><li class=\"ds-medal\" data-tier=\"silver\"><span class=\"ds-disc\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 18v-9M3 13h18v5M21 18v-5a3 3 0 0 0-3-3h-6\"/><circle cx=\"7.5\" cy=\"10.5\" r=\"2\"/></svg></span><span class=\"ds-m-name\">Lights out</span><span class=\"ds-m-count\">22 total</span></li><li class=\"ds-medal\" data-tier=\"none\"><span class=\"ds-disc\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 6.5S10 4.5 4 5v13c6-.5 8 1.5 8 1.5s2-2 8-1.5V5c-6-.5-8 1.5-8 1.5Z\"/><path d=\"M12 6.5v13\"/></svg></span><span class=\"ds-m-name\">Long read</span><span class=\"ds-m-count\">3 total</span></li></ul>",
+      "css": ".ds-medals { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 12px; } .ds-medal { display: grid; justify-items: center; gap: 8px; text-align: center; } .ds-disc { width: 68px; height: 68px; display: grid; place-items: center; border-radius: 50%; background: #131C26; border: 4px solid #24313E; box-shadow: 0 6px 18px -6px rgba(0,0,0,0.65); } .ds-disc svg { width: 26px; height: 26px; } .ds-medal[data-tier=\"bronze\"] .ds-disc { border-color: #C77B42; background: radial-gradient(120% 120% at 50% 0%, #3A2517 0%, #131C26 62%); color: #E3A876; } .ds-medal[data-tier=\"silver\"] .ds-disc { border-color: #D6E2EA; background: radial-gradient(120% 120% at 50% 0%, #2E3A44 0%, #131C26 62%); color: #EDF3F7; } .ds-medal[data-tier=\"gold\"] .ds-disc { border-color: #F5C542; background: radial-gradient(120% 120% at 50% 0%, #3B3013 0%, #131C26 62%); color: #F5C542; box-shadow: 0 6px 18px -6px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(245,197,66,0.35); } .ds-medal[data-tier=\"hof\"] .ds-disc { border-color: #F5C542; background: linear-gradient(180deg, #4A3B14 0%, #1A1E26 100%); color: #F5C542; box-shadow: 0 6px 18px -6px rgba(0,0,0,0.65), inset 0 0 0 2px rgba(245,197,66,0.5); } .ds-medal[data-tier=\"none\"] .ds-disc { border-color: #1B2531; color: #7D91A1; box-shadow: none; } .ds-m-name { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 0.875rem; letter-spacing: 0.04em; line-height: 1.2; color: #E8EEF2; } .ds-m-count { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; color: #7D91A1; } .ds-medal[data-tier=\"gold\"] .ds-m-count, .ds-medal[data-tier=\"hof\"] .ds-m-count { color: #F5C542; } .ds-medal[data-tier=\"silver\"] .ds-m-count { color: #C6D4DE; } .ds-medal[data-tier=\"bronze\"] .ds-m-count { color: #C99368; }"
+    },
+    {
+      "name": "Check-in Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "A multi-select answer in the check-in. Never coloured — an answer is not a reading.",
+      "html": "<div class=\"ds-chips\"><label class=\"ds-chip\"><input type=\"checkbox\" checked><span>Slept well</span></label><label class=\"ds-chip\"><input type=\"checkbox\"><span>Sore</span></label><label class=\"ds-chip\"><input type=\"checkbox\"><span>Low energy</span></label></div>",
+      "css": ".ds-chips { display: flex; flex-wrap: wrap; gap: 8px; } .ds-chip { position: relative; } .ds-chip input { position: absolute; inset: 0; opacity: 0; cursor: pointer; } .ds-chip span { display: block; padding: 8px 12px; border: 1px solid #24313E; border-radius: 3px; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 500; font-size: 1.125rem; letter-spacing: 0.02em; color: #A9BCCB; transition: background 160ms cubic-bezier(0.16,1,0.3,1), border-color 160ms cubic-bezier(0.16,1,0.3,1), color 160ms cubic-bezier(0.16,1,0.3,1); } .ds-chip input:hover + span { border-color: #31414F; color: #E8EEF2; } .ds-chip input:checked + span { background: #1A2530; border-color: #A9BCCB; color: #E8EEF2; } .ds-chip input:focus-visible + span { outline: 2px solid #F5C542; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A recessed well in the desk. Focus shifts the border to gold.",
+      "html": "<textarea class=\"ds-input\" rows=\"3\" placeholder=\"Anything worth recording?\"></textarea>",
+      "css": ".ds-input { width: 100%; min-height: 52px; padding: 12px; background: #101822; border: 1px solid #24313E; border-radius: 3px; color: #E8EEF2; font-family: 'Barlow', system-ui, -apple-system, sans-serif; font-size: 1rem; line-height: 1.5; resize: vertical; } .ds-input::placeholder { color: #7D91A1; } .ds-input:focus { border-color: #F5C542; outline: none; } .ds-input:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; }"
+    },
+    {
+      "name": "Placard Heading",
+      "kind": "custom",
+      "refersTo": "placard",
+      "description": "The department's section stamp: uppercase small print with a rule trailing to the edge. Replaces card containers.",
+      "html": "<h2 class=\"ds-placard\">Today's load</h2>",
+      "css": ".ds-placard { display: flex; align-items: center; gap: 12px; margin: 32px 0 12px; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; color: #7D91A1; } .ds-placard::after { content: \"\"; flex: 1; height: 1px; background: #1B2531; }"
+    },
+    {
+      "name": "Screen Navigation",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Flat uppercase link row above the thumb bar; current page underlined at 2px.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Screens\"><a href=\"#\" aria-current=\"page\">Today</a><a href=\"#\">Player card</a><a href=\"#\">Check-in</a><a href=\"#\">Mentor</a><a href=\"#\">Day changed</a><a href=\"#\">Re-entry</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 16px 24px; padding: 24px 0; border-top: 1px solid #1B2531; flex-wrap: wrap; } .ds-nav a { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; color: #7D91A1; text-decoration: none; } .ds-nav a:hover { color: #E8EEF2; } .ds-nav a:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-nav a[aria-current=\"page\"] { color: #E8EEF2; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.22em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Night-Pitch Readiness Desk",
+    "overview": "This is a club's performance department, not a game menu. The screen is a dark desk under floodlight: night-pitch navy ground, cool white ink, and department small-print set in condensed uppercase. The single most important thing — the next session — is printed enormous at the top of the page, and everything below it visibly steps back in brightness. Rank is expressed as luminance, not as boxes: a session happening now is pure white, the next ones are full ink, the finished ones fade to a muted slate with a struck-through label.\n\nDensity is dashboard-tight but never cramped. A 4px spacing base, hairline rules, and a 430px mobile shell keep the page reading like a printed readiness sheet rather than a card wall. Almost nothing is a container; sections are separated by a placard heading with a rule trailing off to the right edge, so the page is a sequence of stamped sections rather than a stack of tiles. Only two things are allowed to be objects with an edge: the player card strip and the badge medallions. That scarcity is what makes them read as the club's property.\n\nColour is rationed on purpose. One gold carries the player card and the single main action of each screen; green, amber and red are readings, never decoration — they only ever describe readiness, load, or the direction of a change. The world explicitly refuses the EA FC main menu, where the card is the product and the day is a submenu: here the day is the product and the card is a one-row strip you can walk past.",
+    "keyCharacteristics": [
+      "Night-pitch navy ground with cool-white ink; dark is the scene, not a theme toggle.",
+      "One gold, spent exactly once per screen.",
+      "Green / amber / red are readings only; they never decorate.",
+      "Hierarchy is brightness, not enclosure.",
+      "Condensed display face for everything the department stamps; a humanist body face for everything it says.",
+      "Tabular numerals everywhere a number can change under the eye."
+    ],
+    "rules": [
+      { "name": "The One Gold Rule", "body": "Exactly one gold action per screen, and only the player card may wear gold otherwise. If a screen wants two gold buttons, one of them is not the main action.", "section": "colors" },
+      { "name": "The Readings-Only Rule", "body": "Green, amber and red report readiness, load, or the direction of a change. They never mark a category, a brand moment, or a decorative edge. A colour that is not reporting a state must be navy, ink, or gold.", "section": "colors" },
+      { "name": "The Labelled Phase Rule", "body": "The day phase is always written in words in the header placard (\"Dusk · Day 12\"), and the ground tint only ever follows that label. Colour alone never announces the time of day.", "section": "colors" },
+      { "name": "The Stamp-and-Speak Rule", "body": "Condensed for anything the department stamps (numbers, names, labels, controls); normal-width Barlow for anything it says. A paragraph set in the condensed face is a bug.", "section": "typography" },
+      { "name": "The Steady Numeral Rule", "body": "Every number that can change under the eye — countdowns, clocks, OVR, attribute values, bar values — is set in tabular numerals. A countdown must never shuffle width while it is being read.", "section": "typography" },
+      { "name": "The One Enormous Thing Rule", "body": "Exactly one display-size element per screen, in the top third. Everything below it tops out at 2rem.", "section": "typography" },
+      { "name": "The Thumb-Zone Rule", "body": "Every screen's committing action sits in the sticky bottom bar at a minimum 52px target. No primary action lives above the fold only.", "section": "layout" },
+      { "name": "The Offset-Never-Halo Rule", "body": "Every shadow has a downward offset, a soft blur, and a negative spread. A zero-offset glow ringing an element is not part of this world.", "section": "elevation" },
+      { "name": "The Two Objects Rule", "body": "Only the card strip and the medallions are objects. Sections, rows, bars and lists are printed on the desk and carry no shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do put one enormous display element in the top third of every screen and demote everything after it with the stepback wrapper (opacity 0.92).",
+      "Do spend the gold exactly once per screen, on the single main action — plus the player card, which owns gold by right.",
+      "Do write the reading in words beside every bar, tag and arrow (\"40m over plan\", \"Good form\", \"Drifting\"). Colour is the second channel, never the only one.",
+      "Do set every changing number in tabular numerals.",
+      "Do keep the committing action in the sticky thumb bar at 52px minimum, two columns or stacked.",
+      "Do label the day phase in text in the header placard whenever the ground is tinted.",
+      "Do draw new icons into the inline sprite at 24x24, 1.75 stroke, round caps, no fill.",
+      "Do mark any screen carrying demo numbers with the synthetic-data footer rule."
+    ],
+    "donts": [
+      "Don't use green, amber or red for anything that is not a readiness, load, or change reading.",
+      "Don't introduce a second accent, a brand gradient wash, or any gold other than #F5C542.",
+      "Don't put a zero-offset glow on anything, or shadow an element outside the card strip, the medallions and the gold action; shadows here are offset plus blur plus negative spread.",
+      "Don't set prose in the condensed face, or a label or number in the body face.",
+      "Don't wrap sections in bordered cards. Use a placard heading with its trailing rule; only the card strip and medallions are objects.",
+      "Don't carry text below Quiet Slate (#7D91A1, 4.6:1 on the ground).",
+      "Don't write shame language, streak counts, or \"days in a row\" anywhere. Badges count cumulative totals, attributes and badges never fall, and the copy must never imply otherwise.",
+      "Don't frame rest as a loss. Resting while depleted earns double and the screen says so; grinding while depleted earns zero training XP and is labelled \"Injury risk\", never \"wasted\".",
+      "Don't use pill radii, glyph or emoji icons, system display faces, or kicker/eyebrow labels above headlines.",
+      "Don't present prototype numbers as product truth; every value on these screens is a labelled synthetic demo day."
+    ]
+  }
+}

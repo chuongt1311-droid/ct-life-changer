@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Day changed — Life Changer</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="dept.css">
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0">
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></symbol>
+  <symbol id="i-flat" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v13M6 12l6 6 6-6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-rest" viewBox="0 0 24 24"><path d="M19 14.5A8 8 0 0 1 9.5 5a8 8 0 1 0 9.5 9.5Z"/></symbol>
+  <symbol id="i-shift" viewBox="0 0 24 24"><path d="M4 7h9l-2.5-2.5M20 17h-9l2.5 2.5M4 7l2.5 2.5M20 17l-2.5-2.5"/></symbol>
+  <symbol id="i-moved" viewBox="0 0 24 24"><path d="M5 12h12M13 7l5 5-5 5"/></symbol>
+  <symbol id="i-shorter" viewBox="0 0 24 24"><path d="M4 12h16M8 8v8M16 8v8"/></symbol>
+  <symbol id="i-dropped" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-kept" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5 10-11"/></symbol>
+  <symbol id="i-start" viewBox="0 0 24 24"><path d="M8 5.5l10 6.5-10 6.5Z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4.5 12l15-7-4.5 15-3.5-6.5Z"/></symbol>
+  <symbol id="i-boot" viewBox="0 0 24 24"><path d="M6 4h4v8l7 3.5V20H6Z"/><path d="M10 12h3"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18v-9M3 13h18v5M21 18v-5a3 3 0 0 0-3-3h-6"/><circle cx="7.5" cy="10.5" r="2"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="M8 5.5v13M16 5.5v13M3.5 12h17"/></symbol>
+  <symbol id="i-anchor" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M5 13a7 7 0 0 0 14 0M7.5 11H5M19 11h-2.5"/></symbol>
+  <symbol id="i-weight" viewBox="0 0 24 24"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5S10 4.5 4 5v13c6-.5 8 1.5 8 1.5s2-2 8-1.5V5c-6-.5-8 1.5-8 1.5Z"/><path d="M12 6.5v13"/></symbol>
+</svg>
+<main class="shell" data-phase="dusk">
+
+  <header class="dept-head">
+    <p class="placard phase-label"><span class="dot"></span> Replan · 16:41</p>
+    <time datetime="16:41">16:41</time>
+  </header>
+
+  <div class="sheet-head">
+    <h1 class="sheet-title">The day moved</h1>
+    <p class="sheet-sub">Dinner and lights out did not move. Everything else fits around them.</p>
+  </div>
+
+  <a class="cardstrip" href="card.html" aria-label="Player card: overall 58, good form and rising, drifting">
+    <span class="ovr"><b>58</b><span>OVR</span></span>
+    <span class="form-read" data-dir="up">
+      <svg class="icon icon-lg arrow" aria-hidden="true"><use href="#i-up"></use></svg>
+      <span class="label">Good form</span>
+    </span>
+    <span class="tag" data-state="drifting">Drifting</span>
+  </a>
+
+  <div class="stepback">
+
+    <h2 class="placard placard-rule">Four changes</h2>
+    <ul class="diff">
+      <li data-kind="moved">
+        <svg class="icon icon-lg mark" aria-hidden="true"><use href="#i-moved"></use></svg>
+        <span>
+          <span class="row-name">FPL pipeline</span>
+          <span class="row-note"><span class="was">17:00</span> → 17:45. Still inside its window.</span>
+        </span>
+      </li>
+      <li data-kind="shorter">
+        <svg class="icon icon-lg mark" aria-hidden="true"><use href="#i-shorter"></use></svg>
+        <span>
+          <span class="row-name">Reading</span>
+          <span class="row-note"><span class="was">45 min</span> → 20 min, its shortest useful length.</span>
+        </span>
+      </li>
+      <li data-kind="dropped">
+        <svg class="icon icon-lg mark" aria-hidden="true"><use href="#i-dropped"></use></svg>
+        <span>
+          <span class="row-name">Second walk</span>
+          <span class="row-note">Dropped. It was the lowest priority block left today.</span>
+        </span>
+      </li>
+      <li data-kind="kept">
+        <svg class="icon icon-lg mark" aria-hidden="true"><use href="#i-kept"></use></svg>
+        <span>
+          <span class="row-name">Dinner, evening check-in, lights out</span>
+          <span class="row-note">Anchors. Untouched.</span>
+        </span>
+      </li>
+    </ul>
+
+    <h2 class="placard placard-rule">What it costs</h2>
+    <ul class="load">
+      <li data-read="ok">
+        <span class="bar-name">Body</span>
+        <span class="bar-val">No change</span>
+        <span class="track"><span class="fill" style="width:50%"></span></span>
+      </li>
+      <li data-read="warn">
+        <span class="bar-name">Work &amp; growth</span>
+        <span class="bar-val">−25m against plan</span>
+        <span class="track"><span class="fill" style="width:76%"></span></span>
+      </li>
+      <li data-read="ok">
+        <span class="bar-name">Sleep window</span>
+        <span class="bar-val">Intact · 7h 30m available</span>
+        <span class="track"><span class="fill" style="width:94%"></span></span>
+      </li>
+    </ul>
+
+    <p class="empty">Nothing is logged until you accept. Keeping the old plan costs nothing either — blocks that no longer fit will simply be marked missed.</p>
+
+<p class="synthetic">Synthetic demo day — not CT's data</p>
+
+    <nav class="dept-nav" aria-label="Screens">
+      <a href="today.html">Today</a>
+      <a href="card.html">Player card</a>
+      <a href="checkin.html">Check-in</a>
+      <a href="mentor.html">Mentor</a>
+      <a href="day-changed.html" aria-current="page">Day changed</a>
+      <a href="reentry.html">Re-entry</a>
+    </nav>
+
+  </div>
+
+  <div class="thumb stacked">
+    <a class="btn btn-main" href="today.html">
+      <svg class="icon icon-lg" aria-hidden="true"><use href="#i-kept"></use></svg>
+      Take the new day
+    </a>
+    <a class="btn btn-quiet" href="today.html">Keep the old one</a>
+  </div>
+
+</main>
+<script src="dept.js"></script>
+</body>
+</html>

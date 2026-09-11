@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Player card — Life Changer</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="dept.css">
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0">
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></symbol>
+  <symbol id="i-flat" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v13M6 12l6 6 6-6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-rest" viewBox="0 0 24 24"><path d="M19 14.5A8 8 0 0 1 9.5 5a8 8 0 1 0 9.5 9.5Z"/></symbol>
+  <symbol id="i-shift" viewBox="0 0 24 24"><path d="M4 7h9l-2.5-2.5M20 17h-9l2.5 2.5M4 7l2.5 2.5M20 17l-2.5-2.5"/></symbol>
+  <symbol id="i-moved" viewBox="0 0 24 24"><path d="M5 12h12M13 7l5 5-5 5"/></symbol>
+  <symbol id="i-shorter" viewBox="0 0 24 24"><path d="M4 12h16M8 8v8M16 8v8"/></symbol>
+  <symbol id="i-dropped" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-kept" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5 10-11"/></symbol>
+  <symbol id="i-start" viewBox="0 0 24 24"><path d="M8 5.5l10 6.5-10 6.5Z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4.5 12l15-7-4.5 15-3.5-6.5Z"/></symbol>
+  <symbol id="i-boot" viewBox="0 0 24 24"><path d="M6 4h4v8l7 3.5V20H6Z"/><path d="M10 12h3"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18v-9M3 13h18v5M21 18v-5a3 3 0 0 0-3-3h-6"/><circle cx="7.5" cy="10.5" r="2"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="M8 5.5v13M16 5.5v13M3.5 12h17"/></symbol>
+  <symbol id="i-anchor" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M5 13a7 7 0 0 0 14 0M7.5 11H5M19 11h-2.5"/></symbol>
+  <symbol id="i-weight" viewBox="0 0 24 24"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5S10 4.5 4 5v13c6-.5 8 1.5 8 1.5s2-2 8-1.5V5c-6-.5-8 1.5-8 1.5Z"/><path d="M12 6.5v13"/></symbol>
+</svg>
+<main class="shell" data-phase="dusk">
+
+  <header class="dept-head">
+    <p class="placard phase-label"><span class="dot"></span> Player file · Day 12</p>
+    <time datetime="16:44">16:44</time>
+  </header>
+
+  <section class="next" aria-labelledby="ovr-head">
+    <h1 class="next-name" id="ovr-head">58</h1>
+    <p class="next-when">
+      <span class="lead">Overall</span>
+      <span class="form-read" data-dir="up">
+        <svg class="icon icon-lg arrow" aria-hidden="true"><use href="#i-up"></use></svg>
+        <span class="label">Good form</span>
+      </span>
+      <span class="tag" data-state="drifting">Drifting</span>
+    </p>
+    <p class="next-note">The mean of six attributes, each between 40 and 99. Attributes never fall. Form is the last 7 days against the 21 before them, and it is the one reading that moves both ways.</p>
+  </section>
+
+  <div class="stepback">
+
+    <h2 class="placard placard-rule">Attributes</h2>
+    <ul class="attrs">
+      <li data-up="true">
+        <span class="a-name">DIS <span class="a-full">Discipline</span></span>
+        <span class="a-val">55</span>
+        <span class="track"><span class="fill" style="width:100%"></span></span>
+        <span class="to-next">Levelled up tonight · 0 of 94 XP into 56</span>
+      </li>
+      <li>
+        <span class="a-name">ANL <span class="a-full">Analytics</span></span>
+        <span class="a-val">67</span>
+        <span class="track"><span class="fill" style="width:41%"></span></span>
+        <span class="to-next">Your highest. 108 of 262 XP into 68</span>
+      </li>
+      <li>
+        <span class="a-name">PHY <span class="a-full">Physical</span></span>
+        <span class="a-val">61</span>
+        <span class="track"><span class="fill" style="width:58%"></span></span>
+        <span class="to-next">88 of 152 XP into 62</span>
+      </li>
+      <li>
+        <span class="a-name">CHR <span class="a-full">Character</span></span>
+        <span class="a-val">58</span>
+        <span class="track"><span class="fill" style="width:30%"></span></span>
+        <span class="to-next">38 of 128 XP into 59</span>
+      </li>
+      <li>
+        <span class="a-name">MEN <span class="a-full">Mentality</span></span>
+        <span class="a-val">54</span>
+        <span class="track"><span class="fill" style="width:66%"></span></span>
+        <span class="to-next">59 of 89 XP into 55</span>
+      </li>
+      <li>
+        <span class="a-name">REC <span class="a-full">Recovery</span></span>
+        <span class="a-val">49</span>
+        <span class="track"><span class="fill" style="width:22%"></span></span>
+        <span class="to-next">Your lowest. 15 of 67 XP into 50</span>
+      </li>
+    </ul>
+
+    <h2 class="placard placard-rule">Badges</h2>
+    <ul class="medals">
+      <li class="medal" data-tier="silver">
+        <span class="disc"><svg class="icon icon-medal" aria-hidden="true"><use href="#i-bed"></use></svg></span>
+        <span class="m-name">Iron Sleeper</span>
+        <span class="m-count">42 · Silver</span>
+      </li>
+      <li class="medal" data-tier="gold">
+        <span class="disc"><svg class="icon icon-medal" aria-hidden="true"><use href="#i-film"></use></svg></span>
+        <span class="m-name">Film Room</span>
+        <span class="m-count">168h · Gold</span>
+      </li>
+      <li class="medal" data-tier="silver">
+        <span class="disc"><svg class="icon icon-medal" aria-hidden="true"><use href="#i-anchor"></use></svg></span>
+        <span class="m-name">Anchor</span>
+        <span class="m-count">137 · Silver</span>
+      </li>
+      <li class="medal" data-tier="bronze">
+        <span class="disc"><svg class="icon icon-medal" aria-hidden="true"><use href="#i-boot"></use></svg></span>
+        <span class="m-name">Clutch Returner</span>
+        <span class="m-count">14 · Bronze</span>
+      </li>
+      <li class="medal" data-tier="bronze">
+        <span class="disc"><svg class="icon icon-medal" aria-hidden="true"><use href="#i-weight"></use></svg></span>
+        <span class="m-name">Workhorse</span>
+        <span class="m-count">22 · Bronze</span>
+      </li>
+      <li class="medal" data-tier="none">
+        <span class="disc"><svg class="icon icon-medal" aria-hidden="true"><use href="#i-book"></use></svg></span>
+        <span class="m-name">Open Book</span>
+        <span class="m-count">6 of 10</span>
+      </li>
+    </ul>
+
+    <p class="empty">Every badge counts a total, never days in a row. A gap costs you nothing but the days you did not log.</p>
+
+    <h2 class="placard placard-rule">Form, last 28 days</h2>
+    <ul class="load">
+      <li data-read="ok">
+        <span class="bar-name">Last 7 days</span>
+        <span class="bar-val">1.12× the 21 days before</span>
+        <span class="track"><span class="fill" style="width:72%"></span></span>
+      </li>
+      <li data-read="warn">
+        <span class="bar-name">Nights under 7h</span>
+        <span class="bar-val">5 of the last 7</span>
+        <span class="track"><span class="fill" style="width:71%"></span></span>
+      </li>
+      <li data-read="over">
+        <span class="bar-name">Days marked grinding</span>
+        <span class="bar-val">2 · training XP was zeroed both times</span>
+        <span class="track"><span class="fill" style="width:100%"></span></span>
+      </li>
+    </ul>
+
+<p class="synthetic">Synthetic demo day — not CT's data</p>
+
+    <nav class="dept-nav" aria-label="Screens">
+      <a href="today.html">Today</a>
+      <a href="card.html" aria-current="page">Player card</a>
+      <a href="checkin.html">Check-in</a>
+      <a href="mentor.html">Mentor</a>
+      <a href="day-changed.html">Day changed</a>
+      <a href="reentry.html">Re-entry</a>
+    </nav>
+
+  </div>
+
+  <div class="thumb">
+    <a class="btn btn-main" href="today.html">
+      <svg class="icon icon-lg" aria-hidden="true"><use href="#i-moved"></use></svg>
+      Back to today
+    </a>
+    <a class="btn" href="mentor.html">Ask the mentor</a>
+  </div>
+
+</main>
+<script src="dept.js"></script>
+</body>
+</html>

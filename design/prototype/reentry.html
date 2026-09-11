@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Re-entry — Life Changer</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="dept.css">
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0">
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></symbol>
+  <symbol id="i-flat" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v13M6 12l6 6 6-6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-rest" viewBox="0 0 24 24"><path d="M19 14.5A8 8 0 0 1 9.5 5a8 8 0 1 0 9.5 9.5Z"/></symbol>
+  <symbol id="i-shift" viewBox="0 0 24 24"><path d="M4 7h9l-2.5-2.5M20 17h-9l2.5 2.5M4 7l2.5 2.5M20 17l-2.5-2.5"/></symbol>
+  <symbol id="i-moved" viewBox="0 0 24 24"><path d="M5 12h12M13 7l5 5-5 5"/></symbol>
+  <symbol id="i-shorter" viewBox="0 0 24 24"><path d="M4 12h16M8 8v8M16 8v8"/></symbol>
+  <symbol id="i-dropped" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-kept" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5 10-11"/></symbol>
+  <symbol id="i-start" viewBox="0 0 24 24"><path d="M8 5.5l10 6.5-10 6.5Z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4.5 12l15-7-4.5 15-3.5-6.5Z"/></symbol>
+  <symbol id="i-boot" viewBox="0 0 24 24"><path d="M6 4h4v8l7 3.5V20H6Z"/><path d="M10 12h3"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18v-9M3 13h18v5M21 18v-5a3 3 0 0 0-3-3h-6"/><circle cx="7.5" cy="10.5" r="2"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="M8 5.5v13M16 5.5v13M3.5 12h17"/></symbol>
+  <symbol id="i-anchor" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M5 13a7 7 0 0 0 14 0M7.5 11H5M19 11h-2.5"/></symbol>
+  <symbol id="i-weight" viewBox="0 0 24 24"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5S10 4.5 4 5v13c6-.5 8 1.5 8 1.5s2-2 8-1.5V5c-6-.5-8 1.5-8 1.5Z"/><path d="M12 6.5v13"/></symbol>
+</svg>
+<main class="shell" data-phase="night">
+
+  <header class="dept-head">
+    <p class="placard phase-label"><span class="dot"></span> Night · Rest day 2</p>
+    <time datetime="09:12">09:12</time>
+  </header>
+
+  <section class="next" aria-labelledby="next-name">
+    <h1 class="next-name" id="next-name">Easy win</h1>
+    <p class="next-when">
+      <span class="lead">Back on the pitch</span>
+      <span class="num">· 10 min</span>
+    </p>
+    <p class="next-note">Whenever you want it. Two rest days are logged and paid. Recovery went up 100 XP while you were out. The ramp below is three steps, not a full day.</p>
+  </section>
+
+  <div class="cardstrip" aria-label="Player card: overall 58, form settling, recovered">
+    <span class="ovr"><b>58</b><span>OVR</span></span>
+    <span class="form-read" data-dir="flat">
+      <svg class="icon icon-lg arrow" aria-hidden="true"><use href="#i-flat"></use></svg>
+      <span class="label">Rebuilding</span>
+    </span>
+    <span class="tag" data-state="ready">Recovered</span>
+  </div>
+
+  <div class="stepback">
+
+    <h2 class="placard placard-rule">The ramp</h2>
+    <ol class="ramp">
+      <li data-state="now">
+        <span class="pip"></span>
+        <span>
+          <h3 class="r-name">One easy win</h3>
+          <p class="r-note">Ten minutes of anything you already know how to finish. Worth 30 Discipline XP, the same as it is worth on a full day.</p>
+        </span>
+      </li>
+      <li data-state="later">
+        <span class="pip"></span>
+        <span>
+          <h3 class="r-name">Half a session</h3>
+          <p class="r-note">Later today. Half counts as a partial session — 20 Physical XP, and no penalty for stopping there.</p>
+        </span>
+      </li>
+      <li data-state="later">
+        <span class="pip"></span>
+        <span>
+          <h3 class="r-name">Tomorrow's plan</h3>
+          <p class="r-note">Built at 04:00 with one fewer block than a normal day. You can add back to it at any point.</p>
+        </span>
+      </li>
+    </ol>
+
+    <h2 class="placard placard-rule">What the rest earned</h2>
+    <ul class="load">
+      <li data-read="ok">
+        <span class="bar-name">Recovery</span>
+        <span class="bar-val">+100 XP over two days</span>
+        <span class="track"><span class="fill" style="width:82%"></span></span>
+      </li>
+      <li data-read="ok">
+        <span class="bar-name">Iron Sleeper</span>
+        <span class="bar-val">42 of 120 nights · Silver</span>
+        <span class="track"><span class="fill" style="width:35%"></span></span>
+      </li>
+      <li data-read="ok">
+        <span class="bar-name">Sleep debt</span>
+        <span class="bar-val">Cleared</span>
+        <span class="track"><span class="fill" style="width:100%"></span></span>
+      </li>
+    </ul>
+
+    <p class="empty">Nothing was lost while you rested. Attributes and badges only ever go up; Form is the one reading that moves both ways, and it comes back with the next few days.</p>
+
+<p class="synthetic">Synthetic demo day — not CT's data</p>
+
+    <nav class="dept-nav" aria-label="Screens">
+      <a href="today.html">Today</a>
+      <a href="card.html">Player card</a>
+      <a href="checkin.html">Check-in</a>
+      <a href="mentor.html">Mentor</a>
+      <a href="day-changed.html">Day changed</a>
+      <a href="reentry.html" aria-current="page">Re-entry</a>
+    </nav>
+
+  </div>
+
+  <div class="thumb stacked">
+    <a class="btn btn-main" href="today.html">
+      <svg class="icon icon-lg" aria-hidden="true"><use href="#i-start"></use></svg>
+      Take the easy win
+    </a>
+    <a class="btn btn-quiet" href="reentry.html">Rest one more day</a>
+  </div>
+
+</main>
+<script src="dept.js"></script>
+</body>
+</html>
