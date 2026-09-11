@@ -4,3 +4,4 @@ coverage/
 .env*
 !.env.example
 *.log
+.impeccable/config.local.json

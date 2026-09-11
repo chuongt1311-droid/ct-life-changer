@@ -47,6 +47,7 @@ The Sunday weekly review reports all four.
 | Model | `claude-sonnet-5`, configurable in settings; hard monthly $ cap |
 | AI boundary | Deterministic code for planner, guard, nudges. Claude only for mentoring judgment. |
 | Profile memory | Claude auto-updates weekly; versioned, visible change list, one-tap revert |
+| Progression (added 2026-09-11) | **MyCareer**: real mechanics. EA FC-style player card (OVR + six 0–99 attributes), NBA 2K-style tiered badges, Football Manager-style weekly development report. Attributes and badges never decrease; a separate Form rating moves. Recovery earns XP; the burnout guard shows as Fatigued / Injury risk. Anti-compulsion rules in §8b. |
 
 ## 4. Architecture
 
@@ -259,6 +260,67 @@ The profile is a fixed set of named sections, each free text:
 
 Seeded at first run from an onboarding form (one field per section; `observedPatterns` starts empty). Updated automatically by the weekly review, one change = one section replaced. Every update creates a new `profile_versions` row (full history kept). The mentor receives the profile rendered as markdown with section headings. CT can edit any section at any time (new version, author `user`).
 
+## 8b. Progression (MyCareer)
+
+CT's life as a player career. All progression is a **pure function of logged history** (recomputable from the database at any time; nothing is stored that can't be rebuilt).
+
+### 8b.1 Attributes and OVR
+
+Six attributes, each 40–99 (everyone starts at 40, "rookie"). **OVR** = rounded mean of the six.
+
+| Code | Attribute | XP sources (per day) |
+|---|---|---|
+| PHY | Physical | training done +40, partial +20; protein "hit" +10; water ≥ 3 L +5 |
+| REC | Recovery | sleep ≥ 7 h +30 (6–7 h +10); each planned rest session taken +10; rest day with no training +20 |
+| ANL | Analytics | +1 per football-analytics minute (max 240/day); "what I learned" entry +15 |
+| DIS | Discipline | +10 per anchor kept (done or partial); +15 per rest session returned from within 10 min; easy-win block done +30 |
+| MEN | Mentality | morning check-in +10; evening check-in +15; +5 per regulation used (max 15) |
+| CHR | Character | +5 per gratitude line (max 15); win or lesson written +5; reached out to someone +15 |
+
+**State multipliers** (the day's guard state):
+| State | Card tag | Effect |
+|---|---|---|
+| Ready | — | ×1 everything |
+| Drifting | Out of form | ×1; the easy-win bonus (+30 DIS) is the fastest XP of the day |
+| Depleted | Fatigued | PHY, ANL, DIS ×0.5; REC ×2 |
+| Grinding | Injury risk | PHY training XP ×0 (sit out); ANL ×0.5; REC ×2 |
+
+XP amounts are floored after multipliers.
+
+**Growth curve:** going from rating *r* to *r + 1* costs `round(20 × 1.06^(r − 40))` XP (40→41 costs 20, 60→61 ≈ 64, 80→81 ≈ 206, 98→99 ≈ 588). Capped at 99. Reaching 99 in an attribute takes roughly 10,000 XP, which is months of consistent days, never a weekend. **Attributes never decrease.**
+
+### 8b.2 Form
+
+Form compares the last 7 days' total XP with the average 7-day total of the 21 days before them.
+| Ratio | Form |
+|---|---|
+| ≥ 1.30 | Excellent ↑↑ |
+| ≥ 1.05 | Good ↑ |
+| ≥ 0.85 | Steady → |
+| ≥ 0.60 | Dipping ↓ |
+| < 0.60 | Rebuilding ↓↓ |
+
+With fewer than 14 days of history, Form is "Settling in". Form is the only number that goes down, and its wording is plain, never shaming.
+
+### 8b.3 Badges
+
+Tiered on **cumulative counts, never consecutive days**, so §5.9's no-streaks rule holds. Earned tiers are never lost.
+| Badge | Counts | Bronze / Silver / Gold / Hall of Fame |
+|---|---|---|
+| Clutch Returner | rest sessions returned from within 10 min | 10 / 40 / 120 / 300 |
+| Iron Sleeper | nights with ≥ 7 h sleep | 10 / 40 / 120 / 300 |
+| Film Room | football-analytics hours | 10 / 50 / 150 / 400 |
+| Anchor | anchors kept | 25 / 100 / 300 / 800 |
+| Workhorse | training sessions done | 10 / 40 / 120 / 300 |
+| Open Book | evening check-ins with a reflection | 10 / 40 / 120 / 300 |
+
+### 8b.4 Surfaces and anti-compulsion rules
+
+- The player card (OVR, six attributes, Form, today's card tag) and badges appear in the app; the weekly letter becomes a **development report** (attribute changes, badge progress, one focus).
+- **No** login rewards, random rewards, loot, leaderboards, or streak counters. XP never appears in a push notification.
+- Level-ups are shown quietly where they happen and summarised weekly. A new badge **tier** gets one short celebration moment.
+- The mentor never uses ratings to shame ("your DIS is low"); it may use them to point at the next win.
+
 ## 9. Nudges
 
 - **Scheduler:** Supabase `pg_cron` every minute → `pg_net` POST to `/api/cron/tick` (with `CRON_SECRET`) → server loads today's blocks, rest sessions, sent log → `dueNudges(...)` → Web Push → record in `nudges_sent`.
@@ -313,14 +375,14 @@ People entries live inside `checkins.sections.people` (zod-typed); promoted to a
 
 ## 13. Testing
 
-- **Unit (Vitest, TDD):** `planner` (reflow per event type, midnight crossing, overlapping anchors, windowed anchors, empty day, shrink-then-drop order, determinism), `guard` (every rule, missing-data handling, precedence), `nudges` (each type, cap priority, quiet hours, dedup, 5-min look-back), `context` (privacy stripping, ordering for caching), cost computation.
+- **Unit (Vitest, TDD):** `planner` (reflow per event type, midnight crossing, overlapping anchors, windowed anchors, empty day, shrink-then-drop order, determinism), `guard` (every rule, missing-data handling, precedence), `nudges` (each type, cap priority, quiet hours, dedup, 5-min look-back), `context` (privacy stripping, ordering for caching), cost computation, `progression` (XP rules per attribute and state multiplier, growth curve and cap, OVR, form bands and "Settling in", badge tiers from cumulative counts, never-decreasing guarantees).
 - **Mentor:** context builder tested with fixture days; Anthropic client mocked in tests. A small fixture set (one sample day per state) is run manually against the real API to sanity-check tone.
 - **E2E (Playwright):** morning check-in → briefing shown; Day changed → diff → confirm; Start rest → re-entry ramp → "I'm back"; evening form → review shown.
 - **Manual on iPhone:** install to Home Screen, enable push, receive a transition nudge, offline form save → sync.
 
 ## 14. Scope
 
-**In v1:** everything in §§4–13, plus onboarding (profile seed, settings, crisis contacts, templates seeded from the 4-week program), Templates editor, History screen (past days: plan, check-ins, digests, letters), Settings, Export. Minimal training: training blocks carry the day's session as a checklist.
+**In v1:** everything in §§4–13 (including §8b progression), plus onboarding (profile seed, settings, crisis contacts, templates seeded from the 4-week program), Templates editor, History screen (past days: plan, check-ins, digests, letters), Settings, Export. Minimal training: training blocks carry the day's session as a checklist.
 
 **Visual design:** a dedicated design pass with the `impeccable` skill happens early in the build plan, before screens are implemented. Calm, focused, low-stimulation, fast one-thumb use on iPhone.
 
