@@ -8,3 +8,5 @@ coverage/
 .impeccable/review/
 .impeccable/questions/
 graphify-out/
+.next/
+next-env.d.ts
