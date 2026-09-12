@@ -704,8 +704,18 @@
         "section": "colors"
       },
       {
+        "name": "The Brightness-Is-Rank Rule",
+        "body": "Ink value encodes rank, not decoration: Floodlight White for now, Cool White for next, Readable Slate for supporting, Done Slate for finished. A row never changes hue to show status — it changes brightness, and the readings colour only the tag beside it.",
+        "section": "colors"
+      },
+      {
         "name": "The Readings-Only Rule",
         "body": "Green, amber and red report readiness, load, or the direction of a change. They never mark a category, a brand moment, or a decorative edge. A colour that is not reporting a state must be navy, ink, or gold.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tier-Metals-Are-Medallions-Only Rule",
+        "body": "Bronze and silver exist solely as medallion edge and caption material. They are not a second and third accent; a bronze button or a silver heading is outside the world.",
         "section": "colors"
       },
       {
@@ -721,6 +731,11 @@
       {
         "name": "The Steady Numeral Rule",
         "body": "Every number that can change under the eye — countdowns, clocks, OVR, attribute values, bar values — is set in tabular numerals. A countdown must never shuffle width while it is being read.",
+        "section": "typography"
+      },
+      {
+        "name": "The Label-Or-Passage Rule",
+        "body": "Uppercase at 0.11em is for a stamp of a few words. Anything long enough to be read as a sentence — the synthetic-data placard runs 34 characters — drops to sentence case at 0.04em. Uppercase is a label treatment, never a way to make prose look official.",
         "section": "typography"
       },
       {
@@ -742,6 +757,11 @@
         "name": "The Two Objects Rule",
         "body": "Only the card strip and the medallions are objects. Sections, rows, bars and lists are printed on the desk and carry no shadow.",
         "section": "elevation"
+      },
+      {
+        "name": "The Zebra-Means-Overload Rule",
+        "body": "The diagonal stripe is the single overload material. It appears only on a load fill at or over 100% and on the `grinding` tag. It is never a background pattern, a loading state, or a decorative panel.",
+        "section": "shapes"
       }
     ],
     "dos": [
@@ -751,8 +771,11 @@
       "Do set every changing number in tabular numerals.",
       "Do keep the committing action in the sticky thumb bar at 52px minimum, two columns or stacked.",
       "Do label the day phase in text in the header placard whenever the ground is tinted.",
-      "Do draw new icons into the inline sprite at 24x24, 1.75 stroke, round caps, no fill.",
-      "Do mark any screen carrying demo numbers with the synthetic-data footer rule."
+      "Do draw new icons into the inline sprite at 24×24, 1.75 stroke, round caps, no fill.",
+      "Do mark any screen carrying demo numbers with the synthetic-data footer rule, set sentence case at 0.04em.",
+      "Do use the brightness ramp for rank — Floodlight White, Cool White, Readable Slate, Done Slate — and strike completed or superseded text with a rule dimmer than the text it crosses.",
+      "Do reach for the zebra material whenever, and only when, something is over its load.",
+      "Do give the card strip its 2px frame and let the gold action's fill be its own edge."
     ],
     "donts": [
       "Don't use green, amber or red for anything that is not a readiness, load, or change reading.",
@@ -760,7 +783,9 @@
       "Don't put a zero-offset glow on anything, or shadow an element outside the card strip, the medallions and the gold action; shadows here are offset plus blur plus negative spread.",
       "Don't set prose in the condensed face, or a label or number in the body face.",
       "Don't wrap sections in bordered cards. Use a placard heading with its trailing rule; only the card strip and medallions are objects.",
-      "Don't carry text below Quiet Slate (#7D91A1, 4.6:1 on the ground).",
+      "Don't carry text below the 4.5:1 floor on the ground; Quiet Slate and Done Slate are the dimmest inks in the system and nothing dimmer than them carries words. Strike and Superseded Strike are rules, not text colours.",
+      "Don't spend bronze or silver anywhere but a medallion edge or its caption, and don't put Floodlight White on anything but the next-session headline or a now row.",
+      "Don't use the zebra stripe as decoration, or put a border on the gold action.",
       "Don't write shame language, streak counts, or \"days in a row\" anywhere. Badges count cumulative totals, attributes and badges never fall, and the copy must never imply otherwise.",
       "Don't frame rest as a loss. Resting while depleted earns double and the screen says so; grinding while depleted earns zero training XP and is labelled \"Injury risk\", never \"wasted\".",
       "Don't use pill radii, glyph or emoji icons, system display faces, or kicker/eyebrow labels above headlines.",

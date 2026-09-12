@@ -114,7 +114,6 @@ components:
     backgroundColor: "{colors.pitch-600}"
   button-main:
     backgroundColor: "{colors.gold}"
-    borderColorless: "transparent"
     textColor: "#17120A"
     typography: "{typography.subtitle}"
     rounded: "{rounded.sm}"
