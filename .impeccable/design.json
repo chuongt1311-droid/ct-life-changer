@@ -1,60 +1,591 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-12T00:00:00Z",
+  "generatedAt": "2026-09-12T12:00:00Z",
   "title": "Design System: Life Changer — Performance Department",
   "extensions": {
     "colorMeta": {
-      "pitch-900": { "role": "neutral", "displayName": "Night Pitch", "canonical": "#0B1016", "tonalRamp": ["#05080B", "#0B1016", "#101822", "#131C26", "#1A2530", "#24313E", "#3A4B5C", "#7D91A1"] },
-      "pitch-800": { "role": "neutral", "displayName": "Desk Navy", "canonical": "#101822", "tonalRamp": ["#05080B", "#0B1016", "#101822", "#131C26", "#1A2530", "#24313E", "#3A4B5C", "#8EA1B0"] },
-      "pitch-700": { "role": "neutral", "displayName": "Department Slate", "canonical": "#131C26", "tonalRamp": ["#080C10", "#0E141B", "#131C26", "#1A2530", "#24313E", "#31414F", "#5B7183", "#A9BCCB"] },
-      "pitch-600": { "role": "neutral", "displayName": "Raised Slate", "canonical": "#1A2530", "tonalRamp": ["#090D11", "#101822", "#1A2530", "#24313E", "#31414F", "#46596A", "#7D91A1", "#C3D2DC"] },
-      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "#24313E", "tonalRamp": ["#0B1016", "#131C26", "#1B2531", "#24313E", "#31414F", "#46596A", "#7D91A1", "#C3D2DC"] },
-      "line-soft": { "role": "neutral", "displayName": "Soft Hairline", "canonical": "#1B2531", "tonalRamp": ["#080C10", "#0F161E", "#1B2531", "#24313E", "#31414F", "#46596A", "#7D91A1", "#C3D2DC"] },
-      "ink": { "role": "neutral", "displayName": "Cool White", "canonical": "#E8EEF2", "tonalRamp": ["#1B2531", "#31414F", "#5B7183", "#7D91A1", "#A9BCCB", "#C6D4DE", "#E8EEF2", "#F7FAFC"] },
-      "ink-2": { "role": "neutral", "displayName": "Readable Slate", "canonical": "#A9BCCB", "tonalRamp": ["#1B2531", "#2E3A44", "#46596A", "#5B7183", "#7D91A1", "#A9BCCB", "#C6D4DE", "#EDF3F7"] },
-      "ink-3": { "role": "neutral", "displayName": "Quiet Slate", "canonical": "#7D91A1", "tonalRamp": ["#161E27", "#24313E", "#31414F", "#46596A", "#5B7183", "#7D91A1", "#A9BCCB", "#D6E2EA"] },
-      "gold": { "role": "primary", "displayName": "Floodlit Gold", "canonical": "#F5C542", "tonalRamp": ["#2A2008", "#3B3013", "#5C4715", "#8A6E1E", "#B89229", "#D8AE33", "#F5C542", "#FFD661"] },
-      "gold-dim": { "role": "primary", "displayName": "Banked Gold", "canonical": "#8A6E1E", "tonalRamp": ["#1A1408", "#2A2008", "#3B3013", "#5C4715", "#8A6E1E", "#B89229", "#F5C542", "#FFE49A"] },
-      "read-ok": { "role": "secondary", "displayName": "Ready Green", "canonical": "#3DDC84", "tonalRamp": ["#061A0F", "#0B2C1A", "#12492C", "#1A6E43", "#25955B", "#30B972", "#3DDC84", "#8DF0BA"] },
-      "read-warn": { "role": "secondary", "displayName": "Drifting Amber", "canonical": "#FFB020", "tonalRamp": ["#2B1D03", "#402B05", "#5E4008", "#8A5D0C", "#B57A12", "#DE961A", "#FFB020", "#FFD285"] },
-      "read-stop": { "role": "secondary", "displayName": "Stop Red", "canonical": "#FF4D5E", "tonalRamp": ["#2E0A0F", "#450F16", "#66161F", "#8E1F2B", "#B62A38", "#DC3A49", "#FF4D5E", "#FF9AA4"] },
-      "phase-first-light": { "role": "tertiary", "displayName": "First Light Ground", "canonical": "#16202B", "tonalRamp": ["#070A0E", "#0B1016", "#101822", "#16202B", "#1F2C39", "#2B3B4A", "#45596B", "#8EA1B0"] },
-      "phase-day": { "role": "tertiary", "displayName": "Day Ground", "canonical": "#131C26", "tonalRamp": ["#060A0D", "#0B1016", "#101822", "#131C26", "#1A2530", "#24313E", "#3E5163", "#8EA1B0"] },
-      "phase-dusk": { "role": "tertiary", "displayName": "Dusk Ground", "canonical": "#18202C", "tonalRamp": ["#070A0E", "#0C1118", "#121A24", "#18202C", "#212C3B", "#2E3D4F", "#47596F", "#8FA0B4"] },
-      "phase-night": { "role": "tertiary", "displayName": "Night Ground", "canonical": "#0B1016", "tonalRamp": ["#03060A", "#070A0E", "#0B1016", "#101822", "#131C26", "#1A2530", "#31414F", "#7D91A1"] }
+      "pitch-900": {
+        "role": "neutral",
+        "displayName": "Night Pitch",
+        "canonical": "#0B1016",
+        "tonalRamp": [
+          "#05080B",
+          "#0B1016",
+          "#101822",
+          "#131C26",
+          "#1A2530",
+          "#24313E",
+          "#3A4B5C",
+          "#7D91A1"
+        ]
+      },
+      "pitch-800": {
+        "role": "neutral",
+        "displayName": "Desk Navy",
+        "canonical": "#101822",
+        "tonalRamp": [
+          "#05080B",
+          "#0B1016",
+          "#101822",
+          "#131C26",
+          "#1A2530",
+          "#24313E",
+          "#3A4B5C",
+          "#8EA1B0"
+        ]
+      },
+      "pitch-700": {
+        "role": "neutral",
+        "displayName": "Department Slate",
+        "canonical": "#131C26",
+        "tonalRamp": [
+          "#080C10",
+          "#0E141B",
+          "#131C26",
+          "#1A2530",
+          "#24313E",
+          "#31414F",
+          "#5B7183",
+          "#A9BCCB"
+        ]
+      },
+      "pitch-600": {
+        "role": "neutral",
+        "displayName": "Raised Slate",
+        "canonical": "#1A2530",
+        "tonalRamp": [
+          "#090D11",
+          "#101822",
+          "#1A2530",
+          "#24313E",
+          "#31414F",
+          "#46596A",
+          "#7D91A1",
+          "#C3D2DC"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#24313E",
+        "tonalRamp": [
+          "#0B1016",
+          "#131C26",
+          "#1B2531",
+          "#24313E",
+          "#31414F",
+          "#46596A",
+          "#7D91A1",
+          "#C3D2DC"
+        ]
+      },
+      "line-soft": {
+        "role": "neutral",
+        "displayName": "Soft Hairline",
+        "canonical": "#1B2531",
+        "tonalRamp": [
+          "#080C10",
+          "#0F161E",
+          "#1B2531",
+          "#24313E",
+          "#31414F",
+          "#46596A",
+          "#7D91A1",
+          "#C3D2DC"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Cool White",
+        "canonical": "#E8EEF2",
+        "tonalRamp": [
+          "#1B2531",
+          "#31414F",
+          "#5B7183",
+          "#7D91A1",
+          "#A9BCCB",
+          "#C6D4DE",
+          "#E8EEF2",
+          "#F7FAFC"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Readable Slate",
+        "canonical": "#A9BCCB",
+        "tonalRamp": [
+          "#1B2531",
+          "#2E3A44",
+          "#46596A",
+          "#5B7183",
+          "#7D91A1",
+          "#A9BCCB",
+          "#C6D4DE",
+          "#EDF3F7"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Quiet Slate",
+        "canonical": "#7D91A1",
+        "tonalRamp": [
+          "#161E27",
+          "#24313E",
+          "#31414F",
+          "#46596A",
+          "#5B7183",
+          "#7D91A1",
+          "#A9BCCB",
+          "#D6E2EA"
+        ]
+      },
+      "ink-done": {
+        "role": "neutral",
+        "displayName": "Done Slate",
+        "canonical": "#90A4B4",
+        "tonalRamp": [
+          "#161E27",
+          "#24313E",
+          "#31414F",
+          "#46596A",
+          "#5B7183",
+          "#7D91A1",
+          "#90A4B4",
+          "#D6E2EA"
+        ]
+      },
+      "strike": {
+        "role": "neutral",
+        "displayName": "Strike",
+        "canonical": "#5B7183",
+        "tonalRamp": [
+          "#0E141B",
+          "#1B2531",
+          "#2E3A44",
+          "#46596A",
+          "#5B7183",
+          "#7D91A1",
+          "#A9BCCB",
+          "#D6E2EA"
+        ]
+      },
+      "strike-2": {
+        "role": "neutral",
+        "displayName": "Superseded Strike",
+        "canonical": "#46596A",
+        "tonalRamp": [
+          "#0B1016",
+          "#161E27",
+          "#24313E",
+          "#31414F",
+          "#46596A",
+          "#5B7183",
+          "#7D91A1",
+          "#C3D2DC"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Floodlight White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#1B2531",
+          "#31414F",
+          "#5B7183",
+          "#7D91A1",
+          "#A9BCCB",
+          "#E8EEF2",
+          "#F7FAFC",
+          "#FFFFFF"
+        ]
+      },
+      "gold": {
+        "role": "primary",
+        "displayName": "Floodlit Gold",
+        "canonical": "#F5C542",
+        "tonalRamp": [
+          "#2A2008",
+          "#3B3013",
+          "#5C4715",
+          "#8A6E1E",
+          "#B89229",
+          "#D8AE33",
+          "#F5C542",
+          "#FFD661"
+        ]
+      },
+      "gold-dim": {
+        "role": "primary",
+        "displayName": "Banked Gold",
+        "canonical": "#8A6E1E",
+        "tonalRamp": [
+          "#1A1408",
+          "#2A2008",
+          "#3B3013",
+          "#5C4715",
+          "#8A6E1E",
+          "#B89229",
+          "#F5C542",
+          "#FFE49A"
+        ]
+      },
+      "read-ok": {
+        "role": "secondary",
+        "displayName": "Ready Green",
+        "canonical": "#3DDC84",
+        "tonalRamp": [
+          "#061A0F",
+          "#0B2C1A",
+          "#12492C",
+          "#1A6E43",
+          "#25955B",
+          "#30B972",
+          "#3DDC84",
+          "#8DF0BA"
+        ]
+      },
+      "read-warn": {
+        "role": "secondary",
+        "displayName": "Drifting Amber",
+        "canonical": "#FFB020",
+        "tonalRamp": [
+          "#2B1D03",
+          "#402B05",
+          "#5E4008",
+          "#8A5D0C",
+          "#B57A12",
+          "#DE961A",
+          "#FFB020",
+          "#FFD285"
+        ]
+      },
+      "read-stop": {
+        "role": "secondary",
+        "displayName": "Stop Red",
+        "canonical": "#FF4D5E",
+        "tonalRamp": [
+          "#2E0A0F",
+          "#450F16",
+          "#66161F",
+          "#8E1F2B",
+          "#B62A38",
+          "#DC3A49",
+          "#FF4D5E",
+          "#FF9AA4"
+        ]
+      },
+      "phase-first-light": {
+        "role": "tertiary",
+        "displayName": "First Light Ground",
+        "canonical": "#16202B",
+        "tonalRamp": [
+          "#070A0E",
+          "#0B1016",
+          "#101822",
+          "#16202B",
+          "#1F2C39",
+          "#2B3B4A",
+          "#45596B",
+          "#8EA1B0"
+        ]
+      },
+      "phase-day": {
+        "role": "tertiary",
+        "displayName": "Day Ground",
+        "canonical": "#131C26",
+        "tonalRamp": [
+          "#060A0D",
+          "#0B1016",
+          "#101822",
+          "#131C26",
+          "#1A2530",
+          "#24313E",
+          "#3E5163",
+          "#8EA1B0"
+        ]
+      },
+      "phase-dusk": {
+        "role": "tertiary",
+        "displayName": "Dusk Ground",
+        "canonical": "#18202C",
+        "tonalRamp": [
+          "#070A0E",
+          "#0C1118",
+          "#121A24",
+          "#18202C",
+          "#212C3B",
+          "#2E3D4F",
+          "#47596F",
+          "#8FA0B4"
+        ]
+      },
+      "phase-night": {
+        "role": "tertiary",
+        "displayName": "Night Ground",
+        "canonical": "#0B1016",
+        "tonalRamp": [
+          "#03060A",
+          "#070A0E",
+          "#0B1016",
+          "#101822",
+          "#131C26",
+          "#1A2530",
+          "#31414F",
+          "#7D91A1"
+        ]
+      },
+      "tier-bronze": {
+        "role": "tertiary",
+        "displayName": "Bronze Ring",
+        "canonical": "#C77B42",
+        "tonalRamp": [
+          "#1A0E07",
+          "#2A1710",
+          "#3A2517",
+          "#5E3A20",
+          "#8A552D",
+          "#C77B42",
+          "#E3A876",
+          "#F4D2B6"
+        ]
+      },
+      "tier-bronze-ink": {
+        "role": "tertiary",
+        "displayName": "Bronze Caption",
+        "canonical": "#C99368",
+        "tonalRamp": [
+          "#1C1108",
+          "#2E1D11",
+          "#432C1B",
+          "#63432A",
+          "#8F6642",
+          "#C99368",
+          "#E0BA9B",
+          "#F3DECE"
+        ]
+      },
+      "tier-silver": {
+        "role": "tertiary",
+        "displayName": "Silver Ring",
+        "canonical": "#D6E2EA",
+        "tonalRamp": [
+          "#151C22",
+          "#222E36",
+          "#38474F",
+          "#51636D",
+          "#7B8F9A",
+          "#A8BAC4",
+          "#D6E2EA",
+          "#F2F7FA"
+        ]
+      },
+      "tier-silver-ink": {
+        "role": "tertiary",
+        "displayName": "Silver Caption",
+        "canonical": "#C6D4DE",
+        "tonalRamp": [
+          "#131A20",
+          "#202B33",
+          "#35434C",
+          "#4E606A",
+          "#788A96",
+          "#A2B4C0",
+          "#C6D4DE",
+          "#EDF3F7"
+        ]
+      },
+      "tier-ground-bronze": {
+        "role": "tertiary",
+        "displayName": "Bronze Medallion Ground",
+        "canonical": "#3A2517",
+        "tonalRamp": [
+          "#120B06",
+          "#1F1409",
+          "#2B1C10",
+          "#3A2517",
+          "#553722",
+          "#7A4E31",
+          "#A87049",
+          "#C77B42"
+        ]
+      },
+      "tier-ground-silver": {
+        "role": "tertiary",
+        "displayName": "Silver Medallion Ground",
+        "canonical": "#2E3A44",
+        "tonalRamp": [
+          "#0E1216",
+          "#171D23",
+          "#232C34",
+          "#2E3A44",
+          "#42525F",
+          "#5C7181",
+          "#8399A8",
+          "#D6E2EA"
+        ]
+      },
+      "tier-ground-gold": {
+        "role": "tertiary",
+        "displayName": "Gold Medallion Ground",
+        "canonical": "#3B3013",
+        "tonalRamp": [
+          "#120E05",
+          "#1F1808",
+          "#2A2008",
+          "#3B3013",
+          "#5C4715",
+          "#8A6E1E",
+          "#D8AE33",
+          "#F5C542"
+        ]
+      },
+      "tier-ground-hof": {
+        "role": "tertiary",
+        "displayName": "Hall of Fame Ground",
+        "canonical": "#4A3B14",
+        "tonalRamp": [
+          "#151006",
+          "#231B09",
+          "#33280F",
+          "#4A3B14",
+          "#6B551C",
+          "#9A7A26",
+          "#D8AE33",
+          "#F5C542"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "The one enormous element per screen: next-session name, OVR. Top third only." },
-      "headline": { "displayName": "Headline", "purpose": "The when-line under the display: countdown and time window." },
-      "title": { "displayName": "Title", "purpose": "Attribute values, ramp-step names." },
-      "subtitle": { "displayName": "Subtitle", "purpose": "Row voice: bar names, session names, field labels, chips, button text." },
-      "body": { "displayName": "Body", "purpose": "Everything the department says in sentences. Measure capped 52-68ch." },
-      "body-small": { "displayName": "Body Small", "purpose": "Sub-lines, notes, hints." },
-      "label": { "displayName": "Label", "purpose": "Placards, tags, nav, medallion counts, synthetic marker. Always uppercase at 0.11em." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "The one enormous element per screen: next-session name, OVR. Top third only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The when-line under the display: countdown and time window."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "The OVR figure on the card strip (2.5rem, tabular). Sits between headline and the hero clamp; card strip only."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Attribute values, ramp-step names."
+      },
+      "subtitle": {
+        "displayName": "Subtitle",
+        "purpose": "Row voice: bar names, session names, field labels, chips, button text."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Everything the department says in sentences. Measure capped 52-68ch."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Sub-lines, notes, hints."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Placards, tags, nav, medallion counts, synthetic marker. Always uppercase at 0.11em."
+      },
+      "caption-passage": {
+        "displayName": "Caption Passage",
+        "purpose": "Caption size, sentence case at 0.04em, 48ch measure: the synthetic-data placard and any caption long enough to read as a sentence."
+      }
     },
     "shadows": [
-      { "name": "lift", "value": "0 6px 18px -6px rgba(0, 0, 0, 0.65)", "purpose": "The gold main action and medallion discs." },
-      { "name": "lift-card", "value": "0 10px 30px -10px rgba(0, 0, 0, 0.8)", "purpose": "The player card strip only." },
-      { "name": "tier-inset-gold", "value": "inset 0 0 0 1px rgba(245,197,66,0.35)", "purpose": "Gold-tier medallion edge material, layered over lift." },
-      { "name": "tier-inset-hof", "value": "inset 0 0 0 2px rgba(245,197,66,0.5)", "purpose": "Hall-of-Fame medallion edge material, layered over lift." }
+      {
+        "name": "lift",
+        "value": "0 6px 18px -6px rgba(0, 0, 0, 0.65)",
+        "purpose": "The gold main action and medallion discs."
+      },
+      {
+        "name": "lift-card",
+        "value": "0 10px 30px -10px rgba(0, 0, 0, 0.8)",
+        "purpose": "The player card strip only."
+      },
+      {
+        "name": "tier-inset-gold",
+        "value": "inset 0 0 0 1px rgba(245,197,66,0.35)",
+        "purpose": "Gold-tier medallion edge material, layered over lift."
+      },
+      {
+        "name": "tier-inset-hof",
+        "value": "inset 0 0 0 2px rgba(245,197,66,0.5)",
+        "purpose": "Hall-of-Fame medallion edge material, layered over lift."
+      }
     ],
     "motion": [
-      { "name": "ease", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The single easing curve for every transition and animation." },
-      { "name": "duration-control", "value": "120ms - 220ms", "purpose": "Button, chip and card-strip state changes." },
-      { "name": "duration-phase", "value": "900ms", "purpose": "Day-phase ground crossfade." },
-      { "name": "settle", "value": "settle 620ms cubic-bezier(0.16, 1, 0.3, 1) both — opacity 0 to 1, translateY(10px) to 0, blur(6px) to 0", "purpose": "The card strip arriving on load. One of only two authored moments." },
-      { "name": "lift-row", "value": "lift-row 1600ms cubic-bezier(0.16, 1, 0.3, 1) 380ms both — background rgba(245,197,66,0) to 0.16 to 0", "purpose": "A gold wash across an attribute row that levelled up. The second authored moment." },
-      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce collapses all animation and transition to 0.01ms", "purpose": "Non-negotiable; shipped in the token layer." }
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The single easing curve for every transition and animation."
+      },
+      {
+        "name": "duration-control",
+        "value": "120ms - 220ms",
+        "purpose": "Button, chip and card-strip state changes."
+      },
+      {
+        "name": "duration-phase",
+        "value": "900ms",
+        "purpose": "Day-phase ground crossfade."
+      },
+      {
+        "name": "settle",
+        "value": "settle 620ms cubic-bezier(0.16, 1, 0.3, 1) both — opacity 0 to 1, translateY(10px) to 0, blur(6px) to 0",
+        "purpose": "The card strip arriving on load. One of only two authored moments."
+      },
+      {
+        "name": "lift-row",
+        "value": "lift-row 1600ms cubic-bezier(0.16, 1, 0.3, 1) 380ms both — background rgba(245,197,66,0) to 0.16 to 0",
+        "purpose": "A gold wash across an attribute row that levelled up. The second authored moment."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce collapses all animation and transition to 0.01ms",
+        "purpose": "Non-negotiable; shipped in the token layer."
+      }
     ],
     "breakpoints": [
-      { "name": "design-base", "value": "390px" },
-      { "name": "shell", "value": "430px" },
-      { "name": "desk", "value": "900px" },
-      { "name": "desk-max", "value": "1040px" }
+      {
+        "name": "design-base",
+        "value": "390px"
+      },
+      {
+        "name": "shell",
+        "value": "430px"
+      },
+      {
+        "name": "desk",
+        "value": "900px"
+      },
+      {
+        "name": "desk-max",
+        "value": "1040px"
+      }
     ],
     "materials": [
-      { "name": "zebra", "value": "repeating-linear-gradient(-45deg, rgba(11,16,22,0.55) 0 5px, transparent 5px 11px)", "purpose": "Overload material. Laid over a red load fill and over a grinding tag; never decorative." },
-      { "name": "focus-ring", "value": "outline: 2px solid #F5C542; outline-offset: 2px; border-radius: 2px", "purpose": "Global focus-visible treatment." }
+      {
+        "name": "zebra",
+        "value": "repeating-linear-gradient(-45deg, rgba(11,16,22,0.55) 0 5px, transparent 5px 11px)",
+        "purpose": "The single overload material, held as --zebra. Laid over a load fill at or over 100% and over a grinding tag; never decorative."
+      },
+      {
+        "name": "focus-ring",
+        "value": "outline: 2px solid #F5C542; outline-offset: 2px; border-radius: 2px",
+        "purpose": "Global focus-visible treatment."
+      },
+      {
+        "name": "levelled-plate",
+        "value": "border: 1px solid #8A6E1E; border-radius: 3px; background: rgba(245,197,66,0.05); margin-inline: -12px; padding: 12px 11px",
+        "purpose": "An attribute row that levelled up: an edged gold plate bleeding past the text column, not a margin rail."
+      },
+      {
+        "name": "cardstrip-frame",
+        "value": "border: 2px solid #8A6E1E",
+        "purpose": "The only 2px border in the system. Gives the player card strip an edge that holds under a 30px shadow."
+      }
     ]
   },
   "components": [
@@ -62,9 +593,9 @@
       "name": "Main Action",
       "kind": "button",
       "refersTo": "button-main",
-      "description": "The single gold action per screen, in the sticky thumb bar.",
+      "description": "The single gold action per screen, in the sticky thumb bar. The fill is its own edge; no border.",
       "html": "<button class=\"ds-btn ds-btn-main\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M19 14.5A8 8 0 0 1 9.5 5a8 8 0 1 0 9.5 9.5Z\"/></svg>Start rest</button>",
-      "css": ".ds-btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 16px; border-radius: 3px; border: 1px solid #24313E; background: #131C26; color: #E8EEF2; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: background 180ms cubic-bezier(0.16,1,0.3,1), border-color 180ms cubic-bezier(0.16,1,0.3,1), transform 120ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-main { background: #F5C542; border-color: #F5C542; color: #17120A; font-weight: 700; box-shadow: 0 6px 18px -6px rgba(0,0,0,0.65); } .ds-btn-main:hover { background: #FFD661; border-color: #FFD661; } .ds-btn:active { transform: translateY(1px); } .ds-btn:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-icon { width: 20px; height: 20px; }"
+      "css": ".ds-btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 16px; border-radius: 3px; border: 1px solid #24313E; background: #131C26; color: #E8EEF2; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: background 180ms cubic-bezier(0.16,1,0.3,1), border-color 180ms cubic-bezier(0.16,1,0.3,1), transform 120ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-main { background: #F5C542; border-color: transparent; color: #17120A; font-weight: 700; box-shadow: 0 6px 18px -6px rgba(0,0,0,0.65); } .ds-btn-main:hover { background: #FFD661; border-color: transparent; } .ds-btn:active { transform: translateY(1px); } .ds-btn:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-icon { width: 20px; height: 20px; }"
     },
     {
       "name": "Secondary Action",
@@ -86,9 +617,9 @@
       "name": "Player Card Strip",
       "kind": "card",
       "refersTo": "cardstrip",
-      "description": "The whole player in one row: OVR, form arrow, readiness tag. The only gold-bordered object.",
+      "description": "The whole player in one row: OVR, form arrow, readiness tag. The only 2px-framed object in the system.",
       "html": "<a class=\"ds-cardstrip\" href=\"#\" aria-label=\"Player card: overall 58, good form and rising, drifting\"><span class=\"ds-ovr\"><b>58</b><span>OVR</span></span><span class=\"ds-form\" data-dir=\"up\"><svg class=\"ds-arrow\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 19V6M6 12l6-6 6 6\"/></svg><span class=\"ds-form-label\">Good form</span></span><span class=\"ds-tag\" data-state=\"drifting\">Drifting</span></a>",
-      "css": ".ds-cardstrip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 12px 16px; background: linear-gradient(180deg, #1C242E 0%, #141B24 100%); border: 1px solid #8A6E1E; border-radius: 6px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.8); color: #E8EEF2; text-decoration: none; transition: border-color 220ms cubic-bezier(0.16,1,0.3,1), transform 220ms cubic-bezier(0.16,1,0.3,1); animation: ds-settle 620ms cubic-bezier(0.16,1,0.3,1) both; } @keyframes ds-settle { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } } .ds-cardstrip:hover { border-color: #F5C542; transform: translateY(-1px); } .ds-cardstrip:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-ovr { display: flex; align-items: baseline; gap: 8px; } .ds-ovr b { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 700; font-size: 2.5rem; line-height: 1; letter-spacing: -0.02em; color: #F5C542; font-variant-numeric: tabular-nums; } .ds-ovr span { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; color: #7D91A1; } .ds-form { display: flex; align-items: center; gap: 8px; min-width: 0; } .ds-arrow { width: 20px; height: 20px; flex: none; } .ds-form-label { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-form[data-dir=\"up\"] .ds-arrow, .ds-form[data-dir=\"up\"] .ds-form-label { color: #3DDC84; } .ds-form[data-dir=\"flat\"] .ds-arrow, .ds-form[data-dir=\"flat\"] .ds-form-label { color: #A9BCCB; } .ds-form[data-dir=\"down\"] .ds-arrow, .ds-form[data-dir=\"down\"] .ds-form-label { color: #FFB020; } .ds-tag { display: inline-flex; padding: 3px 12px 2px; border-radius: 2px; border: 1px solid rgba(255,176,32,0.45); background: rgba(255,176,32,0.08); color: #FFB020; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; white-space: nowrap; }"
+      "css": ".ds-cardstrip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 12px 16px; background: linear-gradient(180deg, #1C242E 0%, #141B24 100%); border: 2px solid #8A6E1E; border-radius: 6px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.8); color: #E8EEF2; text-decoration: none; transition: border-color 220ms cubic-bezier(0.16,1,0.3,1), transform 220ms cubic-bezier(0.16,1,0.3,1); animation: ds-settle 620ms cubic-bezier(0.16,1,0.3,1) both; } @keyframes ds-settle { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } } .ds-cardstrip:hover { border-color: #F5C542; transform: translateY(-1px); } .ds-cardstrip:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-ovr { display: flex; align-items: baseline; gap: 8px; } .ds-ovr b { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 700; font-size: 2.5rem; line-height: 1; letter-spacing: -0.02em; color: #F5C542; font-variant-numeric: tabular-nums; } .ds-ovr span { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; color: #7D91A1; } .ds-form { display: flex; align-items: center; gap: 8px; min-width: 0; } .ds-arrow { width: 20px; height: 20px; flex: none; } .ds-form-label { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-form[data-dir=\"up\"] .ds-arrow, .ds-form[data-dir=\"up\"] .ds-form-label { color: #3DDC84; } .ds-form[data-dir=\"flat\"] .ds-arrow, .ds-form[data-dir=\"flat\"] .ds-form-label { color: #A9BCCB; } .ds-form[data-dir=\"down\"] .ds-arrow, .ds-form[data-dir=\"down\"] .ds-form-label { color: #FFB020; } .ds-tag { display: inline-flex; padding: 3px 12px 2px; border-radius: 2px; border: 1px solid rgba(255,176,32,0.45); background: rgba(255,176,32,0.08); color: #FFB020; font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; white-space: nowrap; }"
     },
     {
       "name": "Session Load Bars",
@@ -137,6 +668,22 @@
       "description": "Flat uppercase link row above the thumb bar; current page underlined at 2px.",
       "html": "<nav class=\"ds-nav\" aria-label=\"Screens\"><a href=\"#\" aria-current=\"page\">Today</a><a href=\"#\">Player card</a><a href=\"#\">Check-in</a><a href=\"#\">Mentor</a><a href=\"#\">Day changed</a><a href=\"#\">Re-entry</a></nav>",
       "css": ".ds-nav { display: flex; gap: 16px 24px; padding: 24px 0; border-top: 1px solid #1B2531; flex-wrap: wrap; } .ds-nav a { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.11em; text-transform: uppercase; color: #7D91A1; text-decoration: none; } .ds-nav a:hover { color: #E8EEF2; } .ds-nav a:focus-visible { outline: 2px solid #F5C542; outline-offset: 2px; } .ds-nav a[aria-current=\"page\"] { color: #E8EEF2; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.22em; }"
+    },
+    {
+      "name": "Session Row Ranks",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "The day's sessions. Rank is brightness: now, next, done — never a hue change.",
+      "html": "<ul class=\"ds-sessions\"><li data-rank=\"done\"><span class=\"ds-at\">07:10</span><span class=\"ds-what\">Morning walk<small>Body · 30m</small></span></li><li data-rank=\"now\"><span class=\"ds-at\">14:00</span><span class=\"ds-what\">Deep work block<small>Work &amp; growth · 90m</small></span></li><li data-rank=\"next\"><span class=\"ds-at\">19:30</span><span class=\"ds-what\">Reading<small>Mind · 40m</small></span></li></ul>",
+      "css": ".ds-sessions { list-style: none; margin: 0; padding: 0; } .ds-sessions li { display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid #1B2531; } .ds-at { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; color: #A9BCCB; font-variant-numeric: tabular-nums; } .ds-what { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 500; font-size: 1.125rem; color: #A9BCCB; letter-spacing: 0.01em; } .ds-what small { display: block; font-family: 'Barlow', system-ui, sans-serif; font-size: 0.75rem; color: #7D91A1; letter-spacing: 0; } .ds-sessions li[data-rank=\"now\"] .ds-at, .ds-sessions li[data-rank=\"now\"] .ds-what { color: #FFFFFF; } .ds-sessions li[data-rank=\"now\"] .ds-what { font-weight: 700; } .ds-sessions li[data-rank=\"next\"] .ds-at, .ds-sessions li[data-rank=\"next\"] .ds-what { color: #E8EEF2; } .ds-sessions li[data-rank=\"done\"] .ds-at, .ds-sessions li[data-rank=\"done\"] .ds-what { color: #90A4B4; } .ds-sessions li[data-rank=\"done\"] .ds-what { text-decoration: line-through; text-decoration-color: #5B7183; } .ds-sessions .ds-what a { color: inherit; }"
+    },
+    {
+      "name": "Levelled Attribute Row",
+      "kind": "custom",
+      "refersTo": "attr-levelled",
+      "description": "An attribute that went up becomes an edged gold plate bleeding past the text column. Every other row stays printed flat.",
+      "html": "<ul class=\"ds-attrs\"><li><span class=\"ds-a-name\">STA<span class=\"ds-a-full\">Stamina</span></span><span class=\"ds-a-val\">61</span><span class=\"ds-a-track\"><span class=\"ds-a-fill\" style=\"width:41%\"></span></span><span class=\"ds-a-next\">4 to next</span></li><li data-up=\"true\"><span class=\"ds-a-name\">FOC<span class=\"ds-a-full\">Focus</span></span><span class=\"ds-a-val\">58</span><span class=\"ds-a-track\"><span class=\"ds-a-fill\" style=\"width:58%\"></span></span><span class=\"ds-a-next\">Up 1 this week</span></li></ul>",
+      "css": ".ds-attrs { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; } .ds-attrs li { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: baseline; } .ds-a-name { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.06em; text-transform: uppercase; color: #E8EEF2; } .ds-a-full { font-family: 'Barlow', system-ui, sans-serif; font-weight: 400; font-size: 0.75rem; color: #7D91A1; letter-spacing: 0; text-transform: none; margin-left: 8px; } .ds-a-val { font-family: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: -0.02em; color: #E8EEF2; font-variant-numeric: tabular-nums; } .ds-a-track { grid-column: 1 / -1; height: 4px; background: #1B2531; border-radius: 1px; overflow: hidden; } .ds-a-fill { display: block; height: 100%; background: #A9BCCB; } .ds-a-next { grid-column: 1 / -1; font-family: 'Barlow', system-ui, sans-serif; font-size: 0.75rem; color: #7D91A1; } .ds-attrs li[data-up=\"true\"] { border: 1px solid #8A6E1E; border-radius: 3px; background: rgba(245,197,66,0.05); margin-inline: -12px; padding: 12px 11px; animation: ds-lift-row 1600ms cubic-bezier(0.16,1,0.3,1) 380ms both; } @keyframes ds-lift-row { 0% { background-color: rgba(245,197,66,0); } 40% { background-color: rgba(245,197,66,0.16); } 100% { background-color: rgba(245,197,66,0.05); } } .ds-attrs li[data-up=\"true\"] .ds-a-val, .ds-attrs li[data-up=\"true\"] .ds-a-next { color: #F5C542; } .ds-attrs li[data-up=\"true\"] .ds-a-fill { background: #F5C542; }"
     }
   ],
   "narrative": {
@@ -151,15 +698,51 @@
       "Tabular numerals everywhere a number can change under the eye."
     ],
     "rules": [
-      { "name": "The One Gold Rule", "body": "Exactly one gold action per screen, and only the player card may wear gold otherwise. If a screen wants two gold buttons, one of them is not the main action.", "section": "colors" },
-      { "name": "The Readings-Only Rule", "body": "Green, amber and red report readiness, load, or the direction of a change. They never mark a category, a brand moment, or a decorative edge. A colour that is not reporting a state must be navy, ink, or gold.", "section": "colors" },
-      { "name": "The Labelled Phase Rule", "body": "The day phase is always written in words in the header placard (\"Dusk · Day 12\"), and the ground tint only ever follows that label. Colour alone never announces the time of day.", "section": "colors" },
-      { "name": "The Stamp-and-Speak Rule", "body": "Condensed for anything the department stamps (numbers, names, labels, controls); normal-width Barlow for anything it says. A paragraph set in the condensed face is a bug.", "section": "typography" },
-      { "name": "The Steady Numeral Rule", "body": "Every number that can change under the eye — countdowns, clocks, OVR, attribute values, bar values — is set in tabular numerals. A countdown must never shuffle width while it is being read.", "section": "typography" },
-      { "name": "The One Enormous Thing Rule", "body": "Exactly one display-size element per screen, in the top third. Everything below it tops out at 2rem.", "section": "typography" },
-      { "name": "The Thumb-Zone Rule", "body": "Every screen's committing action sits in the sticky bottom bar at a minimum 52px target. No primary action lives above the fold only.", "section": "layout" },
-      { "name": "The Offset-Never-Halo Rule", "body": "Every shadow has a downward offset, a soft blur, and a negative spread. A zero-offset glow ringing an element is not part of this world.", "section": "elevation" },
-      { "name": "The Two Objects Rule", "body": "Only the card strip and the medallions are objects. Sections, rows, bars and lists are printed on the desk and carry no shadow.", "section": "elevation" }
+      {
+        "name": "The One Gold Rule",
+        "body": "Exactly one gold action per screen, and only the player card may wear gold otherwise. If a screen wants two gold buttons, one of them is not the main action.",
+        "section": "colors"
+      },
+      {
+        "name": "The Readings-Only Rule",
+        "body": "Green, amber and red report readiness, load, or the direction of a change. They never mark a category, a brand moment, or a decorative edge. A colour that is not reporting a state must be navy, ink, or gold.",
+        "section": "colors"
+      },
+      {
+        "name": "The Labelled Phase Rule",
+        "body": "The day phase is always written in words in the header placard (\"Dusk · Day 12\"), and the ground tint only ever follows that label. Colour alone never announces the time of day.",
+        "section": "colors"
+      },
+      {
+        "name": "The Stamp-and-Speak Rule",
+        "body": "Condensed for anything the department stamps (numbers, names, labels, controls); normal-width Barlow for anything it says. A paragraph set in the condensed face is a bug.",
+        "section": "typography"
+      },
+      {
+        "name": "The Steady Numeral Rule",
+        "body": "Every number that can change under the eye — countdowns, clocks, OVR, attribute values, bar values — is set in tabular numerals. A countdown must never shuffle width while it is being read.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Enormous Thing Rule",
+        "body": "Exactly one display-size element per screen, in the top third. Everything below it tops out at 2rem.",
+        "section": "typography"
+      },
+      {
+        "name": "The Thumb-Zone Rule",
+        "body": "Every screen's committing action sits in the sticky bottom bar at a minimum 52px target. No primary action lives above the fold only.",
+        "section": "layout"
+      },
+      {
+        "name": "The Offset-Never-Halo Rule",
+        "body": "Every shadow has a downward offset, a soft blur, and a negative spread. A zero-offset glow ringing an element is not part of this world.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Two Objects Rule",
+        "body": "Only the card strip and the medallions are objects. Sections, rows, bars and lists are printed on the desk and carry no shadow.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do put one enormous display element in the top third of every screen and demote everything after it with the stepback wrapper (opacity 0.92).",

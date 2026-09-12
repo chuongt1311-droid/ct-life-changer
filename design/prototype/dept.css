@@ -133,7 +133,7 @@ body:has(.shell[data-phase="night"])       { background: var(--phase-night); --g
   margin-top: var(--s4);
   padding: var(--s3) var(--s4);
   background: linear-gradient(180deg, #1C242E 0%, #141B24 100%);
-  border: 1px solid var(--gold-dim);
+  border: 2px solid var(--gold-dim);
   border-radius: var(--radius-card);
   box-shadow: var(--lift-card);
   color: var(--ink);
@@ -237,12 +237,12 @@ a.cardstrip:hover { border-color: var(--gold); transform: translateY(-1px); }
 /* The one gold action. Exactly one per screen. */
 .btn-main {
   background: var(--gold);
-  border-color: var(--gold);
+  border-color: transparent;
   color: #17120A;
   font-weight: 700;
   box-shadow: var(--lift);
 }
-.btn-main:hover { background: #FFD661; border-color: #FFD661; }
+.btn-main:hover { background: #FFD661; }
 
 .btn-quiet { background: transparent; color: var(--ink-2); }
 .btn-quiet:hover { background: var(--pitch-700); color: var(--ink); }
@@ -327,9 +327,11 @@ a.cardstrip:hover { border-color: var(--gold); transform: translateY(-1px); }
 .attrs .to-next { grid-column: 1 / -1; font-size: var(--t-cap); color: var(--ink-3); }
 
 .attrs li[data-up="true"] {
-  border-left: 3px solid var(--gold);
-  margin-left: -14px;
-  padding-left: 11px;
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius);
+  background: rgba(245, 197, 66, 0.05);
+  margin-inline: -12px;
+  padding: var(--s3) 11px;
 }
 .attrs li[data-up="true"] .a-val { color: var(--gold); }
 .attrs li[data-up="true"] .fill { background: var(--gold); }
@@ -548,8 +550,7 @@ input[type="range"] { width: 100%; }
   border-top: 1px solid var(--line-soft);
   font-family: var(--display);
   font-size: var(--t-cap);
-  letter-spacing: var(--track-cap);
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--ink-3);
 }
 

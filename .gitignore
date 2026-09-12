@@ -7,3 +7,4 @@ coverage/
 .impeccable/config.local.json
 .impeccable/review/
 .impeccable/questions/
+graphify-out/
