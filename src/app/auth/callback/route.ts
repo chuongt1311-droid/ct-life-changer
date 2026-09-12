@@ -8,7 +8,15 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createServerSupabase();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      // Most common cause: the sign-in request and this callback happened in
+      // two different browsers/profiles, so the PKCE code_verifier cookie
+      // set at request time isn't present here to match against.
+      redirectTo.pathname = '/login';
+      redirectTo.searchParams.set('error', error.message);
+      return NextResponse.redirect(redirectTo);
+    }
   }
 
   redirectTo.pathname = '/';

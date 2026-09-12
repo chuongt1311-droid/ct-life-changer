@@ -1,7 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
 import { sendMagicLink } from './actions';
+
+/** Reads the ?error= query param (set by /auth/callback or the middleware on
+ * a rejected sign-in). Split out because useSearchParams() requires a
+ * Suspense boundary for the page to still prerender. */
+function UrlError() {
+  const searchParams = useSearchParams();
+  const urlError = searchParams.get('error');
+  return urlError ? <p role="alert">{urlError}</p> : null;
+}
 
 export default function LoginPage() {
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -26,6 +36,11 @@ export default function LoginPage() {
         {status === 'sent' ? 'Link sent — check your email' : 'Send me a sign-in link'}
       </button>
       {status === 'error' && <p role="alert">{error}</p>}
+      {status !== 'error' && (
+        <Suspense fallback={null}>
+          <UrlError />
+        </Suspense>
+      )}
     </main>
   );
 }
