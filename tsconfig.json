@@ -33,6 +33,7 @@
   },
   "include": [
     "src",
+    "scripts",
     "vitest.config.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts",

@@ -6,18 +6,20 @@ import type { z } from 'zod';
 export interface RepositoryClient {
   from(table: string): {
     select(columns: string): {
-      match(filter: Record<string, unknown>): Promise<{ data: unknown[] | null; error: { message: string } | null }>;
+      // PromiseLike, not Promise: the real Supabase client returns a
+      // thenable query builder here, not a Promise instance.
+      match(filter: Record<string, unknown>): PromiseLike<{ data: unknown[] | null; error: { message: string } | null }>;
       eq(column: string, value: unknown): {
-        maybeSingle(): Promise<{ data: unknown | null; error: { message: string } | null }>;
+        maybeSingle(): PromiseLike<{ data: unknown | null; error: { message: string } | null }>;
       };
     };
     upsert(row: unknown): {
       select(columns: string): {
-        single(): Promise<{ data: unknown | null; error: { message: string } | null }>;
+        single(): PromiseLike<{ data: unknown | null; error: { message: string } | null }>;
       };
     };
     delete(): {
-      eq(column: string, value: unknown): Promise<{ error: { message: string } | null }>;
+      eq(column: string, value: unknown): PromiseLike<{ error: { message: string } | null }>;
     };
   };
 }
