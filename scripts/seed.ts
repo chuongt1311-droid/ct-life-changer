@@ -1,4 +1,8 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+// dotenv/config's default loads .env, not .env.local — Next.js itself loads
+// .env.local automatically, but this standalone script has to be told.
+config({ path: '.env.local' });
+
 import { createAdminSupabase } from '../src/lib/supabase/admin';
 import type { RepositoryClient } from '../src/lib/db/repository';
 import { upsertSettings, upsertTemplate } from '../src/lib/db/repositories';
