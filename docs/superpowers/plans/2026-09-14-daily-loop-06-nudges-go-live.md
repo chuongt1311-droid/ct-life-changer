@@ -1632,7 +1632,13 @@ test-results/
 - [ ] **Step 4: Write the Playwright config**
 
 ```typescript
+import { config as loadEnv } from 'dotenv';
 import { defineConfig } from '@playwright/test';
+
+// The Playwright runner process itself (globalSetup, this config) needs
+// E2E_AUTH_SECRET/E2E_BASE_URL too — nothing else loads .env.test.local into
+// it. dotenv never overwrites a var already set in the real environment.
+loadEnv({ path: '.env.test.local' });
 
 export default defineConfig({
   testDir: './e2e',
@@ -1645,36 +1651,79 @@ export default defineConfig({
   },
   webServer: {
     command: 'npm run dev',
+    // NODE_ENV=test makes Next.js load .env.test.local (and skip .env.local
+    // entirely — see @next/env's loadEnvConfig) so this can never run
+    // against production credentials, even by accident.
+    env: { NODE_ENV: 'test' },
     url: process.env.E2E_BASE_URL ?? 'http://localhost:3000',
-    reuseExistingServer: true,
+    // Always spawn a fresh server bound to the test env rather than
+    // reusing whatever else might already be listening on this port.
+    reuseExistingServer: false,
     timeout: 60_000,
   },
   globalSetup: './e2e/global-setup.ts',
 });
 ```
 
+Two things here weren't obvious until actually running the suite against a real test project: `next dev` on its own loads `.env.local` (i.e. production) — it never picks up `.env.test.local` unless `NODE_ENV=test` is set, which is why `webServer.env` forces it. And the Playwright *runner* process (which executes `global-setup.ts` directly in Node, not inside the spawned dev server) needed its own `.env.test.local` load — hence the `dotenv` import at the top; `dotenv` is already a devDependency.
+
 - [ ] **Step 5: Write global setup**
 
 ```typescript
 import { chromium } from '@playwright/test';
 import fs from 'node:fs';
+import { createAdminSupabase } from '../src/lib/supabase/admin';
+import type { RepositoryClient } from '../src/lib/db/repository';
+import { upsertSettings, upsertTemplate } from '../src/lib/db/repositories';
+import { seedSettingsRow, seedTemplateRows } from '../src/lib/onboarding/seedData';
 
-/** Authenticates once via the secret-gated test login route (Task 13) and
- * saves the resulting session cookies for every spec to reuse. */
+/** A fresh test Supabase project has no settings/template rows yet, so
+ * signing in redirects straight to /onboarding (src/app/page.tsx's own
+ * gate) — none of the four spec §13 flows have anything to work with until
+ * that's seeded. Mirrors scripts/seed.ts's logic directly (not shelled out
+ * to, since that script hardcodes .env.local) against whichever project
+ * .env.test.local points at. */
+async function seedOnboardingData(ownerEmail: string) {
+  const admin = createAdminSupabase();
+  const client = admin as unknown as RepositoryClient;
+  const { data: usersPage } = await admin.auth.admin.listUsers();
+  const owner = usersPage?.users.find((u) => u.email?.toLowerCase() === ownerEmail.toLowerCase());
+  if (!owner) throw new Error(`No auth user found for OWNER_EMAIL ${ownerEmail} — the test login step should have created one.`);
+
+  await upsertSettings(client, { ...seedSettingsRow(), owner_id: owner.id });
+  for (const template of seedTemplateRows()) {
+    await upsertTemplate(client, { ...template, owner_id: owner.id });
+  }
+}
+
+/** Authenticates once via the secret-gated test login route (Task 13),
+ * seeds onboarding data if this is a fresh test project, and saves the
+ * resulting session cookies for every spec to reuse. */
 export default async function globalSetup() {
   const baseURL = process.env.E2E_BASE_URL ?? 'http://localhost:3000';
   const secret = process.env.E2E_AUTH_SECRET;
   if (!secret) throw new Error('E2E_AUTH_SECRET must be set (see .env.test.local.example) to run E2E tests.');
+  const ownerEmail = process.env.OWNER_EMAIL;
+  if (!ownerEmail) throw new Error('OWNER_EMAIL must be set (see .env.test.local.example) to run E2E tests.');
 
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.goto(`${baseURL}/api/test/login?secret=${secret}`);
-  await page.waitForURL(`${baseURL}/`);
+  await page.waitForURL(/\/(onboarding)?$/, { timeout: 30_000 });
+
+  if (page.url() === `${baseURL}/onboarding`) {
+    await seedOnboardingData(ownerEmail);
+    await page.goto(baseURL);
+    await page.waitForURL(`${baseURL}/`);
+  }
+
   fs.mkdirSync('./e2e/.auth', { recursive: true });
   await page.context().storageState({ path: './e2e/.auth/state.json' });
   await browser.close();
 }
 ```
+
+A fresh test Supabase project (the whole point of not pointing this at production) has no `settings`/`templates` rows, so the sign-in redirect lands on `/onboarding`, not `/`. `scripts/seed.ts` already does exactly this seeding but hardcodes `.env.local`, so it can't be shelled out to here — this reimplements its two calls directly against whatever `.env.test.local` points at.
 
 - [ ] **Step 6: Write the morning check-in flow**
 
@@ -1703,10 +1752,18 @@ import { expect, test } from '@playwright/test';
 
 test('Day changed shows a diff and confirms', async ({ page }) => {
   await page.goto('/day-changed');
-  await expect(page.getByRole('heading')).toBeVisible();
+  // The page renders both an <h1> ("The day moved") and an <h2> section
+  // heading ("What changed?") — a bare getByRole('heading') matches both
+  // and Playwright's strict mode refuses to pick one implicitly.
+  await expect(page.getByRole('heading', { name: 'The day moved' })).toBeVisible();
 
-  const confirmButton = page.getByRole('button', { name: /Confirm|Apply/i }).first();
-  await confirmButton.click();
+  // ReflowFlow.tsx is a two-step picker → diff sheet: picking an event first
+  // calls previewReflowAction (a server round trip), then the diff sheet
+  // (with its actual "Take the new day" confirm button) renders.
+  await page.getByRole('button', { name: 'Running late (30 min)' }).click();
+  await expect(page.getByRole('heading', { name: 'What changed' })).toBeVisible({ timeout: 15_000 });
+
+  await page.getByRole('button', { name: 'Take the new day' }).click();
   await page.waitForURL('/', { timeout: 15_000 });
 });
 ```
@@ -1741,13 +1798,15 @@ test('evening form submission shows the review', async ({ page }) => {
 });
 ```
 
-- [ ] **Step 10: Run the suite once against a test Supabase project**
+- [x] **Step 10: Run the suite once against a test Supabase project**
 
-This step is CT's to run, not Claude's — it calls the real Anthropic API twice (morning + evening) and needs `.env.test.local` filled in against a real (test) Supabase project:
+This step needs `.env.test.local` filled in against a real (test) Supabase project and CT's explicit go-ahead — it calls the real Anthropic API twice (morning + evening). CT set up `.env.test.local` and gave the go-ahead on 2026-09-14; Claude ran it:
 
 ```bash
 npm run test:e2e
 ```
+
+Result: **4/4 passed** (`day-changed` 3.9s, `evening-checkin` 9.4s, `morning-checkin` 3.5s, `rest-reentry` 4.7s). Getting there required fixing three real gaps the plan hadn't hit yet (see Step 4/5/7's updated code above) — none were guessable without an actual run: `webServer` needed `NODE_ENV=test` + `reuseExistingServer: false` or it would silently target production, `global-setup.ts` needed to seed onboarding data for a brand-new project, and `day-changed.spec.ts`'s locators didn't match the real `ReflowFlow.tsx` markup.
 
 - [ ] **Step 11: Typecheck**
 
