@@ -1616,6 +1616,19 @@ E2E_BASE_URL=http://localhost:3000
 
 Save this as `.env.test.local.example`.
 
+The repo's `.gitignore` has a blanket `.env*` rule with a single `!.env.example` exception — it would silently ignore this new example file too. Add exceptions for it and for Playwright's own output directories:
+
+```
+.env*
+!.env.example
+!.env.test.local.example
+e2e/.auth/
+playwright-report/
+test-results/
+```
+
+(The `e2e/.auth/`, `playwright-report/`, and `test-results/` lines are new additions to the existing `.gitignore`; the first two lines already exist.)
+
 - [ ] **Step 4: Write the Playwright config**
 
 ```typescript
@@ -1744,7 +1757,7 @@ Expected: no errors (Playwright specs are excluded from `npm test`'s Vitest run 
 - [ ] **Step 12: Commit**
 
 ```bash
-git add package.json package-lock.json playwright.config.ts e2e/ .env.test.local.example
+git add package.json package-lock.json playwright.config.ts e2e/ .env.test.local.example .gitignore
 git commit -m "test(e2e): Playwright suite for the four spec §13 E2E flows"
 ```
 
