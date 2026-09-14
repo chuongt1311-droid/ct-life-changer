@@ -1,0 +1,111 @@
+/* Life Changer — Performance Department
+   Design tokens. Seed 2562ab01. Ported from design/prototype/ in Plan 5.
+   Fonts are loaded via @fontsource/barlow(-condensed) in the root layout
+   instead of the @font-face blocks the prototype used. */
+
+:root {
+  /* Ground — night pitch. The evening happens in a dark room, so dark is the
+     scene, not the category. */
+  --pitch-900: #0B1016;
+  --pitch-800: #101822;
+  --pitch-700: #131C26;
+  --pitch-600: #1A2530;
+  --line:      #24313E;
+  --line-soft: #1B2531;
+
+  /* Ink */
+  --ink:       #E8EEF2;
+  --ink-2:     #A9BCCB;   /* 7.1:1 on --pitch-900 */
+  --ink-3:     #7D91A1;   /* 4.6:1 on --pitch-900 — floor for secondary text */
+  --ink-done:  #90A4B4;   /* completed rows: dimmer in rank, never under the floor */
+  --strike:    #5B7183;   /* strikethrough on a completed row */
+  --strike-2:  #46596A;   /* strikethrough on a superseded value */
+
+  /* The one gold. Player card and the single main action. Nothing else. */
+  --gold:      #F5C542;
+  --gold-dim:  #8A6E1E;
+
+  /* Readings. Only ever readiness, never decoration. */
+  --read-ok:   #3DDC84;
+  --read-warn: #FFB020;
+  --read-stop: #FF4D5E;
+
+  /* Day phases. Labelled in the UI; the tint only follows the label. */
+  --phase-first-light: #16202B;
+  --phase-day:         #131C26;
+  --phase-dusk:        #18202C;
+  --phase-night:       #0B1016;
+
+  /* Type */
+  --display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --prose:   'Barlow', system-ui, -apple-system, sans-serif;
+
+  --t-hero:   clamp(3.25rem, 15vw, 5.25rem);
+  --t-xl:     2rem;
+  --t-lg:     1.5rem;
+  --t-md:     1.125rem;
+  --t-base:   1rem;
+  --t-sm:     0.875rem;
+  --t-cap:    0.75rem;   /* caption / placard */
+
+  --track-display: -0.02em;
+  --track-cap: 0.11em;
+
+  /* Space — 4px base */
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+
+  --radius: 3px;          /* department paperwork, not app tiles */
+  --radius-card: 6px;
+
+  --shell: 430px;
+
+  /* Depth: offset + soft blur, never a zero-offset halo. */
+  --lift: 0 6px 18px -6px rgba(0, 0, 0, 0.65);
+  --lift-card: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Browser surfaces carry the design too. */
+::selection { background: var(--gold); color: var(--pitch-900); }
+:root { color-scheme: dark; accent-color: var(--gold); caret-color: var(--gold); }
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--pitch-900);
+  color: var(--ink);
+  font-family: var(--prose);
+  font-size: var(--t-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Numerals in every reading are tabular: a countdown must not shuffle width. */
+.num, time, .ovr b, .stat-val, .bar-val { font-variant-numeric: tabular-nums; }
+
+/* Scrollbar */
+* { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--line); border-radius: 10px; border: 3px solid var(--pitch-900); }
+*::-webkit-scrollbar-thumb:hover { background: #31414F; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
