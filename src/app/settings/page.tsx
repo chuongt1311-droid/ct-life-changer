@@ -3,7 +3,9 @@ import { isOwner } from '@/lib/auth/isOwner';
 import { repositories } from '@/lib/db/repositories';
 import type { RepositoryClient } from '@/lib/db/repository';
 import { seedSettingsRow } from '@/lib/onboarding/seedData';
+import { Placard } from '@/components/ui/Placard';
 import { SettingsForm } from './SettingsForm';
+import { ExportLinks } from './ExportLinks';
 
 export default async function SettingsPage() {
   const supabase = await createServerSupabase();
@@ -29,6 +31,10 @@ export default async function SettingsPage() {
         </p>
       </header>
       <SettingsForm initial={settingsRow} ownerEmail={user.email ?? ''} />
+      <div className="stepback">
+        <Placard>Export</Placard>
+        <ExportLinks />
+      </div>
     </main>
   );
 }
