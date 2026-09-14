@@ -249,16 +249,24 @@ git commit -m "feat(nudges): pure missed-days-in-a-row and welcome-back-sent hel
 - [ ] **Step 1: Write the failing tests**
 
 ```typescript
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PushSubscriptionRow } from '@/lib/db/schemas';
 
 vi.stubEnv('NEXT_PUBLIC_VAPID_PUBLIC_KEY', 'pub');
 vi.stubEnv('VAPID_PRIVATE_KEY', 'priv');
 vi.stubEnv('VAPID_SUBJECT', 'mailto:ct@example.com');
 
-const sendNotification = vi.fn();
+// A plain (non-vi.fn) indirection — vi.fn()'s internal call-tracking on an
+// async-throwing implementation creates an orphaned rejected promise that
+// trips Node's unhandledRejection detector even though sendPush's own
+// try/catch handles it correctly. A plain reassignable function sidesteps
+// that entirely; these tests don't need call-argument assertions anyway.
+let sendNotificationImpl: (...args: unknown[]) => Promise<unknown> = async () => undefined;
 vi.mock('web-push', () => ({
-  default: { setVapidDetails: vi.fn(), sendNotification: (...args: unknown[]) => sendNotification(...args) },
+  default: {
+    setVapidDetails: () => {},
+    sendNotification: (...args: unknown[]) => sendNotificationImpl(...args),
+  },
 }));
 
 const subscription: PushSubscriptionRow = {
@@ -271,24 +279,29 @@ const subscription: PushSubscriptionRow = {
 };
 
 describe('sendPush', () => {
-  beforeEach(() => sendNotification.mockReset());
+  beforeEach(() => {
+    sendNotificationImpl = async () => undefined;
+  });
 
   it('returns ok on a successful send', async () => {
-    sendNotification.mockResolvedValue(undefined);
     const { sendPush } = await import('./sendPush');
     const result = await sendPush(subscription, { title: 'Hi', body: 'There' });
     expect(result).toEqual({ ok: true, expired: false });
   });
 
   it('flags the subscription as expired on a 410', async () => {
-    sendNotification.mockRejectedValue({ statusCode: 410 });
+    sendNotificationImpl = async () => {
+      throw { statusCode: 410 };
+    };
     const { sendPush } = await import('./sendPush');
     const result = await sendPush(subscription, { title: 'Hi', body: 'There' });
     expect(result).toEqual({ ok: false, expired: true });
   });
 
   it('does not flag expired for other errors', async () => {
-    sendNotification.mockRejectedValue({ statusCode: 500 });
+    sendNotificationImpl = async () => {
+      throw { statusCode: 500 };
+    };
     const { sendPush } = await import('./sendPush');
     const result = await sendPush(subscription, { title: 'Hi', body: 'There' });
     expect(result).toEqual({ ok: false, expired: false });
