@@ -558,7 +558,11 @@ export function usePushSubscription() {
     const reg = await navigator.serviceWorker.ready;
     const sub = await reg.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(publicKey),
+      // TS's lib.dom types applicationServerKey as BufferSource<ArrayBuffer>;
+      // Uint8Array's buffer is typed ArrayBufferLike (may be a
+      // SharedArrayBuffer), so an explicit cast is needed here even though
+      // this Uint8Array is always backed by a plain ArrayBuffer at runtime.
+      applicationServerKey: urlBase64ToUint8Array(publicKey) as BufferSource,
     });
     const json = sub.toJSON();
     await subscribePushAction({
