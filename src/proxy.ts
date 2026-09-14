@@ -55,5 +55,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  // sw.js must always be served raw, never redirected — a redirected service
+  // worker script response is rejected outright by the browser (surfaced by
+  // live browser testing: registering it while signed out on /login hit this
+  // matcher, got 307'd to /login, and Chrome logged "The script resource is
+  // behind a redirect, which is disallowed").
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|sw.js).*)'],
 };
