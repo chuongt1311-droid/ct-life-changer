@@ -3,6 +3,10 @@ node_modules/
 coverage/
 .env*
 !.env.example
+!.env.test.local.example
+e2e/.auth/
+playwright-report/
+test-results/
 *.log
 .impeccable/config.local.json
 .impeccable/review/

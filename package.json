@@ -11,9 +11,11 @@
     "build": "next build",
     "start": "next start",
     "seed": "tsx scripts/seed.ts",
-    "mentor-tone-check": "tsx scripts/mentor-tone-check.ts"
+    "mentor-tone-check": "tsx scripts/mentor-tone-check.ts",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^24.13.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
