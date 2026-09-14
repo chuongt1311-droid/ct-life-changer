@@ -7,6 +7,7 @@ import type { RepositoryClient } from '@/lib/db/repository';
 import { getDaySummaries } from '@/lib/db/daySummary';
 import { getPlayerCard } from '@/lib/db/progressDays';
 import { settingsToDomain } from '@/lib/db/settingsMapping';
+import { blockRowToCore } from '@/lib/db/blockMapping';
 import { ensureTodayPlan } from '@/lib/planner/ensureTodayPlan';
 import { computeLoadBars } from '@/core/today/loadBars';
 import { dayPhase } from '@/core/today/phase';
@@ -58,11 +59,7 @@ export default async function TodayPage() {
   const weekday = new Date(`${planDate}T00:00:00Z`).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
 
   const bars = computeLoadBars({
-    blocks: blocks.map((b) => ({
-      id: b.id, title: b.title, kind: b.kind, anchor: b.anchor, priority: b.priority, start: b.start, end: b.end,
-      minMinutes: b.min_minutes, window: b.window_start !== null && b.window_end !== null ? { earliestStart: b.window_start, latestEnd: b.window_end } : null,
-      tags: b.tags, checklist: b.checklist, recoveryVariant: b.recovery_variant, status: b.status, source: b.source,
-    })),
+    blocks: blocks.map(blockRowToCore),
     today: today!,
     settings,
   });
