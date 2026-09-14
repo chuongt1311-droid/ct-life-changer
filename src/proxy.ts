@@ -29,6 +29,9 @@ export async function proxy(request: NextRequest) {
   // pg_net calls this with no Supabase session — it authenticates with
   // CRON_SECRET inside the route itself, same reasoning as isLoginRoute.
   const isCronRoute = request.nextUrl.pathname.startsWith('/api/cron/');
+  // E2E-only (Playwright global setup): 404s unless E2E_AUTH_SECRET is set,
+  // which CT never sets in production — see the route itself.
+  const isTestLoginRoute = request.nextUrl.pathname === '/api/test/login';
 
   if (user && !isOwner(user.email)) {
     await supabase.auth.signOut();
@@ -41,7 +44,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  if (!user && !isLoginRoute && !isCronRoute) {
+  if (!user && !isLoginRoute && !isCronRoute && !isTestLoginRoute) {
     if (isApiRoute) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     const url = request.nextUrl.clone();
     url.pathname = '/login';
