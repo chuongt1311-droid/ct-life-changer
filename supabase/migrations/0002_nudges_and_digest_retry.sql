@@ -11,3 +11,22 @@ create unique index if not exists nudges_sent_key_idx on nudges_sent (key);
 
 alter table digests alter column text drop not null;
 alter table digests add column if not exists attempts integer not null default 0;
+
+-- Enable the extensions this schedule needs (idempotent — safe to re-run).
+create extension if not exists pg_cron with schema extensions;
+create extension if not exists pg_net with schema extensions;
+
+-- CT: after deploying /api/cron/tick and setting CRON_SECRET in Vercel, run
+-- this yourself in the Supabase SQL editor (substitute your real domain and
+-- the same CRON_SECRET value you put in Vercel):
+--
+--   select cron.schedule('life-changer-tick', '* * * * *', $$
+--     select net.http_post(
+--       url := 'https://<your-vercel-domain>/api/cron/tick',
+--       headers := jsonb_build_object('content-type', 'application/json', 'x-cron-secret', '<your CRON_SECRET>'),
+--       body := '{}'::jsonb
+--     );
+--   $$);
+--
+-- To check it's running: select * from cron.job_run_details order by start_time desc limit 5;
+-- To stop it: select cron.unschedule('life-changer-tick');
