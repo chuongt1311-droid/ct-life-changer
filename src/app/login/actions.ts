@@ -13,10 +13,13 @@ export async function sendMagicLink(): Promise<SendMagicLinkResult> {
   const ownerEmail = process.env.OWNER_EMAIL;
   if (!ownerEmail) return { ok: false, error: 'OWNER_EMAIL is not configured' };
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!siteUrl) return { ok: false, error: 'NEXT_PUBLIC_SITE_URL is not configured' };
+
   const supabase = await createServerSupabase();
   const { error } = await supabase.auth.signInWithOtp({
     email: ownerEmail,
-    options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
+    options: { emailRedirectTo: `${siteUrl}/auth/callback` },
   });
   return error ? { ok: false, error: error.message } : { ok: true };
 }
