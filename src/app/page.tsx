@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { isOwner } from '@/lib/auth/isOwner';
 import { repositories } from '@/lib/db/repositories';
@@ -37,9 +38,12 @@ export default async function TodayPage() {
   }
 
   const client = supabase as unknown as RepositoryClient;
+  const settingsCheck = await repositories(client).settings.get();
+  if (!settingsCheck) redirect('/onboarding');
+
   const now = new Date();
-  const [{ plan: _plan, blocks }, settingsRow] = await Promise.all([ensureTodayPlan(client, user.id, now), repositories(client).settings.get()]);
-  const settings = settingsToDomain(settingsRow!);
+  const { blocks } = await ensureTodayPlan(client, user.id, now);
+  const settings = settingsToDomain(settingsCheck);
   const { planDate, minute } = planClock(now, settings.timezone);
   const [today] = await getDaySummaries(client, planDate, planDate);
   const card = await getPlayerCard(client, planDate);
