@@ -8,6 +8,7 @@ import '@fontsource/barlow-condensed/700.css';
 import './tokens.css';
 import './dept.css';
 import { IconSprite } from '@/components/icons/IconSprite';
+import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister';
 
 export const metadata = {
   title: "CT's Life Changer",
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <IconSprite />
+        <ServiceWorkerRegister />
         {children}
       </body>
     </html>
