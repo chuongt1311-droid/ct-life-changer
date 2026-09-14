@@ -1039,7 +1039,10 @@ const block: BlockRow = {
 describe('assembleNudgeInput', () => {
   it('builds a NudgeInput from DB rows, mapping rest sessions to their block end', async () => {
     const client = fakeClient({
-      checkins: [],
+      // A check-in the day before planDate keeps missedDaysInARow at 0 —
+      // otherwise every lookback day defaults to "missed" and the trailing
+      // count would be the full 30-day window, not 0.
+      checkins: [{ id: 'c0', owner_id: 'ct', date: '2026-09-13', type: 'evening', sections: {}, private_keys: [], created_at: '2026-09-13T21:00:00Z' }],
       nudges_sent: [{ id: 'n1', owner_id: 'ct', date: '2026-09-14', type: 'morning', block_id: null, key: '2026-09-14:morning:-', sent_at: '2026-09-14T07:00:00Z', acked_at: null }],
       rest_sessions: [{ id: 'r1', owner_id: 'ct', date: '2026-09-14', block_id: 'deep', activity: 'walk', planned: true, started_at: '2026-09-14T09:00:00Z', ended_at: null, reentry_ack_at: null }],
     });
