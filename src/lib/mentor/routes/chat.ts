@@ -6,6 +6,7 @@ import { repositories } from '@/lib/db/repositories';
 import { loadSystemPrompt } from '@/lib/mentor/systemPrompt';
 import { assembleMentorContext } from '@/lib/mentor/assembleContext';
 import { checkCap, extractUsage, recordUsage } from '@/lib/mentor/usage';
+import { logMentorMessage } from '@/lib/mentor/logMessage';
 import type { MentorRouteParams } from './briefing';
 
 /** Last 20 chat messages for `date`, oldest first, mapped to the
@@ -36,6 +37,7 @@ export async function* chat(
   }
 
   const chatHistory = await loadChatHistory(client, date);
+  await logMentorMessage(client, { ownerId: params.ownerId, date, route: 'chat', role: 'user', content: message, stateAtTime: null, usageId: null });
   const input = await assembleMentorContext(client, { systemPrompt: loadSystemPrompt(), date, request: message, chatHistory });
   const ctx = buildMentorContext(input);
 
@@ -48,11 +50,16 @@ export async function* chat(
       system: ctx.system,
       messages: ctx.messages,
     });
+    let fullText = '';
     for await (const event of stream) {
-      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') yield event.delta.text;
+      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+        fullText += event.delta.text;
+        yield event.delta.text;
+      }
     }
     const final = await stream.finalMessage();
-    await recordUsage(client, { ownerId: params.ownerId, route: 'chat', model: params.model, usage: extractUsage(final) });
+    const usageRow = await recordUsage(client, { ownerId: params.ownerId, route: 'chat', model: params.model, usage: extractUsage(final) });
+    await logMentorMessage(client, { ownerId: params.ownerId, date, route: 'chat', role: 'assistant', content: fullText, stateAtTime: input.today.state, usageId: usageRow.id });
     return { fallback: false };
   } catch {
     yield routeFallbackText('chat');

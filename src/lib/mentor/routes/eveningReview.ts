@@ -9,6 +9,7 @@ import { loadSystemPrompt } from '@/lib/mentor/systemPrompt';
 import { assembleMentorContext } from '@/lib/mentor/assembleContext';
 import { checkCap, extractUsage, recordUsage } from '@/lib/mentor/usage';
 import { repositories } from '@/lib/db/repositories';
+import { logMentorMessage } from '@/lib/mentor/logMessage';
 import type { MentorRouteParams } from './briefing';
 
 const EveningReviewSchema = z.object({
@@ -54,8 +55,10 @@ export async function eveningReview(
       messages: ctx.messages,
     });
     if (!response.parsed_output) return { ...eveningReviewFallback(), crisis: localCrisis, fallback: true };
-    await recordUsage(client, { ownerId: params.ownerId, route: 'eveningReview', model: params.model, usage: extractUsage(response) });
-    return { ...response.parsed_output, crisis: response.parsed_output.crisis || localCrisis, fallback: false };
+    const usageRow = await recordUsage(client, { ownerId: params.ownerId, route: 'eveningReview', model: params.model, usage: extractUsage(response) });
+    const crisis = response.parsed_output.crisis || localCrisis;
+    await logMentorMessage(client, { ownerId: params.ownerId, date, route: 'eveningReview', role: 'assistant', content: response.parsed_output.message, stateAtTime: input.today.state, usageId: usageRow.id });
+    return { ...response.parsed_output, crisis, fallback: false };
   } catch {
     return { ...eveningReviewFallback(), crisis: localCrisis, fallback: true };
   }

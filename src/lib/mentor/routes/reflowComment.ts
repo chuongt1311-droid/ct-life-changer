@@ -5,6 +5,7 @@ import type { RepositoryClient } from '@/lib/db/repository';
 import { loadSystemPrompt } from '@/lib/mentor/systemPrompt';
 import { assembleMentorContext } from '@/lib/mentor/assembleContext';
 import { checkCap, extractUsage, recordUsage } from '@/lib/mentor/usage';
+import { logMentorMessage } from '@/lib/mentor/logMessage';
 import type { MentorRouteParams } from './briefing';
 
 export async function reflowComment(
@@ -30,9 +31,11 @@ export async function reflowComment(
       system: ctx.system,
       messages: ctx.messages,
     });
-    await recordUsage(client, { ownerId: params.ownerId, route: 'reflowComment', model: params.model, usage: extractUsage(response) });
+    const usageRow = await recordUsage(client, { ownerId: params.ownerId, route: 'reflowComment', model: params.model, usage: extractUsage(response) });
     const textBlock = response.content.find((b): b is Anthropic.TextBlock => b.type === 'text');
-    return { text: textBlock?.text ?? routeFallbackText('reflowComment'), fallback: false };
+    const text = textBlock?.text ?? routeFallbackText('reflowComment');
+    await logMentorMessage(client, { ownerId: params.ownerId, date, route: 'reflowComment', role: 'assistant', content: text, stateAtTime: input.today.state, usageId: usageRow.id });
+    return { text, fallback: false };
   } catch {
     return { text: routeFallbackText('reflowComment'), fallback: true };
   }

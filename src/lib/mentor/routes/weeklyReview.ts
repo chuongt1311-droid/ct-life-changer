@@ -8,6 +8,7 @@ import type { RepositoryClient } from '@/lib/db/repository';
 import { loadSystemPrompt } from '@/lib/mentor/systemPrompt';
 import { assembleMentorContext } from '@/lib/mentor/assembleContext';
 import { checkCap, extractUsage, recordUsage } from '@/lib/mentor/usage';
+import { logMentorMessage } from '@/lib/mentor/logMessage';
 import type { MentorRouteParams } from './briefing';
 
 const WeeklyReviewSchema = z.object({
@@ -43,11 +44,12 @@ export async function weeklyReview(
       messages: ctx.messages,
     });
     if (!response.parsed_output) return { ...weeklyReviewFallback(), fallback: true };
-    await recordUsage(client, { ownerId: params.ownerId, route: 'weeklyReview', model: params.model, usage: extractUsage(response) });
+    const usageRow = await recordUsage(client, { ownerId: params.ownerId, route: 'weeklyReview', model: params.model, usage: extractUsage(response) });
     // Unknown sections are dropped, never trusted blindly — a bad model
     // output must not corrupt the profile (mirrors applyProfileChanges'
     // own guard in @/core/mentor/profile, applied here before persistence).
     const changes = response.parsed_output.changes.filter((c) => VALID_SECTIONS.has(c.section as never));
+    await logMentorMessage(client, { ownerId: params.ownerId, date: weekStart, route: 'weeklyReview', role: 'assistant', content: response.parsed_output.letter, stateAtTime: null, usageId: usageRow.id });
     return { letter: response.parsed_output.letter, changes, crisis: response.parsed_output.crisis, fallback: false };
   } catch {
     return { ...weeklyReviewFallback(), fallback: true };
