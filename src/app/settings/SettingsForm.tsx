@@ -5,12 +5,14 @@ import { Placard } from '@/components/ui/Placard';
 import { ThumbBar } from '@/components/ui/ThumbBar';
 import { MODEL_PRICES } from '@/core/mentor/cost';
 import type { SettingsRow } from '@/lib/db/schemas';
+import { usePushSubscription } from '@/lib/push/usePushSubscription';
 import { saveSettingsAction, signOutAction } from './actions';
 
 export function SettingsForm({ initial, ownerEmail }: { initial: SettingsRow; ownerEmail: string }) {
   const [draft, setDraft] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
+  const push = usePushSubscription();
 
   async function save() {
     setSaving(true);
@@ -27,6 +29,19 @@ export function SettingsForm({ initial, ownerEmail }: { initial: SettingsRow; ow
     <div className="stepback">
       <Placard>Account</Placard>
       <p className="note">Signed in as {ownerEmail}.</p>
+
+      <Placard>Nudges</Placard>
+      <p className="note">
+        {push.status === 'subscribed' && 'Push notifications are on for this device.'}
+        {push.status === 'not-subscribed' && 'Push notifications are off for this device.'}
+        {push.status === 'denied' && 'Notifications were declined in your browser settings.'}
+        {push.status === 'unsupported' && "This browser doesn't support push notifications."}
+      </p>
+      {push.status === 'not-subscribed' && (
+        <button className="btn btn-quiet" onClick={() => push.subscribe()}>
+          Enable push notifications
+        </button>
+      )}
 
       <Placard>Mentor</Placard>
       <div className="field">

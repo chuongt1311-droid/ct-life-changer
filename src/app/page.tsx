@@ -19,6 +19,7 @@ import { ThumbBar } from '@/components/ui/ThumbBar';
 import { DeptNav } from '@/components/ui/DeptNav';
 import { Icon } from '@/components/icons/Icon';
 import { Countdown } from '@/components/today/Countdown';
+import { NudgesBanner } from '@/components/today/NudgesBanner';
 
 const RANK: Record<string, SessionRank> = { done: 'done', partial: 'done', skipped: 'done', missed: 'done', dropped: 'done', active: 'now', planned: 'next' };
 const TAG_LABEL: Record<string, string> = { done: 'Done', partial: 'Partial', skipped: 'Skipped', missed: 'Missed', dropped: 'Dropped', active: 'Now', planned: 'Next' };
@@ -91,6 +92,8 @@ export default async function TodayPage() {
       </section>
 
       <PlayerCardStrip card={card} />
+
+      <NudgesBanner />
 
       <div className="stepback desk">
         <Placard>Today&apos;s load</Placard>
