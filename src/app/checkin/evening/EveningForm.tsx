@@ -9,6 +9,7 @@ import { Icon } from '@/components/icons/Icon';
 import { useCrisisCheck } from '@/hooks/useCrisisCheck';
 import { CrisisContactsCard } from '@/components/mentor/CrisisContactsCard';
 import type { CrisisContact } from '@/core/types';
+import { useOutbox } from '@/lib/offline/useOutbox';
 import { submitEveningCheckinAction } from './actions';
 import type { EveningCheckinInput } from '@/lib/checkins/submitCheckin';
 
@@ -43,8 +44,14 @@ export function EveningForm({ crisisContacts }: { crisisContacts: CrisisContact[
   const [privatePeople, setPrivatePeople] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [review, setReview] = useState<Awaited<ReturnType<typeof submitEveningCheckinAction>> | null>(null);
+  const [queued, setQueued] = useState(false);
 
   const localCrisis = useCrisisCheck([learned, lessonOfDay, winOfDay, frictionNote]);
+  const outbox = useOutbox({
+    eveningCheckin: async (payload) => {
+      await submitEveningCheckinAction(payload as EveningCheckinInput);
+    },
+  });
 
   async function handleSubmit() {
     setSubmitting(true);
@@ -57,9 +64,30 @@ export function EveningForm({ crisisContacts }: { crisisContacts: CrisisContact[
       reflection: { gratitudeLines: gratitudeText.split('\n').filter((l) => l.trim().length > 0), lessonOfDay, winOfDay },
       privateKeys: privatePeople ? ['people'] : [],
     };
-    const result = await submitEveningCheckinAction(input);
-    setSubmitting(false);
-    setReview(result);
+    try {
+      const result = await submitEveningCheckinAction(input);
+      setSubmitting(false);
+      setReview(result);
+    } catch {
+      await outbox.enqueue('eveningCheckin', input);
+      setSubmitting(false);
+      setQueued(true);
+    }
+  }
+
+  if (queued) {
+    return (
+      <div className="stepback">
+        <p className="note">
+          No connection right now — today&apos;s evening entry is queued and will send the moment you&apos;re back online. Nothing is lost.
+        </p>
+        <ThumbBar>
+          <a className="btn btn-main btn-wide" href="/">
+            Back to today
+          </a>
+        </ThumbBar>
+      </div>
+    );
   }
 
   if (review) {

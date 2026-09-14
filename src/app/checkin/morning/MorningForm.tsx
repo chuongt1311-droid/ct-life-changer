@@ -5,8 +5,10 @@ import { ChipGroup } from '@/components/ui/Chip';
 import { Placard } from '@/components/ui/Placard';
 import { ThumbBar } from '@/components/ui/ThumbBar';
 import { Icon } from '@/components/icons/Icon';
+import { useOutbox } from '@/lib/offline/useOutbox';
 import { applyAdjustmentsAction, keepOriginalAction, submitMorningCheckinAction } from './actions';
 import type { ReassessResult } from '@/lib/checkins/reassessMorning';
+import type { MorningCheckinInput } from '@/lib/checkins/submitCheckin';
 
 const STRESS_CAUSES = [
   { value: 'family', label: 'Family' },
@@ -26,17 +28,46 @@ export function MorningForm({ prefillBedtime, prefillWakeTime }: { prefillBedtim
   const [privateMind, setPrivateMind] = useState(false);
   const [banner, setBanner] = useState<ReassessResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [queued, setQueued] = useState(false);
+
+  const outbox = useOutbox({
+    morningCheckin: async (payload) => {
+      await submitMorningCheckinAction(payload as MorningCheckinInput);
+    },
+  });
 
   async function handleSubmit() {
     setSubmitting(true);
-    const result = await submitMorningCheckinAction({
+    const input: MorningCheckinInput = {
       body: { bedtime: prefillBedtime, wakeTime: prefillWakeTime, sleepQuality, energy },
       mind: { mood, stress, stressCause },
       privateKeys: privateMind ? ['mind'] : [],
-    });
-    setSubmitting(false);
-    if (result.changed) setBanner(result);
-    else window.location.href = '/';
+    };
+    try {
+      const result = await submitMorningCheckinAction(input);
+      setSubmitting(false);
+      if (result.changed) setBanner(result);
+      else window.location.href = '/';
+    } catch {
+      await outbox.enqueue('morningCheckin', input);
+      setSubmitting(false);
+      setQueued(true);
+    }
+  }
+
+  if (queued) {
+    return (
+      <div className="stepback">
+        <p className="note">
+          No connection right now — today&apos;s morning entry is queued and will send the moment you&apos;re back online. Nothing is lost.
+        </p>
+        <ThumbBar>
+          <a className="btn btn-main btn-wide" href="/">
+            Back to today
+          </a>
+        </ThumbBar>
+      </div>
+    );
   }
 
   if (banner) {
