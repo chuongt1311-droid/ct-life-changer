@@ -792,15 +792,29 @@ alter table digests alter column text drop not null;
 alter table digests add column if not exists attempts integer not null default 0;
 ```
 
-- [ ] **Step 4: Run the full test suite and typecheck**
+- [ ] **Step 4: Run typecheck and fix the one call site it surfaces**
+
+Run: `npm run typecheck`
+
+`digestRowSchema.text` becoming `string | null` breaks one existing caller: `src/lib/mentor/assembleContext.ts` maps `digestRows` straight into `MentorContextInput['digests']`, which expects `text: string`. A digest row with a null text is a failed generation attempt awaiting the cron tick's retry (Task 10) — nothing worth sending Claude, so filter it out rather than loosen the core type:
+
+```typescript
+    // A digest row can now have a null text (a failed generation attempt
+    // awaiting the cron tick's retry, Plan 6) — nothing worth sending Claude.
+    digests: digestRows.filter((d) => d.text !== null).map((d) => ({ date: d.date, text: d.text as string })),
+```
+
+This replaces the previous `digests: digestRows.map((d) => ({ date: d.date, text: d.text })),` line.
+
+- [ ] **Step 5: Run the full test suite and typecheck again**
 
 Run: `npm test && npm run typecheck`
-Expected: all existing tests pass (the evening-checkin action test, if any, and everything else); no type errors.
+Expected: all existing tests pass; no type errors.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add src/lib/db/schemas.ts src/app/checkin/evening/actions.ts supabase/migrations/0002_nudges_and_digest_retry.sql
+git add src/lib/db/schemas.ts src/app/checkin/evening/actions.ts src/lib/mentor/assembleContext.ts supabase/migrations/0002_nudges_and_digest_retry.sql
 git commit -m "feat(db): nudges_sent dedup key and digests retry tracking"
 ```
 

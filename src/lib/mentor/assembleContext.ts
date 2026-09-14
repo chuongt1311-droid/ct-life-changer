@@ -41,7 +41,9 @@ export async function assembleMentorContext(client: RepositoryClient, params: As
     systemPrompt: params.systemPrompt,
     profile,
     weeklyLetters: weeklyLetterRows.map((w) => ({ weekStart: w.week_start, letter: w.letter })),
-    digests: digestRows.map((d) => ({ date: d.date, text: d.text })),
+    // A digest row can now have a null text (a failed generation attempt
+    // awaiting the cron tick's retry, Plan 6) — nothing worth sending Claude.
+    digests: digestRows.filter((d) => d.text !== null).map((d) => ({ date: d.date, text: d.text as string })),
     today: {
       date: params.date,
       state: plan?.state ?? 'ready',

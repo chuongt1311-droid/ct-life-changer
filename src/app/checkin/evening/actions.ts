@@ -34,9 +34,12 @@ export async function submitEveningCheckinAction(
     { ownerId: user.id, model: settingsRow?.model ?? DEFAULT_SETTINGS.model, monthlyCapUsd: settingsRow?.monthly_cap_usd ?? DEFAULT_SETTINGS.monthlyCapUsd },
     planDate,
   );
-  if (!review.fallback) {
-    await repos.digests.upsert({ date: planDate, owner_id: user.id, text: review.digest });
-  }
+  await repos.digests.upsert({
+    date: planDate,
+    owner_id: user.id,
+    text: review.fallback ? null : review.digest,
+    attempts: 1,
+  });
 
   await generateTomorrowPlan(client, user.id, planDate);
 

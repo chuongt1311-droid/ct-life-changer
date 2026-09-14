@@ -148,7 +148,8 @@ export type MentorMessageRow = z.infer<typeof mentorMessageRowSchema>;
 export const digestRowSchema = z.object({
   date: z.string(),
   owner_id: z.string(),
-  text: z.string(),
+  text: z.string().nullable(),
+  attempts: z.number(),
 });
 export type DigestRow = z.infer<typeof digestRowSchema>;
 
@@ -188,6 +189,7 @@ export const nudgeSentRowSchema = z.object({
   date: z.string(),
   type: z.string(),
   block_id: z.string().nullable(),
+  key: z.string(),
   sent_at: z.string(),
   acked_at: z.string().nullable(),
 });
