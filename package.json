@@ -10,7 +10,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "mentor-tone-check": "tsx scripts/mentor-tone-check.ts"
   },
   "devDependencies": {
     "@types/node": "^24.13.4",
