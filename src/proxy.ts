@@ -3,7 +3,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { isOwner } from '@/lib/auth/isOwner';
 
 /** Refreshes the Supabase session on every request and signs out (redirecting
- * to /login) anyone who isn't OWNER_EMAIL — spec §4.2's server-side gate. */
+ * to /login) anyone who isn't OWNER_EMAIL — spec §4.2's server-side gate.
+ * API routes (/api/*) get a 401 JSON body instead of a redirect — a fetch
+ * client following a 307 to an HTML login page is not a usable error. */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -22,10 +24,12 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const isApiRoute = request.nextUrl.pathname.startsWith('/api/');
   const isLoginRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/auth/callback');
 
   if (user && !isOwner(user.email)) {
     await supabase.auth.signOut();
+    if (isApiRoute) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     if (!isLoginRoute) {
       const url = request.nextUrl.clone();
       url.pathname = '/login';
@@ -35,6 +39,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!user && !isLoginRoute) {
+    if (isApiRoute) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
