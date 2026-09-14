@@ -1154,17 +1154,17 @@ git commit -m "feat(nudges): assemble dueNudges' NudgeInput from DB rows"
 ```typescript
 import { describe, expect, it, vi } from 'vitest';
 import type Anthropic from '@anthropic-ai/sdk';
+import { DEFAULT_SETTINGS } from '@/core/types';
 import { fakeClient } from '@/lib/testing/fakeClient';
 import { runCronTick } from './tick';
 
 const settingsRow = {
   id: 'singleton' as const, owner_id: 'ct', timezone: 'UTC', wake_time: '07:00', bedtime: '23:00',
   model: 'claude-sonnet-5', monthly_cap_usd: 12, nudge_daily_cap: 8, deep_work_daily_cap_min: 360,
-  thresholds: {
-    sleepLowHours: 6, sleepLowNights: 2, sleepLowWindow: 3, energyLowMax: 4, energyLowDays: 2,
-    stressHighMin: 7, stressHighDays: 2, grindDays: 5, grindWindow: 7, grindRestDayTrainings: 2,
-    indulgeHighMin: 120, indulgeHighDays: 3, anchorSkipRatio: 0.5,
-  },
+  // Reuse the real DEFAULT_SETTINGS shape rather than hand-typing thresholds
+  // — thresholdsSchema has grown fields (anchorSkipDays, anchorSkipMinEnergy)
+  // since this plan's earlier drafts, and a hand-typed fixture drifts silently.
+  thresholds: DEFAULT_SETTINGS.thresholds,
   crisis_contacts: [],
 };
 const templateRow = { weekday: 1, owner_id: 'ct', rest_day: false, blocks: [] };
