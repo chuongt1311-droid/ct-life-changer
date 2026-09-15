@@ -9,11 +9,15 @@ export interface LogMentorMessageParams {
   content: string;
   stateAtTime: string | null;
   usageId: string | null;
+  /** Pre-generated id — needed when something else (a mentor tool's
+   * proposal row) must reference this message's id before it's logged.
+   * Omit for the normal case; a fresh id is generated. */
+  id?: string;
 }
 
 export async function logMentorMessage(client: RepositoryClient, params: LogMentorMessageParams): Promise<void> {
   await repositories(client).mentorMessages.upsert({
-    id: crypto.randomUUID(),
+    id: params.id ?? crypto.randomUUID(),
     owner_id: params.ownerId,
     date: params.date,
     route: params.route,
