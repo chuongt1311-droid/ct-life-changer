@@ -666,3 +666,6 @@ input[type="range"] { width: 100%; }
   letter-spacing: var(--track-cap);
   text-transform: uppercase;
 }
+
+.proposal-card { margin-top: var(--s3); padding: var(--s3); border: 1px solid var(--line); border-radius: var(--radius); }
+.proposal-actions { display: flex; gap: var(--s2); margin-top: var(--s3); }

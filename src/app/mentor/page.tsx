@@ -9,6 +9,7 @@ import { DEFAULT_SETTINGS } from '@/core/types';
 import { Placard } from '@/components/ui/Placard';
 import { LoadBarRow } from '@/components/ui/LoadBarRow';
 import { ChatThread, type ChatMessage } from '@/components/mentor/ChatThread';
+import type { Proposal } from '@/components/mentor/ProposalCard';
 
 export default async function MentorPage() {
   const supabase = await createServerSupabase();
@@ -36,7 +37,16 @@ export default async function MentorPage() {
   const initialMessages: ChatMessage[] = history
     .filter((r) => r.role === 'user' || r.role === 'assistant')
     .sort((a, b) => a.created_at.localeCompare(b.created_at))
-    .map((r) => ({ role: r.role as 'user' | 'assistant', content: r.content }));
+    .map((r) => ({ role: r.role as 'user' | 'assistant', content: r.content, id: r.id }));
+
+  const assistantMessageIds = initialMessages.filter((m) => m.role === 'assistant').map((m) => m.id!);
+  const pendingProposals = assistantMessageIds.length > 0
+    ? (await repos.mentorProposals.list()).filter((p) => p.status === 'pending' && assistantMessageIds.includes(p.message_id))
+    : [];
+  const initialProposalsByMessageId: Record<string, Proposal[]> = {};
+  for (const p of pendingProposals) {
+    (initialProposalsByMessageId[p.message_id] ??= []).push({ id: p.id, kind: p.kind, target: p.target, diff: p.diff as never, conflicts: p.conflicts });
+  }
 
   return (
     <main className="shell" data-phase="dusk">
@@ -63,7 +73,7 @@ export default async function MentorPage() {
           />
         </ul>
         <Placard>Conversation</Placard>
-        <ChatThread date={planDate} initialMessages={initialMessages} crisisContacts={settingsRow?.crisis_contacts ?? []} />
+        <ChatThread date={planDate} initialMessages={initialMessages} initialProposalsByMessageId={initialProposalsByMessageId} crisisContacts={settingsRow?.crisis_contacts ?? []} />
       </div>
     </main>
   );
