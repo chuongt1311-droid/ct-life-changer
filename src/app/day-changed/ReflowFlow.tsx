@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { DiffEntry } from '@/core/planner/diff';
-import { diffVisual } from '@/core/planner/diffVisual';
 import type { Block } from '@/core/types';
 import type { ReflowEvent } from '@/core/planner/reflow';
 import { Icon } from '@/components/icons/Icon';
 import { Placard } from '@/components/ui/Placard';
 import { ThumbBar } from '@/components/ui/ThumbBar';
+import { DiffList } from '@/components/planner/DiffList';
 import { askMentorAboutReflowAction, confirmReflowAction, previewReflowAction } from './actions';
 
 type Picked =
@@ -69,20 +69,7 @@ export function ReflowFlow({ nowMinute }: { nowMinute: number }) {
     <>
       <div className="stepback">
         <Placard>What changed</Placard>
-        <ul className="diff">
-          {result.diff.map((d) => {
-            const v = diffVisual(d.change);
-            return (
-              <li key={d.blockId} data-kind={v.mark}>
-                <Icon name={v.mark} />
-                <span>
-                  <span className="row-name">{d.title}</span>
-                  <span className="row-note">{d.reason || 'Unchanged'}</span>
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+        <DiffList entries={result.diff} />
         <p className="empty">Nothing is logged until you accept. Keeping the old plan costs nothing either.</p>
         {comment && <p className="note">{comment}</p>}
         <button
