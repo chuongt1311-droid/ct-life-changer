@@ -31,9 +31,12 @@ describe('computeLoadBars', () => {
     expect(bars[0]).toMatchObject({ name: 'Body', valueText: '1 of 2 sessions', percent: 50, read: 'ok' });
   });
 
-  it('Body: no training blocks today reads ok at 100%', () => {
+  // A full bar reads as "done", so nothing-planned must render as an EMPTY
+  // track, not a complete one: on a rest day a full Body bar claimed credit
+  // for training CT never did.
+  it('Body: no training blocks today reads empty, not complete', () => {
     const bars = computeLoadBars({ blocks: [], today: summary(), settings: SETTINGS });
-    expect(bars[0]).toMatchObject({ valueText: '0 of 0 sessions', percent: 100, read: 'ok' });
+    expect(bars[0]).toMatchObject({ valueText: 'None planned', percent: 0, read: 'ok' });
   });
 
   it('Work & growth: over the deep-work cap reads over', () => {
@@ -58,5 +61,17 @@ describe('computeLoadBars', () => {
       settings: SETTINGS,
     });
     expect(bars[3]).toMatchObject({ name: 'Rest & reflection', valueText: '1 of 2 rest sessions', percent: 50 });
+  });
+
+  it('Rest: none planned reads empty, not complete', () => {
+    const bars = computeLoadBars({ blocks: [], today: summary(), settings: SETTINGS });
+    expect(bars[3]).toMatchObject({ valueText: 'None planned', percent: 0 });
+  });
+
+  // Production showed "1 of 0 rest sessions" on a full green bar: rest taken
+  // off-plan divided by zero planned. Report it as taken, and never over 100%.
+  it('Rest: taken with none planned is reported, not divided by zero', () => {
+    const bars = computeLoadBars({ blocks: [], today: summary({ restSessionsTaken: 1 }), settings: SETTINGS });
+    expect(bars[3]).toMatchObject({ valueText: '1 taken, none planned', percent: 100 });
   });
 });

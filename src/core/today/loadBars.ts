@@ -16,7 +16,9 @@ const formatMin = (min: number) => (min >= 60 ? `${Math.floor(min / 60)}h ${min 
 export function computeLoadBars({ blocks, today, settings }: ComputeLoadBarsInput): LoadBarInput[] {
   const training = blocks.filter((b) => b.kind === 'training');
   const trainingDone = training.filter((b) => b.status === 'done' || b.status === 'partial').length;
-  const bodyPercent = training.length === 0 ? 100 : Math.round((trainingDone / training.length) * 100);
+  // Nothing planned is an EMPTY track, never a full one: a filled bar reads as
+  // "done" and would claim credit for training that was never scheduled.
+  const bodyPercent = training.length === 0 ? 0 : Math.round((trainingDone / training.length) * 100);
 
   const deepWorkMin = today.deepWorkMin ?? 0;
   const cap = settings.deepWorkDailyCapMin;
@@ -29,10 +31,26 @@ export function computeLoadBars({ blocks, today, settings }: ComputeLoadBarsInpu
   const screenRead = indulgeMin > indulgeThreshold ? 'over' : indulgeMin >= indulgeThreshold * 0.8 ? 'warn' : 'ok';
 
   const restPlanned = blocks.filter((b) => b.kind === 'rest').length;
-  const restPercent = restPlanned === 0 ? 100 : Math.round((today.restSessionsTaken / restPlanned) * 100);
+  const restTaken = today.restSessionsTaken;
+  // Rest taken off-plan divided by zero planned and printed "1 of 0" on a full
+  // bar. With none planned the count is reported on its own, and a plan that is
+  // over-fulfilled still caps the track at full rather than overflowing it.
+  const restPercent =
+    restPlanned === 0 ? (restTaken > 0 ? 100 : 0) : Math.min(100, Math.round((restTaken / restPlanned) * 100));
+  const restText =
+    restPlanned === 0
+      ? restTaken > 0
+        ? `${restTaken} taken, none planned`
+        : 'None planned'
+      : `${restTaken} of ${restPlanned} rest sessions`;
 
   return [
-    { name: 'Body', valueText: `${trainingDone} of ${training.length} sessions`, percent: bodyPercent, read: 'ok' },
+    {
+      name: 'Body',
+      valueText: training.length === 0 ? 'None planned' : `${trainingDone} of ${training.length} sessions`,
+      percent: bodyPercent,
+      read: 'ok',
+    },
     {
       name: 'Work & growth',
       valueText: deepWorkMin === 0 ? 'No deep work yet' : `${formatMin(deepWorkMin)} of ${formatMin(cap)} cap`,
@@ -47,7 +65,7 @@ export function computeLoadBars({ blocks, today, settings }: ComputeLoadBarsInpu
     },
     {
       name: 'Rest & reflection',
-      valueText: `${today.restSessionsTaken} of ${restPlanned} rest sessions`,
+      valueText: restText,
       percent: restPercent,
       read: 'ok',
     },
