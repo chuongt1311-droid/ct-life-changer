@@ -26,9 +26,9 @@ export async function POST(request: Request) {
         controller.close();
         return;
       }
-      controller.enqueue(encoder.encode(next.value));
+      controller.enqueue(encoder.encode(JSON.stringify(next.value) + '\n'));
     },
   });
 
-  return new Response(stream, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+  return new Response(stream, { headers: { 'Content-Type': 'application/x-ndjson; charset=utf-8' } });
 }
