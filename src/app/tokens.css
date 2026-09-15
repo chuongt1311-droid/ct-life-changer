@@ -59,6 +59,7 @@
   --radius-card: 6px;
 
   --shell: 430px;
+  --nav-h: 54px;        /* the fixed department index at the foot of every screen */
 
   /* Depth: offset + soft blur, never a zero-offset halo. */
   --lift: 0 6px 18px -6px rgba(0, 0, 0, 0.65);

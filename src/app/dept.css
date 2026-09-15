@@ -6,7 +6,9 @@
   max-width: var(--shell);
   margin: 0 auto;
   min-height: 100vh;
-  padding: 0 var(--s4) calc(var(--s8) + var(--s7));
+  /* Clear the fixed department index; the old value reserved 112px for a
+     link list that scrolled away with the page, leaving a dead void below it. */
+  padding: 0 var(--s4) calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + var(--s5));
   position: relative;
   display: flex;
   flex-direction: column;
@@ -199,9 +201,11 @@ a.cardstrip:hover { border-color: var(--gold); transform: translateY(-1px); }
 .thumb {
   margin-top: auto;
   position: sticky;
-  bottom: 0;
+  /* Rides above the department index rather than under it. */
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+  z-index: 30;
   margin: var(--s6) calc(var(--s4) * -1) 0;
-  padding: var(--s3) var(--s4) calc(var(--s4) + env(safe-area-inset-bottom, 0px));
+  padding: var(--s3) var(--s4) var(--s4);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--s3);
@@ -481,25 +485,46 @@ input[type="range"] { width: 100%; }
 
 /* ---------- Nav ---------- */
 
-.dept-nav {
-  display: flex;
-  gap: var(--s4) var(--s5);
-  padding: var(--s5) 0 88px;
-  border-top: 1px solid var(--line-soft);
-  margin-top: var(--s7);
-  flex-wrap: wrap;
+/* The department index. Fixed, so no screen is ever a dead end on a
+   Home-Screen install where there is no browser back button. */
+.deptbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--ground);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-.dept-nav a {
+.deptbar-inner {
+  max-width: var(--shell);
+  margin: 0 auto;
+  height: var(--nav-h);
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+@media (min-width: 900px) { .deptbar-inner { max-width: 1040px; } }
+
+.deptbar a {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  /* The stamped rule sits on the bar's own hairline, not below it. */
+  margin-top: -1px;
+  border-top: 2px solid transparent;
   font-family: var(--display);
   font-weight: 600;
-  font-size: var(--t-cap);
-  letter-spacing: var(--track-cap);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-3);
   text-decoration: none;
+  transition: color 160ms var(--ease), border-color 160ms var(--ease);
 }
-.dept-nav a:hover { color: var(--ink); }
-.dept-nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; }
+.deptbar a:hover { color: var(--ink-2); }
+/* Rank is brightness, and the current screen is stamped. Never gold. */
+.deptbar a[aria-current="page"] { color: var(--ink); border-top-color: var(--ink); }
 
 /* ---------- Sheet (Day changed) ---------- */
 

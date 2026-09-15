@@ -8,7 +8,6 @@ import { getWeeklyMetrics } from '@/lib/db/weeklyMetrics';
 import { addDays, planClock } from '@/core/time';
 import { Placard } from '@/components/ui/Placard';
 import { LoadBarRow } from '@/components/ui/LoadBarRow';
-import { DeptNav } from '@/components/ui/DeptNav';
 import { Tag } from '@/components/ui/Tag';
 
 export default async function HistoryPage() {
@@ -103,8 +102,6 @@ export default async function HistoryPage() {
             ))}
           </ul>
         )}
-
-        <DeptNav />
       </div>
     </main>
   );

@@ -17,7 +17,6 @@ import { LoadBarRow } from '@/components/ui/LoadBarRow';
 import { SessionRow, type SessionRank } from '@/components/ui/SessionRow';
 import { Placard } from '@/components/ui/Placard';
 import { ThumbBar } from '@/components/ui/ThumbBar';
-import { DeptNav } from '@/components/ui/DeptNav';
 import { Icon } from '@/components/icons/Icon';
 import { Countdown } from '@/components/today/Countdown';
 import { NudgesBanner } from '@/components/today/NudgesBanner';
@@ -116,8 +115,6 @@ export default async function TodayPage() {
             ))}
           </ul>
         </div>
-
-        <DeptNav />
       </div>
 
       <ThumbBar>

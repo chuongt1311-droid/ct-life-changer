@@ -9,7 +9,6 @@ import { ATTRS } from '@/core/progression/xp';
 import { Placard } from '@/components/ui/Placard';
 import { AttributeRow } from '@/components/ui/AttributeRow';
 import { BadgeMedallion } from '@/components/ui/BadgeMedallion';
-import { DeptNav } from '@/components/ui/DeptNav';
 import { ThumbBar } from '@/components/ui/ThumbBar';
 import { Icon } from '@/components/icons/Icon';
 import Link from 'next/link';
@@ -75,8 +74,6 @@ export default async function CardPage() {
           ))}
         </ul>
         <p className="empty">Every badge counts a total, never days in a row. A gap costs you nothing but the days you did not log.</p>
-
-        <DeptNav />
       </div>
       <ThumbBar>
         <Link className="btn btn-main" href="/">
