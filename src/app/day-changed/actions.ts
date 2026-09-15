@@ -5,7 +5,8 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { createAnthropicClient } from '@/lib/anthropic/client';
 import type { RepositoryClient } from '@/lib/db/repository';
 import { repositories } from '@/lib/db/repositories';
-import { confirmReflow, previewReflow } from '@/lib/planner/reflowDay';
+import { confirmReflow, previewEdits, previewReflow } from '@/lib/planner/reflowDay';
+import type { PlanEdit } from '@/core/planner/edits';
 import { summarizeDiff } from '@/core/planner/summarizeDiff';
 import { planClock } from '@/core/time';
 import { settingsToDomain } from '@/lib/db/settingsMapping';
@@ -31,6 +32,17 @@ export async function previewReflowAction(event: ReflowEvent): Promise<{ date: s
   const { planDate, minute } = planClock(new Date(), settings.timezone);
   const { plan, diff } = await previewReflow(client, planDate, event, minute);
   return { date: planDate, blocks: plan.blocks, diff };
+}
+
+export async function previewEditsAction(
+  edits: PlanEdit[],
+): Promise<{ date: string; blocks: Block[]; diff: DiffEntry[]; conflicts: [string, string][]; errors: string[] }> {
+  const { client } = await authedClient();
+  const settingsRow = await repositories(client).settings.get();
+  const settings = settingsToDomain(settingsRow!);
+  const { planDate, minute } = planClock(new Date(), settings.timezone);
+  const { plan, diff, conflicts, errors } = await previewEdits(client, planDate, edits, minute);
+  return { date: planDate, blocks: plan.blocks, diff, conflicts, errors };
 }
 
 export async function confirmReflowAction(date: string, blocks: Block[]): Promise<void> {

@@ -1,4 +1,5 @@
 import { reflow, type ReflowEvent } from '@/core/planner/reflow';
+import { applyEdits, validateEdits, type PlanEdit } from '@/core/planner/edits';
 import { toPlanMinute } from '@/core/time';
 import type { Block, DayPlan } from '@/core/types';
 import type { RepositoryClient } from '@/lib/db/repository';
@@ -41,6 +42,32 @@ export async function previewReflow(
   const plan: DayPlan = { date, wake: toPlanMinute(settings.wakeTime), bedtime: toPlanMinute(settings.bedtime), blocks: blockRows.map(rowToBlock) };
   const result = reflow(plan, now, event);
   return { plan: result.plan, diff: result.diff };
+}
+
+/** Lay out today with CT's edits applied, without writing anything. Validation
+ *  runs first so an impossible edit is reported rather than silently reshaping
+ *  the day; only `confirmReflow` persists. */
+export async function previewEdits(
+  client: RepositoryClient,
+  date: string,
+  edits: PlanEdit[],
+  now: number,
+): Promise<{ plan: DayPlan; diff: DiffEntry[]; conflicts: [string, string][]; errors: string[] }> {
+  const repos = repositories(client);
+  const [settingsRow, blockRows] = await Promise.all([repos.settings.get(), repos.blocks.list({ date } as never)]);
+  const settings = settingsToDomain(settingsRow!);
+  const plan: DayPlan = {
+    date,
+    wake: toPlanMinute(settings.wakeTime),
+    bedtime: toPlanMinute(settings.bedtime),
+    blocks: blockRows.map(rowToBlock),
+  };
+
+  const errors = validateEdits(plan, now, edits);
+  if (errors.length > 0) return { plan, diff: [], conflicts: [], errors };
+
+  const result = applyEdits(plan, now, edits);
+  return { plan: result.plan, diff: result.diff, conflicts: result.conflicts, errors: [] };
 }
 
 /** Persists the previewed plan's blocks — "Take the new day" in the UI. */
