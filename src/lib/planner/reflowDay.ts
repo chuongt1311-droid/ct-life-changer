@@ -8,7 +8,7 @@ import { settingsToDomain } from '@/lib/db/settingsMapping';
 import type { BlockRow } from '@/lib/db/schemas';
 import type { DiffEntry } from '@/core/planner/diff';
 
-function rowToBlock(row: BlockRow): Block {
+export function rowToBlock(row: BlockRow): Block {
   return {
     id: row.id, title: row.title, kind: row.kind, anchor: row.anchor, priority: row.priority,
     start: row.start, end: row.end, minMinutes: row.min_minutes,
@@ -17,7 +17,7 @@ function rowToBlock(row: BlockRow): Block {
   };
 }
 
-function blockToRow(block: Block, date: string, ownerId: string): BlockRow {
+export function blockToRow(block: Block, date: string, ownerId: string): BlockRow {
   return {
     id: block.id, owner_id: ownerId, date, title: block.title, kind: block.kind, anchor: block.anchor,
     priority: block.priority, start: block.start, end: block.end, min_minutes: block.minMinutes,
