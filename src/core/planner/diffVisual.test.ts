@@ -29,4 +29,8 @@ describe('diffVisual', () => {
   it('missed → dropped / stop (same severity as dropped)', () => {
     expect(diffVisual('missed')).toEqual({ mark: 'dropped', tone: 'stop' });
   });
+
+  it('skipped → dropped / warn (CT chose this — it leaves the day like a drop but is not an alarm)', () => {
+    expect(diffVisual('skipped')).toEqual({ mark: 'dropped', tone: 'warn' });
+  });
 });

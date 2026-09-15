@@ -50,3 +50,26 @@ describe('diffBlocks', () => {
     expect(shrunk[0]!.reason).toBe('Shortened — energy is low');
   });
 });
+
+describe('CT-authored edits', () => {
+  it('reports a block CT skipped as skipped, not kept', () => {
+    const before = [makeBlock({ id: 'film', title: 'Film room', start: 540, end: 600 })];
+    const after = [makeBlock({ id: 'film', title: 'Film room', start: 540, end: 600, status: 'skipped' })];
+    const [entry] = diffBlocks(before, after);
+    expect(entry).toMatchObject({ blockId: 'film', change: 'skipped', to: null });
+  });
+
+  it('prefers a supplied reason over the generic one', () => {
+    const before = [makeBlock({ id: 'gym', title: 'Gym', start: 1020, end: 1080 })];
+    const after = [makeBlock({ id: 'gym', title: 'Gym', start: 1080, end: 1140 })];
+    const [entry] = diffBlocks(before, after, { reasons: { gym: 'You moved it' } });
+    expect(entry).toMatchObject({ change: 'moved', reason: 'You moved it' });
+  });
+
+  it('still explains a block the planner displaced as a consequence', () => {
+    const before = [makeBlock({ id: 'study', title: 'Study', start: 780, end: 840 })];
+    const after = [makeBlock({ id: 'study', title: 'Study', start: 840, end: 900 })];
+    const [entry] = diffBlocks(before, after, { reasons: { gym: 'You moved it' } });
+    expect(entry.reason).toBe('Moved to make room');
+  });
+});

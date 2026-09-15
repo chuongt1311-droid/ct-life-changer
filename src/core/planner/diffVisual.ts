@@ -20,5 +20,8 @@ export function diffVisual(change: ChangeKind): DiffVisual {
     case 'dropped':
     case 'missed':
       return { mark: 'dropped', tone: 'stop' };
+    case 'skipped':
+      // CT chose this. It leaves the day like a drop, but it is not an alarm.
+      return { mark: 'dropped', tone: 'warn' };
   }
 }
