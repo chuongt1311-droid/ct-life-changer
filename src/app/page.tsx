@@ -14,15 +14,12 @@ import { dayPhase } from '@/core/today/phase';
 import { planClock, formatPlanMinute } from '@/core/time';
 import { PlayerCardStrip } from '@/components/ui/PlayerCardStrip';
 import { LoadBarRow } from '@/components/ui/LoadBarRow';
-import { SessionRow, type SessionRank } from '@/components/ui/SessionRow';
 import { Placard } from '@/components/ui/Placard';
 import { ThumbBar } from '@/components/ui/ThumbBar';
 import { Icon } from '@/components/icons/Icon';
 import { Countdown } from '@/components/today/Countdown';
 import { NudgesBanner } from '@/components/today/NudgesBanner';
-
-const RANK: Record<string, SessionRank> = { done: 'done', partial: 'done', skipped: 'done', missed: 'done', dropped: 'done', active: 'now', planned: 'next' };
-const TAG_LABEL: Record<string, string> = { done: 'Done', partial: 'Partial', skipped: 'Skipped', missed: 'Missed', dropped: 'Dropped', active: 'Now', planned: 'Next' };
+import { EditableDay } from '@/components/today/EditableDay';
 
 export default async function TodayPage() {
   const supabase = await createServerSupabase();
@@ -100,33 +97,24 @@ export default async function TodayPage() {
         </ul>
 
         <div className="col-b">
-          <Placard>The rest of today</Placard>
-          <ul className="sessions">
-            {sorted.map((b) => (
-              <SessionRow
-                key={b.id}
-                at={formatPlanMinute(b.start)}
-                title={b.title}
-                note={b.anchor ? 'Anchor' : b.kind}
-                rank={RANK[b.status] ?? 'next'}
-                tagState="neutral"
-                tagLabel={TAG_LABEL[b.status] ?? b.status}
-              />
-            ))}
-          </ul>
+          <EditableDay
+            blocks={sorted.map(blockRowToCore)}
+            nowMinute={minute}
+            actions={
+              <ThumbBar>
+                <Link className="btn btn-main" href="/reentry">
+                  <Icon name="rest" />
+                  Start rest
+                </Link>
+                <Link className="btn" href="/day-changed">
+                  <Icon name="shift" />
+                  Day changed
+                </Link>
+              </ThumbBar>
+            }
+          />
         </div>
       </div>
-
-      <ThumbBar>
-        <Link className="btn btn-main" href="/reentry">
-          <Icon name="rest" />
-          Start rest
-        </Link>
-        <Link className="btn" href="/day-changed">
-          <Icon name="shift" />
-          Day changed
-        </Link>
-      </ThumbBar>
     </main>
   );
 }
