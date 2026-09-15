@@ -23,6 +23,19 @@ export function formatPlanMinute(minute: number): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
+/** True if `timeZone` is a real IANA identifier `Intl` can resolve — e.g.
+ * "Asia/Ho_Chi_Minh", not the abbreviation "ICT". Used to reject bad values
+ * at Settings-save time instead of letting them reach `planClock` (which
+ * throws) on every later page load. */
+export function isValidTimeZone(timeZone: string): boolean {
+  try {
+    new Intl.DateTimeFormat('en-CA', { timeZone });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export interface PlanClock {
   planDate: string; // YYYY-MM-DD
   minute: number; // plan minute

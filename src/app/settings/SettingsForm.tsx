@@ -12,13 +12,16 @@ export function SettingsForm({ initial, ownerEmail }: { initial: SettingsRow; ow
   const [draft, setDraft] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const push = usePushSubscription();
 
   async function save() {
     setSaving(true);
-    await saveSettingsAction(draft);
+    setError(null);
+    const result = await saveSettingsAction(draft);
     setSaving(false);
-    setSavedAt(Date.now());
+    if (result.ok) setSavedAt(Date.now());
+    else setError(result.error ?? 'Something went wrong — nothing was saved.');
   }
 
   function addContact() {
@@ -111,7 +114,12 @@ export function SettingsForm({ initial, ownerEmail }: { initial: SettingsRow; ow
         Add contact
       </button>
 
-      {savedAt && <p className="hint">Saved.</p>}
+      {error && (
+        <p role="alert" className="note">
+          {error}
+        </p>
+      )}
+      {savedAt && !error && <p className="hint">Saved.</p>}
       <ThumbBar>
         <button className="btn btn-main" onClick={save} disabled={saving}>
           {saving ? 'Saving…' : 'Save settings'}

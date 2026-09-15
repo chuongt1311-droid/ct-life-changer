@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addDays, formatPlanMinute, planClock, toPlanMinute, weekdayOf } from './time';
+import { addDays, formatPlanMinute, isValidTimeZone, planClock, toPlanMinute, weekdayOf } from './time';
 
 describe('toPlanMinute', () => {
   it('converts daytime HH:MM to minutes since midnight', () => {
@@ -48,6 +48,27 @@ describe('planClock', () => {
       planDate: '2026-09-10',
       minute: 1290,
     });
+  });
+});
+
+describe('isValidTimeZone', () => {
+  it('accepts real IANA identifiers', () => {
+    expect(isValidTimeZone('UTC')).toBe(true);
+    expect(isValidTimeZone('Asia/Ho_Chi_Minh')).toBe(true);
+    expect(isValidTimeZone('America/New_York')).toBe(true);
+  });
+
+  it('rejects common non-IANA abbreviations ICU has no alias for', () => {
+    // "ICT" (Indochina Time) is exactly the invalid value that broke
+    // ensureTodayPlan in production — it has no ICU legacy alias, unlike
+    // e.g. "PST", which Intl does resolve.
+    expect(isValidTimeZone('ICT')).toBe(false);
+    expect(isValidTimeZone('GMT+7')).toBe(false);
+  });
+
+  it('rejects empty and garbage input', () => {
+    expect(isValidTimeZone('')).toBe(false);
+    expect(isValidTimeZone('not a timezone')).toBe(false);
   });
 });
 
