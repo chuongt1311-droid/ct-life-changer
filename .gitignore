@@ -17,3 +17,6 @@ next-env.d.ts
 *.tsbuildinfo
 .vercel
 screenshots/
+
+# unlazy verification scaffolding (machine-specific, process artifacts)
+.unlazy/
