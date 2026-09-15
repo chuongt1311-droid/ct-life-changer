@@ -1,12 +1,14 @@
 import { assess } from '@/core/guard/assess';
 import { buildDay } from '@/core/planner/buildDay';
+import { applyEdits, validateEdits, type PlanEdit } from '@/core/planner/edits';
+import type { DiffEntry } from '@/core/planner/diff';
 import { addDays, planClock, toPlanMinute, weekdayOf } from '@/core/time';
 import type { Adjustment, DayPlan, DayTemplate, Flag, GuardState } from '@/core/types';
 import type { RepositoryClient } from '@/lib/db/repository';
 import { repositories } from '@/lib/db/repositories';
 import { getDaySummaries } from '@/lib/db/daySummary';
 import { settingsToDomain } from '@/lib/db/settingsMapping';
-import { rowToBlock } from './reflowDay';
+import { blockToRow, rowToBlock } from './reflowDay';
 
 export interface FuturePlanPreview {
   plan: DayPlan;
@@ -68,4 +70,58 @@ export async function previewFuturePlan(client: RepositoryClient, date: string, 
   const { plan } = buildDay(template, date, settings, assessment.adjustments);
 
   return { plan, source: 'generated', state: assessment.state, flags: assessment.flags, adjustments: assessment.adjustments };
+}
+
+export interface FutureEditsResult {
+  plan: DayPlan;
+  diff: DiffEntry[];
+  conflicts: [string, string][];
+  errors: string[];
+  state: GuardState;
+  flags: Flag[];
+  adjustments: Adjustment[];
+}
+
+/** Composes `previewFuturePlan` with the same validate → applyEdits
+ * sequence `previewEdits` (reflowDay.ts) already runs for today — just over
+ * a base plan that might not be persisted yet.
+ *
+ * `now` is passed to `validateEdits`/`applyEdits` as `0`, not a real
+ * minute-of-day: every minute on a date that hasn't happened yet is still
+ * ahead of it, so the "can't move into the past" checks (which compare an
+ * edit's target minute against `now`) must never reject anything here.
+ * Only Today's own edits (sub-project A) have a real past to guard
+ * against — `now: Date` here is only used to find CT's most recent history
+ * for the guard assessment, exactly as in `previewFuturePlan`. */
+export async function previewFutureEdits(client: RepositoryClient, date: string, edits: PlanEdit[], now: Date): Promise<FutureEditsResult> {
+  const preview = await previewFuturePlan(client, date, now);
+  const errors = validateEdits(preview.plan, 0, edits);
+  if (errors.length > 0) return { plan: preview.plan, diff: [], conflicts: [], errors, state: preview.state, flags: preview.flags, adjustments: preview.adjustments };
+  const result = applyEdits(preview.plan, 0, edits);
+  return { plan: result.plan, diff: result.diff, conflicts: result.conflicts, errors: [], state: preview.state, flags: preview.flags, adjustments: preview.adjustments };
+}
+
+/** Persists `plan.blocks` and, unlike `confirmReflow` (which only ever
+ * touches an already-existing day's blocks), also upserts the `plans` row
+ * itself — a future date reached through this path may have no plan row
+ * yet. `overridden: true` gives this row the same meaning
+ * `assembleContext.ts` already reads elsewhere ("CT overrode them"), and
+ * because `ensureTodayPlan`/`generateTomorrowPlan` both skip generation
+ * once a plan row exists for a date, this row alone is what keeps the
+ * saved override from being silently regenerated away later.
+ *
+ * `meta` is threaded through from whatever `previewFuturePlan`/
+ * `previewFutureEdits` already computed rather than recomputed here — a
+ * fresh guard assessment right at confirm time could, in principle,
+ * disagree with the one CT actually reviewed a moment earlier. */
+export async function confirmFuturePlan(
+  client: RepositoryClient,
+  ownerId: string,
+  date: string,
+  plan: DayPlan,
+  meta: { state: GuardState; flags: Flag[]; adjustments: Adjustment[] },
+): Promise<void> {
+  const repos = repositories(client);
+  await repos.plans.upsert({ date, owner_id: ownerId, state: meta.state, flags: meta.flags, adjustments: meta.adjustments, overridden: true });
+  await Promise.all(plan.blocks.map((b) => repos.blocks.upsert(blockToRow(b, date, ownerId))));
 }
