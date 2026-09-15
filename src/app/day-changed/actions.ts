@@ -51,6 +51,18 @@ export async function confirmReflowAction(date: string, blocks: Block[]): Promis
   redirect('/');
 }
 
+/** Same persistence as confirmReflowAction, without the redirect. Today
+ * confirms its own edits while already at '/' — redirect('/') from there
+ * throws Next's NEXT_REDIRECT sentinel (by design, a terminal operation: any
+ * code after it in the same call never runs), and even once that sentinel is
+ * properly caught, a same-URL push does not reliably force a re-render.
+ * Confirmed with a throwaway inspection script's unhandledrejection
+ * listener, not guessed. The caller calls router.refresh() itself instead. */
+export async function confirmEditsAction(date: string, blocks: Block[]): Promise<void> {
+  const { client, ownerId } = await authedClient();
+  await confirmReflow(client, ownerId, date, { date, wake: 0, bedtime: 0, blocks });
+}
+
 export async function askMentorAboutReflowAction(date: string, diff: DiffEntry[]): Promise<{ text: string; fallback: boolean }> {
   const { client, ownerId } = await authedClient();
   const settingsRow = await repositories(client).settings.get();

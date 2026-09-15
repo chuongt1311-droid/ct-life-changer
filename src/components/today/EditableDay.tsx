@@ -1,6 +1,7 @@
 'use client';
 
 import { type ReactNode, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { Block } from '@/core/types';
 import type { PlanEdit } from '@/core/planner/edits';
 import type { DiffEntry } from '@/core/planner/diff';
@@ -9,7 +10,7 @@ import { Placard } from '@/components/ui/Placard';
 import { Tag } from '@/components/ui/Tag';
 import { DiffList } from '@/components/planner/DiffList';
 import { EditBlockSheet } from './EditBlockSheet';
-import { confirmReflowAction, previewEditsAction } from '@/app/day-changed/actions';
+import { confirmEditsAction, previewEditsAction } from '@/app/day-changed/actions';
 
 const RANK: Record<string, 'done' | 'now' | 'next'> = {
   done: 'done', partial: 'done', skipped: 'done', missed: 'done', dropped: 'done',
@@ -39,6 +40,7 @@ const isOpen = (b: Block) => b.status === 'planned' || b.status === 'active';
  * — the day cannot be both "start resting" and "you have unreviewed changes"
  * as the single most important action. */
 export function EditableDay({ blocks, nowMinute, actions }: { blocks: Block[]; nowMinute: number; actions: ReactNode }) {
+  const router = useRouter();
   const [edits, setEdits] = useState<PlanEdit[]>([]);
   const [editing, setEditing] = useState<Block | null | undefined>(undefined); // undefined = closed, null = adding
   const [review, setReview] = useState<Review | null>(null);
@@ -62,7 +64,17 @@ export function EditableDay({ blocks, nowMinute, actions }: { blocks: Block[]; n
   async function take() {
     if (!review) return;
     setBusy(true);
-    await confirmReflowAction(review.date, review.blocks);
+    // confirmEditsAction persists without redirecting — Today is already at
+    // '/', and confirmReflowAction's redirect('/') (fine for Day-changed,
+    // a real cross-route confirm) throws Next's NEXT_REDIRECT sentinel as a
+    // terminal operation: nothing after it in the same call ever runs, by
+    // design. router.refresh() plus resetting this component's own local
+    // state (review/edits — untouched by a server-driven re-render of its
+    // parent) is what gets the screen back to the fresh list.
+    await confirmEditsAction(review.date, review.blocks);
+    router.refresh();
+    setReview(null);
+    setEdits([]);
   }
 
   if (editing !== undefined) {
