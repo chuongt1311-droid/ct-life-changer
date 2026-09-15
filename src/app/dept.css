@@ -299,6 +299,9 @@ a.cardstrip:hover { border-color: var(--gold); transform: translateY(-1px); }
 .sessions li[data-rank="next"] .at, .sessions li[data-rank="next"] .what { color: var(--ink); }
 .sessions li[data-rank="done"] .at, .sessions li[data-rank="done"] .what { color: var(--ink-done); }
 .sessions li[data-rank="done"] .what { text-decoration: line-through; text-decoration-color: var(--strike); }
+/* A past day in History is a record, not a cancelled item: same step back in
+   brightness, no strikethrough. ("8h sleep" struck through read as voided.) */
+.sessions li[data-rank="record"] .at, .sessions li[data-rank="record"] .what { color: var(--ink-done); }
 
 /* ---------- Diff rows (Day changed) ---------- */
 

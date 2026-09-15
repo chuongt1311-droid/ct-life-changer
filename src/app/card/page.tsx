@@ -10,7 +10,6 @@ import { Placard } from '@/components/ui/Placard';
 import { AttributeRow } from '@/components/ui/AttributeRow';
 import { BadgeMedallion } from '@/components/ui/BadgeMedallion';
 import { ThumbBar } from '@/components/ui/ThumbBar';
-import { Icon } from '@/components/icons/Icon';
 import Link from 'next/link';
 
 export default async function CardPage() {
@@ -75,12 +74,11 @@ export default async function CardPage() {
         </ul>
         <p className="empty">Every badge counts a total, never days in a row. A gap costs you nothing but the days you did not log.</p>
       </div>
-      <ThumbBar>
-        <Link className="btn btn-main" href="/">
-          <Icon name="moved" />
-          Back to today
-        </Link>
-        <Link className="btn" href="/mentor">
+      {/* "Back to today" was the gold action here — the scarce accent spent on
+          the exit. The department index makes it redundant, so the gold now
+          marks the one thing worth doing from this screen. */}
+      <ThumbBar stacked>
+        <Link className="btn btn-main" href="/mentor">
           Ask the mentor
         </Link>
       </ThumbBar>

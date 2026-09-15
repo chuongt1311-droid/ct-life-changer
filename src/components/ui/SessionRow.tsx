@@ -1,6 +1,9 @@
 import { Tag, type TagState } from './Tag';
 
-export type SessionRank = 'done' | 'now' | 'next';
+/** `done` is a session that finished today and is struck through. `record` is a
+ * past day in History: dimmed the same way, but never struck — a strikethrough
+ * reads as "did not happen", and these did. */
+export type SessionRank = 'done' | 'record' | 'now' | 'next';
 
 export interface SessionRowProps {
   at: string;

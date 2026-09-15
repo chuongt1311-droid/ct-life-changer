@@ -70,7 +70,10 @@
 
 /* Browser surfaces carry the design too. */
 ::selection { background: var(--gold); color: var(--pitch-900); }
-:root { color-scheme: dark; accent-color: var(--gold); caret-color: var(--gold); }
+/* accent-color paints range sliders and checkboxes. Gold here put five golds on
+   the morning check-in (four sliders plus the submit button) and broke the one
+   law this system has: one gold, spent once per screen, on the main action. */
+:root { color-scheme: dark; accent-color: var(--ink-2); caret-color: var(--gold); }
 
 * { box-sizing: border-box; }
 

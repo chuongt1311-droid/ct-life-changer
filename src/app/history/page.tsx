@@ -64,8 +64,8 @@ export default async function HistoryPage() {
           />
           <LoadBarRow
             name="Training done vs planned"
-            valueText={`${metrics.s4.trainingDone} of ${metrics.s4.trainingPlanned}`}
-            percent={metrics.s4.trainingPlanned === 0 ? 100 : (metrics.s4.trainingDone / metrics.s4.trainingPlanned) * 100}
+            valueText={metrics.s4.trainingPlanned === 0 ? 'None planned' : `${metrics.s4.trainingDone} of ${metrics.s4.trainingPlanned}`}
+            percent={metrics.s4.trainingPlanned === 0 ? 0 : (metrics.s4.trainingDone / metrics.s4.trainingPlanned) * 100}
             read="ok"
           />
         </ul>
@@ -75,7 +75,7 @@ export default async function HistoryPage() {
           {[...days].reverse().map((d) => {
             const plan = planByDate.get(d.date);
             return (
-              <li key={d.date} data-rank="done">
+              <li key={d.date} data-rank="record">
                 <span className="at">{d.date.slice(5)}</span>
                 <span className="what">
                   {plan ? plan.state[0]!.toUpperCase() + plan.state.slice(1) : 'No plan'}
@@ -93,7 +93,7 @@ export default async function HistoryPage() {
         ) : (
           <ul className="sessions">
             {recentLetters.map((l) => (
-              <li key={l.week_start} data-rank="done">
+              <li key={l.week_start} data-rank="record">
                 <span className="what">
                   Week of {l.week_start}
                   <small>{l.letter.slice(0, 80)}…</small>
