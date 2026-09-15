@@ -618,3 +618,51 @@ input[type="range"] { width: 100%; }
 .note a { color: var(--ink); font-weight: 600; }
 /* A list row whose whole title is the link. */
 .sessions .what a { color: inherit; }
+
+/* ---------- Editing today ---------- */
+
+/* A session row is a button when the day can still be changed. It must not
+   look like one: the row treatment is the design, the tap target is the
+   affordance. */
+.sessions li > button.row-edit {
+  appearance: none;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: contents;
+}
+.sessions li:has(> button.row-edit:hover) .what { color: var(--ink); }
+.sessions li:has(> button.row-edit:focus-visible) {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* A row with an unreviewed edit against it. */
+.sessions li[data-pending="true"] .what::after {
+  content: " · edited";
+  color: var(--read-warn);
+  font-size: var(--t-cap);
+  letter-spacing: var(--track-cap);
+  text-transform: uppercase;
+}
+
+.pending-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-top: var(--s5);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--line-soft);
+  color: var(--read-warn);
+  font-family: var(--display);
+  font-size: var(--t-cap);
+  letter-spacing: var(--track-cap);
+  text-transform: uppercase;
+}
