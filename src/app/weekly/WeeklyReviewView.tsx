@@ -7,7 +7,7 @@ import type { ProfileSection } from '@/core/mentor/profile';
 import { revertProfileSectionAction, runWeeklyReviewAction } from './actions';
 import type { WeeklyReviewResult } from '@/lib/mentor/runWeeklyReview';
 
-export function WeeklyReviewView({ weekStart }: { weekStart: string }) {
+export function WeeklyReviewView({ weekStart, savedLetter }: { weekStart: string; savedLetter: string | null }) {
   const [result, setResult] = useState<WeeklyReviewResult | null>(null);
   const [running, setRunning] = useState(false);
   const [reverted, setReverted] = useState<Set<string>>(new Set());
@@ -27,12 +27,25 @@ export function WeeklyReviewView({ weekStart }: { weekStart: string }) {
     return (
       <div className="stepback">
         <Placard>This week&apos;s letter</Placard>
-        <p className="note">One Claude call — S1–S4, training, indulgence trend, one pattern, one focus, and any profile updates.</p>
-        <ThumbBar>
-          <button className="btn btn-main btn-wide" onClick={run} disabled={running}>
-            {running ? 'Writing the letter…' : "Run this week's review"}
-          </button>
-        </ThumbBar>
+        {savedLetter ? (
+          <>
+            <p className="note">{savedLetter}</p>
+            <ThumbBar stacked>
+              <button className="btn btn-quiet btn-wide" onClick={run} disabled={running}>
+                {running ? 'Writing the letter…' : 'Write it again'}
+              </button>
+            </ThumbBar>
+          </>
+        ) : (
+          <>
+            <p className="note">One Claude call — S1–S4, training, indulgence trend, one pattern, one focus, and any profile updates.</p>
+            <ThumbBar stacked>
+              <button className="btn btn-main btn-wide" onClick={run} disabled={running}>
+                {running ? 'Writing the letter…' : "Run this week's review"}
+              </button>
+            </ThumbBar>
+          </>
+        )}
       </div>
     );
   }
@@ -44,7 +57,7 @@ export function WeeklyReviewView({ weekStart }: { weekStart: string }) {
       {result.changes.length > 0 && (
         <>
           <Placard>What changed about you</Placard>
-          <ul className="sessions">
+          <ul className="sessions plain">
             {result.changes.map((c) => (
               <li key={c.section} data-rank="next">
                 <span className="what">

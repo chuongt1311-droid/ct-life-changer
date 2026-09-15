@@ -49,6 +49,9 @@ export function ChatThread({ date, initialMessages, crisisContacts }: { date: st
   return (
     <>
       {localCrisis && <CrisisContactsCard contacts={crisisContacts} />}
+      {messages.length === 0 && (
+        <p className="empty">Nothing asked today. The mentor already has today&apos;s plan, your recent history and your check-ins — just start.</p>
+      )}
       <ul className="thread" style={{ listStyle: 'none' }}>
         {messages.map((m, i) => (
           <li className={`msg ${m.role === 'assistant' ? 'from-dept' : 'from-ct'}`} key={i}>

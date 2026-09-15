@@ -30,7 +30,7 @@ export function TemplateEditor({ templates }: { templates: TemplateRow[] }) {
     return (
       <div className="stepback">
         <Placard>Weekday templates</Placard>
-        <ul className="sessions">
+        <ul className="sessions plain">
           {WEEKDAY_NAMES.map((name, weekday) => {
             const t = templates.find((tpl) => tpl.weekday === weekday);
             return (
@@ -57,7 +57,7 @@ export function TemplateEditor({ templates }: { templates: TemplateRow[] }) {
         <input type="checkbox" checked={draft.rest_day} onChange={(e) => setDraft({ ...draft, rest_day: e.target.checked })} />
         <span>Rest day</span>
       </label>
-      <ul className="sessions">
+      <ul className="sessions plain">
         {draft.blocks.map((b, i) => (
           <li key={b.key} data-rank="next">
             <span className="what">

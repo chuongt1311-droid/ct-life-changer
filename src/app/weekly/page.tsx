@@ -20,12 +20,17 @@ export default async function WeeklyPage() {
   }
 
   const client = supabase as unknown as RepositoryClient;
-  const settingsRow = await repositories(client).settings.get();
+  const repos = repositories(client);
+  const settingsRow = await repos.settings.get();
   const settings = settingsToDomain(settingsRow!);
   const { planDate } = planClock(new Date(), settings.timezone);
   // The most recent Sunday on or before today (spec §5.8: weeks start Sunday).
   const weekday = new Date(`${planDate}T00:00:00Z`).getUTCDay();
   const weekStart = addDays(planDate, -weekday);
+  // The letter for this week may already have been written — by the Sunday cron
+  // or by CT. Without this the screen only ever showed the letter it wrote in
+  // the current session, so returning the next day offered to run it again.
+  const saved = await repos.weeklyLetters.get(weekStart, 'week_start');
 
   return (
     <main className="shell" data-phase="dusk">
@@ -34,7 +39,7 @@ export default async function WeeklyPage() {
           <span className="dot" /> Weekly review
         </p>
       </header>
-      <WeeklyReviewView weekStart={weekStart} />
+      <WeeklyReviewView weekStart={weekStart} savedLetter={saved?.letter ?? null} />
     </main>
   );
 }

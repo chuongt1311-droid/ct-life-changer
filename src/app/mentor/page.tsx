@@ -49,8 +49,10 @@ export default async function MentorPage() {
         <h1 className="sheet-title">Mentor</h1>
         <p className="sheet-sub">Reads today&apos;s plan, recent history, and your check-ins. Nothing marked &quot;just for me&quot; is ever sent.</p>
       </div>
+      {/* Usage first, conversation last: the composer is sticky, so anything
+          rendered after it pushes it up out of the thumb zone — which is why
+          the ask box used to sit halfway up an empty screen. */}
       <div className="stepback">
-        <ChatThread date={planDate} initialMessages={initialMessages} crisisContacts={settingsRow?.crisis_contacts ?? []} />
         <Placard>This month&apos;s usage</Placard>
         <ul className="load">
           <LoadBarRow
@@ -60,6 +62,8 @@ export default async function MentorPage() {
             read={cap.over ? 'over' : cap.spentUsd >= cap.capUsd * 0.8 ? 'warn' : 'ok'}
           />
         </ul>
+        <Placard>Conversation</Placard>
+        <ChatThread date={planDate} initialMessages={initialMessages} crisisContacts={settingsRow?.crisis_contacts ?? []} />
       </div>
     </main>
   );
