@@ -2,7 +2,7 @@
 
 import { type ReactNode, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Block } from '@/core/types';
+import type { Adjustment, Block, Flag, GuardState } from '@/core/types';
 import type { PlanEdit } from '@/core/planner/edits';
 import type { DiffEntry } from '@/core/planner/diff';
 import { formatPlanMinute } from '@/core/time';
@@ -21,26 +21,54 @@ const TAG_LABEL: Record<string, string> = {
   dropped: 'Dropped', active: 'Now', planned: 'Next',
 };
 
-type Review = { date: string; blocks: Block[]; diff: DiffEntry[]; conflicts: [string, string][] };
+/** What confirming needs beyond the edited blocks — only ever populated when
+ * `previewAction` is the future-date one (Plan-ahead); Today's own
+ * `previewEditsAction` never returns it, so `take()` passes `undefined`
+ * straight through to `confirmEditsAction`, which ignores a 3rd argument it
+ * never declared. */
+type ConfirmMeta = { state: GuardState; flags: Flag[]; adjustments: Adjustment[] };
+type Review = { date: string; blocks: Block[]; diff: DiffEntry[]; conflicts: [string, string][]; meta?: ConfirmMeta };
+
+type PreviewFn = (date: string, edits: PlanEdit[]) => Promise<{
+  date: string; blocks: Block[]; diff: DiffEntry[]; conflicts: [string, string][]; errors: string[];
+  state?: GuardState; flags?: Flag[]; adjustments?: Adjustment[];
+}>;
+type ConfirmFn = (date: string, blocks: Block[], meta?: ConfirmMeta) => Promise<void>;
 
 const editTarget = (e: PlanEdit): string | null =>
   e.type === 'move' || e.type === 'resize' || e.type === 'drop' ? e.blockId : null;
 
 const isOpen = (b: Block) => b.status === 'planned' || b.status === 'active';
 
-/** Today's session list, made editable. Tapping an open row opens
+/** A day's session list, made editable — Today's own day (sub-project A) by
+ * default, or any date the Plan-ahead detail page passes in via
+ * `previewAction`/`confirmAction`. Tapping an open row opens
  * `EditBlockSheet`; edits stack as client-only state until "Review changes"
- * turns them into one diff via `previewEditsAction`, and "Take the new day"
- * persists via the existing `confirmReflowAction`. Nothing is written until
- * that last step.
+ * turns them into one diff, and the confirm button persists. Nothing is
+ * written until that last step.
  *
- * `actions` is the page's own thumb-bar content (Start rest / Day changed):
- * while edits are pending this component's own "Review changes" takes the
- * screen's one gold action instead, and the passed-in bar is shown otherwise
- * — the day cannot be both "start resting" and "you have unreviewed changes"
- * as the single most important action. */
-export function EditableDay({ blocks, nowMinute, actions }: { blocks: Block[]; nowMinute: number; actions: ReactNode }) {
+ * `actions` is the page's own thumb-bar content (Start rest / Day changed
+ * on Today; a plain "back to the list" bar on Plan-ahead): while edits are
+ * pending this component's own "Review changes" takes the screen's one gold
+ * action instead, and the passed-in bar is shown otherwise. */
+export function EditableDay({
+  date,
+  blocks,
+  nowMinute,
+  actions,
+  previewAction,
+  confirmAction,
+}: {
+  date: string;
+  blocks: Block[];
+  nowMinute: number;
+  actions: ReactNode;
+  previewAction?: PreviewFn;
+  confirmAction?: ConfirmFn;
+}) {
   const router = useRouter();
+  const preview: PreviewFn = previewAction ?? ((_date: string, edits: PlanEdit[]) => previewEditsAction(edits));
+  const confirm: ConfirmFn = confirmAction ?? confirmEditsAction;
   const [edits, setEdits] = useState<PlanEdit[]>([]);
   const [editing, setEditing] = useState<Block | null | undefined>(undefined); // undefined = closed, null = adding
   const [review, setReview] = useState<Review | null>(null);
@@ -51,27 +79,30 @@ export function EditableDay({ blocks, nowMinute, actions }: { blocks: Block[]; n
 
   async function openReview() {
     setBusy(true);
-    const result = await previewEditsAction(edits);
+    const result = await preview(date, edits);
     setBusy(false);
     if (result.errors.length > 0) {
       setErrors(result.errors);
       return;
     }
     setErrors([]);
-    setReview({ date: result.date, blocks: result.blocks, diff: result.diff, conflicts: result.conflicts });
+    const meta = result.state !== undefined && result.flags !== undefined && result.adjustments !== undefined
+      ? { state: result.state, flags: result.flags, adjustments: result.adjustments }
+      : undefined;
+    setReview({ date: result.date, blocks: result.blocks, diff: result.diff, conflicts: result.conflicts, meta });
   }
 
   async function take() {
     if (!review) return;
     setBusy(true);
-    // confirmEditsAction persists without redirecting — Today is already at
-    // '/', and confirmReflowAction's redirect('/') (fine for Day-changed,
-    // a real cross-route confirm) throws Next's NEXT_REDIRECT sentinel as a
-    // terminal operation: nothing after it in the same call ever runs, by
-    // design. router.refresh() plus resetting this component's own local
-    // state (review/edits — untouched by a server-driven re-render of its
-    // parent) is what gets the screen back to the fresh list.
-    await confirmEditsAction(review.date, review.blocks);
+    // confirmEditsAction (Today's default) persists without redirecting —
+    // Today is already at '/', and confirmReflowAction's redirect('/')
+    // (fine for Day-changed, a real cross-route confirm) throws Next's
+    // NEXT_REDIRECT sentinel as a terminal operation: any code after it in
+    // the same call never runs, by design. router.refresh() plus resetting
+    // this component's own local state is what gets the screen back to the
+    // fresh list — Plan-ahead's confirm action follows the same pattern.
+    await confirm(review.date, review.blocks, review.meta);
     router.refresh();
     setReview(null);
     setEdits([]);

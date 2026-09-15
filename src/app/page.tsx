@@ -98,6 +98,7 @@ export default async function TodayPage() {
 
         <div className="col-b">
           <EditableDay
+            date={planDate}
             blocks={sorted.map(blockRowToCore)}
             nowMinute={minute}
             actions={
