@@ -16,6 +16,11 @@ export interface LayoutInput {
   keepRunning?: boolean;
   /** Flexible block ids placed first, starting at the earliest free minute. */
   placeFirst?: string[];
+  /** Block ids that keep their exact start/end. They become fixed obstacles the
+   *  rest of the day lays out around — used when CT moves or adds a block and it
+   *  must land where they put it rather than be re-optimised. Never done with
+   *  `anchor: true`, which is persisted and feeds the guard. */
+  pinned?: string[];
 }
 
 export interface LayoutResult {
@@ -44,6 +49,7 @@ export function layout(input: LayoutInput): LayoutResult {
   const from = Math.max(input.earliest ?? now, wake);
   const lost = normalize(input.unavailable ?? []);
   const placeFirst = input.placeFirst ?? [];
+  const pinned = input.pinned ?? [];
 
   const untouched: Block[] = [];
   const kept: Block[] = [];
@@ -51,6 +57,7 @@ export function layout(input: LayoutInput): LayoutResult {
   for (const b of blocks) {
     const open = b.status === 'planned' || b.status === 'active';
     if (!open || b.end <= now) untouched.push(b);
+    else if (pinned.includes(b.id)) kept.push(b);
     else if (keepRunning && b.start <= now) kept.push(b);
     else movable.push(b);
   }

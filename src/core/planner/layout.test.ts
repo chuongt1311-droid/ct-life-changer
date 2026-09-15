@@ -161,6 +161,67 @@ describe('layout', () => {
     expect(result.blocks.every((b) => b.status === 'planned')).toBe(true);
   });
 
+  describe('pinned blocks', () => {
+    // A plain flexible block at priority 1 is exactly the shrink/drop candidate
+    // the "shrinks lowest priority first" test above proves gets touched. Pinning
+    // must exempt it from that entirely — proof that pinning is not just "happens
+    // to stay put" but genuinely removes the block from the optimizer's pool.
+    it('exempts a pinned block from shrink-then-drop even when it is the lowest priority', () => {
+      const result = layout({
+        now: 1199,
+        wake: 420,
+        until: 1260, // only 61 free minutes; low alone claims all of it
+        pinned: ['low'],
+        blocks: [
+          makeBlock({ id: 'high', priority: 5, start: 1200, end: 1240, minMinutes: 20 }),
+          makeBlock({ id: 'mid', priority: 3, start: 1240, end: 1280, minMinutes: 20 }),
+          makeBlock({ id: 'low', priority: 1, start: 1200, end: 1260, minMinutes: 10 }),
+        ],
+      });
+      const low = result.blocks.find((b) => b.id === 'low')!;
+      expect(low.start).toBe(1200);
+      expect(low.end).toBe(1260); // full original length; never shrunk to minMinutes
+      expect(low.status).toBe('planned'); // never dropped
+    });
+
+    // 'other' is listed FIRST and shares the pinned block's exact start, so plain
+    // flexible ordering (stable sort, ties broken by array position) would give
+    // 'other' the earlier slot and push 'pinnedTask' after it. Pinning must win
+    // regardless of array order — proof it is a hard obstacle, not just another
+    // flexible item that happens not to move in this particular ordering.
+    it('a pinned block is a fixed obstacle regardless of the order blocks were given in', () => {
+      const result = layout({
+        now: 480,
+        wake: 420,
+        until: 1320,
+        pinned: ['pinnedTask'],
+        blocks: [
+          makeBlock({ id: 'other', start: 540, end: 600 }),
+          makeBlock({ id: 'pinnedTask', start: 540, end: 600 }),
+        ],
+      });
+      const pinnedTask = result.blocks.find((b) => b.id === 'pinnedTask')!;
+      expect(pinnedTask.start).toBe(540);
+      expect(pinnedTask.end).toBe(600);
+      const other = result.blocks.find((b) => b.id === 'other')!;
+      expect(other.start).toBeGreaterThanOrEqual(600);
+    });
+
+    it('reports two overlapping pinned blocks as a conflict', () => {
+      const result = layout({
+        now: 480,
+        wake: 420,
+        until: 1320,
+        pinned: ['a', 'b'],
+        blocks: [
+          makeBlock({ id: 'a', start: 540, end: 640 }),
+          makeBlock({ id: 'b', start: 600, end: 700 }),
+        ],
+      });
+      expect(result.conflicts).toContainEqual(['a', 'b']);
+    });
+  });
+
   it('is deterministic', () => {
     const blocks = [
       makeBlock({ id: 'a', priority: 2, start: 600, end: 700 }),
