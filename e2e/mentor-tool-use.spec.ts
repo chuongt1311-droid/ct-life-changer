@@ -8,13 +8,26 @@ test('confirming a mentor proposal actually changes the schedule', async ({ page
   const { data: usersPage } = await admin.auth.admin.listUsers();
   const ownerId = usersPage!.users.find((u) => u.email?.toLowerCase() === ownerEmail.toLowerCase())!.id;
 
+  // A prior run's failure (or an earlier attempt in this same run history)
+  // can leave a proposal sitting `status: 'pending'` — the mentor page
+  // shows every pending proposal for CT, so an old one would render
+  // alongside this run's and `.first()` would grab whichever inserted
+  // first, not this run's. Clear the slate so the card this test asserts
+  // on is unambiguously the one it just seeded.
+  await admin.from('mentor_proposals').delete().eq('owner_id', ownerId).eq('status', 'pending');
+
   const messageId = crypto.randomUUID();
   await admin.from('mentor_messages').insert({
     id: messageId, owner_id: ownerId, date: today, route: 'chat', role: 'assistant',
     content: 'Test proposal', state_at_time: null, usage_id: null,
   });
 
-  const { data: block } = await admin.from('blocks').select('id,start,end').eq('date', today).limit(1).single();
+  // Exclude "Wind down" — buildDay always appends it as the last block,
+  // ending exactly at bedtime, so growing it necessarily fails
+  // validateEdits' own "wouldn't finish before wind-down" check (it IS
+  // that boundary). Order by start so this is deterministic, not whatever
+  // order Postgres happens to return without one.
+  const { data: block } = await admin.from('blocks').select('id,start,end,title').eq('date', today).neq('title', 'Wind down').order('start', { ascending: true }).limit(1).single();
   const growBy = 30;
   const newDurationMin = block!.end - block!.start + growBy;
   await admin.from('mentor_proposals').insert({
