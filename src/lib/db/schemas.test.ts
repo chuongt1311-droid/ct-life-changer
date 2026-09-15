@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS, DEFAULT_THRESHOLDS } from '@/core/types';
-import { blockRowSchema, settingsRowSchema, templateRowSchema } from './schemas';
+import { blockRowSchema, mentorProposalRowSchema, settingsRowSchema, templateRowSchema } from './schemas';
 
 describe('settingsRowSchema', () => {
   it('accepts a row shaped like DEFAULT_SETTINGS', () => {
@@ -83,5 +83,22 @@ describe('blockRowSchema', () => {
       source: 'template',
     };
     expect(() => blockRowSchema.parse(row)).toThrow();
+  });
+});
+
+describe('mentorProposalRowSchema', () => {
+  it('accepts a pending schedule proposal row', () => {
+    const row = {
+      id: 'p1', owner_id: 'ct', message_id: 'm1', kind: 'schedule', target: '2026-09-22',
+      edits: [{ type: 'resize', blockId: 'deep', durationMin: 90 }],
+      diff: [{ blockId: 'deep', title: 'Deep work', change: 'shrunk', from: null, to: null, reason: 'You changed its length' }],
+      conflicts: [], status: 'pending', created_at: '2026-09-15T12:00:00.000Z',
+    };
+    expect(() => mentorProposalRowSchema.parse(row)).not.toThrow();
+  });
+
+  it('rejects an unknown kind', () => {
+    const row = { id: 'p1', owner_id: 'ct', message_id: 'm1', kind: 'nonsense', target: 'x', edits: [], diff: [], conflicts: [], status: 'pending', created_at: '2026-09-15T12:00:00.000Z' };
+    expect(() => mentorProposalRowSchema.parse(row)).toThrow();
   });
 });

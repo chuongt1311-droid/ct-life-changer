@@ -13,6 +13,7 @@ const PRIMARY_KEY: Record<string, string> = {
   rest_sessions: 'id',
   unplanned_indulgence: 'id',
   mentor_messages: 'id',
+  mentor_proposals: 'id',
   digests: 'date',
   weekly_letters: 'week_start',
   profile_versions: 'id',

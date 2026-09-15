@@ -145,6 +145,20 @@ export const mentorMessageRowSchema = z.object({
 });
 export type MentorMessageRow = z.infer<typeof mentorMessageRowSchema>;
 
+export const mentorProposalRowSchema = z.object({
+  id: z.string(),
+  owner_id: z.string(),
+  message_id: z.string(),
+  kind: z.enum(['schedule', 'template']),
+  target: z.string(),
+  edits: z.array(z.record(z.string(), z.unknown())),
+  diff: z.array(z.record(z.string(), z.unknown())),
+  conflicts: z.array(z.tuple([z.string(), z.string()])),
+  status: z.enum(['pending', 'confirmed', 'discarded']),
+  created_at: z.string(),
+});
+export type MentorProposalRow = z.infer<typeof mentorProposalRowSchema>;
+
 export const digestRowSchema = z.object({
   date: z.string(),
   owner_id: z.string(),
