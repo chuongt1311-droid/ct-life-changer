@@ -16,3 +16,4 @@ graphify-out/
 next-env.d.ts
 *.tsbuildinfo
 .vercel
+screenshots/
