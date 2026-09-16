@@ -2,6 +2,7 @@ import type { CheckinRecord, MentorContextInput } from '@/core/mentor/context';
 import { emptyProfile, type Profile } from '@/core/mentor/profile';
 import type { RepositoryClient } from '@/lib/db/repository';
 import { repositories } from '@/lib/db/repositories';
+import { queryMemory } from '@/lib/memory/client';
 
 export interface AssembleContextParams {
   systemPrompt: string;
@@ -17,13 +18,12 @@ export interface AssembleContextParams {
 export async function assembleMentorContext(client: RepositoryClient, params: AssembleContextParams): Promise<MentorContextInput> {
   const repos = repositories(client);
 
-  const [profileVersions, weeklyLetterRows, digestRows, planRows, blockRows, checkinRows] = await Promise.all([
+  const [profileVersions, planRows, blockRows, checkinRows, retrievedMemory] = await Promise.all([
     repos.profileVersions.list(),
-    repos.weeklyLetters.list(),
-    repos.digests.list(),
     repos.plans.list({ date: params.date } as never),
     repos.blocks.list({ date: params.date } as never),
     repos.checkins.list({ date: params.date } as never),
+    queryMemory(params.request),
   ]);
 
   const latestProfileVersion = [...profileVersions].sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
@@ -40,10 +40,7 @@ export async function assembleMentorContext(client: RepositoryClient, params: As
   return {
     systemPrompt: params.systemPrompt,
     profile,
-    weeklyLetters: weeklyLetterRows.map((w) => ({ weekStart: w.week_start, letter: w.letter })),
-    // A digest row can now have a null text (a failed generation attempt
-    // awaiting the cron tick's retry, Plan 6) — nothing worth sending Claude.
-    digests: digestRows.filter((d) => d.text !== null).map((d) => ({ date: d.date, text: d.text as string })),
+    retrievedMemory,
     today: {
       date: params.date,
       state: plan?.state ?? 'ready',

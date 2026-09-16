@@ -14,8 +14,10 @@ export interface CheckinRecord {
 export interface MentorContextInput {
   systemPrompt: string;
   profile: Profile;
-  weeklyLetters: { weekStart: string; letter: string }[];
-  digests: { date: string; text: string }[];
+  /** Compact text from the memory graph, relevant to `request` — replaces
+   * the old blanket "last 7 digests, last 4 weekly letters" window. Empty
+   * string when nothing matched or the memory service is unreachable. */
+  retrievedMemory: string;
   today: {
     date: string;
     state: GuardState;
@@ -48,15 +50,8 @@ export function stripPrivate(checkin: CheckinRecord): Record<string, Record<stri
   return out;
 }
 
-function renderHistory(input: MentorContextInput): string {
-  const letters = [...input.weeklyLetters].sort((a, b) => a.weekStart.localeCompare(b.weekStart)).slice(-4);
-  const digests = [...input.digests].sort((a, b) => a.date.localeCompare(b.date)).slice(-7);
-  const parts = ['<history>', '## Weekly letters (oldest first)'];
-  parts.push(...(letters.length ? letters.map((l) => `### Week of ${l.weekStart}\n${l.letter}`) : ['(none yet)']));
-  parts.push('## Daily digests (oldest first)');
-  parts.push(...(digests.length ? digests.map((d) => `### ${d.date}\n${d.text}`) : ['(none yet)']));
-  parts.push('</history>');
-  return parts.join('\n');
+function renderMemory(input: MentorContextInput): string {
+  return ['<memory>', input.retrievedMemory || '(nothing retrieved)', '</memory>'].join('\n');
 }
 
 function renderBlock(b: Block): string {
@@ -98,7 +93,7 @@ export function buildMentorContext(input: MentorContextInput): MentorContext {
     {
       role: 'user',
       content: [
-        { type: 'text', text: renderHistory(input), cache_control: cache },
+        { type: 'text', text: renderMemory(input), cache_control: cache },
         { type: 'text', text: renderToday(input.today) },
         { type: 'text', text: first!.content },
       ],

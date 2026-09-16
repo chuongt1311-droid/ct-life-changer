@@ -17,11 +17,7 @@ function input(overrides: Partial<MentorContextInput> = {}): MentorContextInput 
   return {
     systemPrompt: 'You are CT’s mentor.',
     profile: { ...emptyProfile(), values: 'Discipline' },
-    weeklyLetters: [
-      { weekStart: '2026-08-31', letter: 'Letter A' },
-      { weekStart: '2026-08-24', letter: 'Letter B' },
-    ],
-    digests: [{ date: '2026-09-13', text: 'Solid day.' }],
+    retrievedMemory: 'You skipped deep work three days running last week.',
     today: {
       date: '2026-09-14',
       state: 'depleted',
@@ -61,20 +57,48 @@ describe('buildMentorContext', () => {
     const first = ctx.messages[0]!;
     expect(first.role).toBe('user');
     const blocks = first.content as { text: string; cache_control?: unknown }[];
-    expect(blocks[0]!.text).toMatch(/^<history>/);
+    expect(blocks[0]!.text).toMatch(/^<memory>/);
     expect(blocks[0]!.cache_control).toEqual({ type: 'ephemeral' });
     expect(blocks[1]!.text).toMatch(/^<today date="2026-09-14">/);
     expect(blocks[1]!.cache_control).toBeUndefined();
     expect(blocks[2]!.text).toBe('Write the evening review.');
   });
 
-  it('orders history oldest first and renders today readably', () => {
+  it('renders today readably', () => {
     const ctx = buildMentorContext(input());
-    const [history, today] = (ctx.messages[0]!.content as { text: string }[]).map((b) => b.text);
-    expect(history!.indexOf('Letter B')).toBeLessThan(history!.indexOf('Letter A'));
+    const [, today] = (ctx.messages[0]!.content as { text: string }[]).map((b) => b.text);
     expect(today).toContain('State: depleted');
     expect(today).toContain('- SLEEP_LOW: Under 6h sleep on 3 of your last 4 nights');
     expect(today).toContain('- 09:00–11:00 Deep work — done');
+  });
+
+  it('renders retrievedMemory as its own cached block', () => {
+    const memInput: MentorContextInput = {
+      systemPrompt: 'sys',
+      profile: emptyProfile(),
+      retrievedMemory: 'You skipped deep work three days running last week.',
+      today: { date: '2026-09-16', state: 'ready', flags: [], adjustments: [], overridden: false, blocks: [], checkins: [] },
+      request: 'hi',
+    };
+    const ctx = buildMentorContext(memInput);
+    const historyBlock = (ctx.messages[0]!.content as { text: string; cache_control?: unknown }[]).find((b) =>
+      b.text.includes('<memory>'),
+    );
+    expect(historyBlock?.text).toContain('You skipped deep work three days running last week.');
+    expect(historyBlock?.cache_control).toEqual({ type: 'ephemeral' });
+  });
+
+  it('renders a placeholder when no memory was retrieved', () => {
+    const memInput: MentorContextInput = {
+      systemPrompt: 'sys',
+      profile: emptyProfile(),
+      retrievedMemory: '',
+      today: { date: '2026-09-16', state: 'ready', flags: [], adjustments: [], overridden: false, blocks: [], checkins: [] },
+      request: 'hi',
+    };
+    const ctx = buildMentorContext(memInput);
+    const historyBlock = (ctx.messages[0]!.content as { text: string }[]).find((b) => b.text.includes('<memory>'));
+    expect(historyBlock?.text).toContain('(nothing retrieved)');
   });
 
   it('appends chat history after the context turn and ends with the new message', () => {

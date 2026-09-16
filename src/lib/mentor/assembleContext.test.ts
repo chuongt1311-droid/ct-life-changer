@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { RepositoryClient } from '@/lib/db/repository';
 import { assembleMentorContext } from './assembleContext';
+
+vi.mock('@/lib/memory/client', () => ({ queryMemory: vi.fn().mockResolvedValue('retrieved text') }));
 
 function fakeClient(seed: {
   profileVersions?: Record<string, unknown>[];
@@ -74,6 +76,12 @@ describe('assembleMentorContext', () => {
     expect(input.today.blocks).toHaveLength(1);
     expect(input.today.checkins).toHaveLength(1);
     expect(input.today.checkins[0]!.privateKeys).toEqual([]);
+  });
+
+  it('fills today.retrievedMemory from queryMemory', async () => {
+    const client = fakeClient({});
+    const input = await assembleMentorContext(client, { systemPrompt: 'sys', date: '2026-09-16', request: 'hi' });
+    expect(input.retrievedMemory).toBe('retrieved text');
   });
 
   it('passes the system prompt, request, and chat history straight through', async () => {

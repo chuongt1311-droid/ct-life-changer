@@ -6,8 +6,7 @@ function fixtureFor(state: GuardState, request: string): MentorContextInput {
   const base: MentorContextInput = {
     systemPrompt: '', // filled in by the caller with loadSystemPrompt()
     profile: { ...emptyProfile(), goalsPhysical: 'Get stronger without wrecking sleep.', values: 'Consistency over intensity.' },
-    weeklyLetters: [],
-    digests: [],
+    retrievedMemory: '',
     today: {
       date: '2026-09-14',
       state,
