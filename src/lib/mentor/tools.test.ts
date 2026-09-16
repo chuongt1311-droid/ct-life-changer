@@ -58,6 +58,30 @@ describe('buildMentorTools', () => {
     expect(proposals).toHaveLength(0);
   });
 
+  it('propose_schedule_edit rejects a malformed edit (e.g. a clock string for start) before it ever becomes a proposal', async () => {
+    const client = fakeClient({ settings: [settingsRow], blocks: [blockRow({ id: 'deep', date: '2026-09-15', start: 540, end: 600 })] });
+    const { tools, proposals } = buildMentorTools({ client, ownerId: 'ct', messageId: 'm1', todayDate: '2026-09-15', now: new Date('2026-09-15T12:00:00Z') });
+    const proposeScheduleEdit = tools.find((t) => t.name === 'propose_schedule_edit')!;
+    expect(() => proposeScheduleEdit.parse({ date: '2026-09-15', edits: [{ type: 'add', id: 'x', title: 'Reading', kind: 'task', start: '18:00', durationMin: 30, priority: 3 }] })).toThrow(/Invalid edits/);
+    expect(proposals).toHaveLength(0);
+    expect(client.tables.mentor_proposals ?? []).toHaveLength(0);
+  });
+
+  it('propose_template_edit rejects a block with an invalid kind before it ever becomes a proposal', async () => {
+    const client = fakeClient({
+      settings: [settingsRow],
+      templates: [{ weekday: 1, owner_id: 'ct', rest_day: false, blocks: [{ key: 'gym', title: 'Gym', kind: 'training', anchor: false, priority: 3, start: '18:00', durationMin: 60 }] }],
+    });
+    const { tools, proposals } = buildMentorTools({ client, ownerId: 'ct', messageId: 'm1', todayDate: '2026-09-15', now: new Date('2026-09-15T12:00:00Z') });
+    const proposeTemplateEdit = tools.find((t) => t.name === 'propose_template_edit')!;
+    expect(() => proposeTemplateEdit.parse({
+      weekday: 1, restDay: false,
+      blocks: [{ key: 'gym', title: 'Gym', kind: 'workout', anchor: false, priority: 3, start: '18:00', durationMin: 90 }],
+    })).toThrow(/Invalid template edit/);
+    expect(proposals).toHaveLength(0);
+    expect(client.tables.mentor_proposals ?? []).toHaveLength(0);
+  });
+
   it('propose_template_edit writes a pending template proposal with a real diff', async () => {
     const client = fakeClient({
       settings: [settingsRow],

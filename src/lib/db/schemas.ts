@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-const priority = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]);
-const blockKind = z.enum(['task', 'training', 'rest', 'buffer', 'routine']);
+export const priority = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]);
+export const blockKind = z.enum(['task', 'training', 'rest', 'buffer', 'routine']);
 const blockStatus = z.enum(['planned', 'active', 'done', 'partial', 'skipped', 'missed', 'dropped']);
 const blockSource = z.enum(['template', 'manual', 'urgent', 'guard']);
 
 const checklistItemSchema = z.object({ label: z.string(), done: z.boolean() });
-const templateBlockSchema = z.object({
+export const templateBlockSchema = z.object({
   key: z.string(),
   title: z.string(),
   kind: blockKind,
