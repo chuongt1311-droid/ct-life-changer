@@ -4,7 +4,7 @@ CT's single-user ADHD companion PWA. Read these before answering questions about
 
 ## Knowledge graph
 
-This project has its own graph at `graphify-out/` (346 nodes, 673 edges, 20 communities),
+This project has its own graph at `graphify-out/` (1169 nodes, 3260 edges, 72 communities),
 built from the source **and** the spec, plans, PRODUCT.md and DESIGN.md — so it answers
 design and product questions, not only code ones.
 
@@ -26,6 +26,25 @@ design and product questions, not only code ones.
 | `docs/superpowers/plans/2026-09-11-daily-loop-00-roadmap.md` | Six plans, what each delivers, what CT must do. |
 | `PRODUCT.md` | Product truth, principles, and the career-mode guardrails. |
 | `DESIGN.md` | The Performance Department design system, recorded from the built prototype. |
+
+## Sub-projects beyond the original roadmap
+
+The 6-plan roadmap above is done and deployed (**https://ct-life-changer.vercel.app**).
+Further work since then follows the same brainstorm → spec → plan → implementation cycle,
+each getting its own dated spec/plan under `docs/superpowers/`:
+
+- **Shipped:** flexible schedule editing on Today (2026-09-15 spec/plan), future-date
+  editing via `/plan-ahead` (2026-09-15), mentor tool use — `read_schedule`,
+  `propose_schedule_edit`, `propose_template_edit` via the Anthropic Beta Tool Runner
+  (`src/lib/mentor/tools.ts`), every proposal previewed and inert until CT confirms.
+- **Spec + plan written, not yet built:** a persistent mentor memory graph — FalkorDB
+  on CT's VPS, imported from CT's local graphify graphs, replacing the old blanket
+  digest/weekly-letter context window with targeted retrieval. See
+  `docs/superpowers/specs/2026-09-16-mentor-memory-graph-design.md` and its plan. This
+  will add a new `memory-api/` subdirectory — a **separately deployed** Node/Express
+  service (Docker Compose on the VPS), not part of the Next.js app's own Vercel build;
+  don't expect its files to show up in a normal `npm test`/`npm run typecheck` from the
+  repo root once it exists (its own `vitest.config.ts` only globs its own `src/`).
 
 ## Standing rules
 
