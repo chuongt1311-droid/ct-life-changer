@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCrisisCheck } from '@/hooks/useCrisisCheck';
 import { CrisisContactsCard } from './CrisisContactsCard';
 import { Icon } from '@/components/icons/Icon';
@@ -41,6 +41,18 @@ export function ChatThread({
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const localCrisis = useCrisisCheck([draft]);
+  const lastMessageRef = useRef<HTMLLIElement>(null);
+
+  // The composer is a sticky footer that paints above ordinary scrolled
+  // content (see dept.css) — without this, the newest message (and any
+  // Confirm/Discard buttons a proposal card adds to it) can end up visually
+  // present but underneath the composer for most of the scrollable range,
+  // never actually reachable by a tap. Reruns on every streamed delta and
+  // every proposal card appearing, matching `.thread > .msg:last-child`'s
+  // scroll-margin-bottom in dept.css so this always lands clear of it.
+  useEffect(() => {
+    lastMessageRef.current?.scrollIntoView({ block: 'end' });
+  }, [messages, proposalsByMessageId, liveProposalsByIndex]);
 
   function resolveProposal(id: string) {
     setProposalsByMessageId((byId) => {
@@ -101,8 +113,9 @@ export function ChatThread({
       <ul className="thread" style={{ listStyle: 'none' }}>
         {messages.map((m, i) => {
           const proposals = (m.id ? proposalsByMessageId[m.id] : undefined) ?? liveProposalsByIndex[i] ?? [];
+          const isLast = i === messages.length - 1;
           return (
-            <li className={`msg ${m.role === 'assistant' ? 'from-dept' : 'from-ct'}`} key={i}>
+            <li className={`msg ${m.role === 'assistant' ? 'from-dept' : 'from-ct'}`} key={i} ref={isLast ? lastMessageRef : undefined}>
               <span className="who">{m.role === 'assistant' ? 'Mentor' : 'CT'}</span>
               <div className="body">
                 <p>{m.content || (sending && i === messages.length - 1 ? '…' : '')}</p>

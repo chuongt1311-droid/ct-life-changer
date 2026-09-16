@@ -23,22 +23,37 @@ export function ProposalCard({ proposal, onResolved }: { proposal: Proposal; onR
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
+  // A server action can reject outright (e.g. the proposal's stored edits
+  // turn out to be malformed and blow up deep in a DB write) rather than
+  // resolving to `{ok:false}` — without this try/catch that left the button
+  // stuck on "Working…" forever, since the code after the bare `await`
+  // never ran.
   async function confirm() {
     setBusy(true);
-    const result = await confirmProposalAction(proposal.id);
-    setBusy(false);
-    if (!result.ok) {
-      setErrors(result.errors);
-      return;
+    try {
+      const result = await confirmProposalAction(proposal.id);
+      if (!result.ok) {
+        setErrors(result.errors);
+        return;
+      }
+      onResolved();
+    } catch {
+      setErrors(['Something went wrong confirming this. Try again, or discard it.']);
+    } finally {
+      setBusy(false);
     }
-    onResolved();
   }
 
   async function discard() {
     setBusy(true);
-    await discardProposalAction(proposal.id);
-    setBusy(false);
-    onResolved();
+    try {
+      await discardProposalAction(proposal.id);
+      onResolved();
+    } catch {
+      setErrors(['Something went wrong discarding this. Try again.']);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

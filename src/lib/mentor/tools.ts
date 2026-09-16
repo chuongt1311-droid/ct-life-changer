@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { BetaRunnableTool } from '@anthropic-ai/sdk/lib/tools/BetaRunnableTool';
 import type { RepositoryClient } from '@/lib/db/repository';
 import { repositories } from '@/lib/db/repositories';
@@ -7,7 +8,26 @@ import { diffTemplate } from '@/core/planner/diffTemplate';
 import { planClock } from '@/core/time';
 import { settingsToDomain } from '@/lib/db/settingsMapping';
 import type { PlanEdit } from '@/core/planner/edits';
-import type { TemplateRow } from '@/lib/db/schemas';
+import { blockKind, priority, templateBlockSchema, type TemplateRow } from '@/lib/db/schemas';
+
+/** The tools' `input_schema` only tells the model the outer shape (an array
+ * of objects) — Anthropic's tool use doesn't enforce per-field types the way
+ * this JSON Schema subset can't express (discriminated unions, numeric vs
+ * string). Without this, a malformed edit (e.g. `start` sent as a clock
+ * string like the template block shape uses, instead of a plan-minute
+ * number) sails through `applyEdits` untyped, gets diffed and stored as a
+ * 'pending' proposal, and only blows up — uncaught — when CT taps Confirm.
+ * Validating in `parse` means BetaToolRunner's own try/catch turns a bad
+ * call into an `is_error` tool_result the model can see and retry from,
+ * instead of a landmine proposal CT discovers later. */
+const planEditSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('move'), blockId: z.string(), toStart: z.number() }),
+  z.object({ type: z.literal('resize'), blockId: z.string(), durationMin: z.number() }),
+  z.object({ type: z.literal('drop'), blockId: z.string() }),
+  z.object({ type: z.literal('add'), id: z.string(), title: z.string(), kind: blockKind, start: z.number(), durationMin: z.number(), priority }),
+]);
+const planEditsSchema = z.array(planEditSchema);
+const templateEditSchema = z.object({ weekday: z.number().int().min(0).max(6), restDay: z.boolean(), blocks: z.array(templateBlockSchema) });
 
 export interface ProposalEvent {
   id: string;
@@ -66,7 +86,12 @@ export function buildMentorTools(params: BuildMentorToolsParams): { tools: BetaR
       },
       required: ['date', 'edits'],
     },
-    parse: (input) => input as { date: string; edits: PlanEdit[] },
+    parse: (input) => {
+      const { date, edits } = input as { date: string; edits: unknown };
+      const parsed = planEditsSchema.safeParse(edits);
+      if (!parsed.success) throw new Error(`Invalid edits: ${parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
+      return { date, edits: parsed.data as PlanEdit[] };
+    },
     run: async ({ date, edits }) => {
       const isToday = date === params.todayDate;
       const result = isToday
@@ -106,7 +131,11 @@ export function buildMentorTools(params: BuildMentorToolsParams): { tools: BetaR
       },
       required: ['weekday', 'restDay', 'blocks'],
     },
-    parse: (input) => input as { weekday: number; restDay: boolean; blocks: TemplateRow['blocks'] },
+    parse: (input) => {
+      const parsed = templateEditSchema.safeParse(input);
+      if (!parsed.success) throw new Error(`Invalid template edit: ${parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
+      return parsed.data as { weekday: number; restDay: boolean; blocks: TemplateRow['blocks'] };
+    },
     run: async ({ weekday, restDay, blocks }) => {
       const current = await repos.templates.get(weekday);
       const diff = diffTemplate(
