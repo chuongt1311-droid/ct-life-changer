@@ -1,6 +1,7 @@
 import express from 'express';
 import { requireBearerToken } from './auth';
 import { connectGraph } from './falkor';
+import { writeMemory } from './writeMemory';
 
 const PORT = Number(process.env.MEMORY_API_PORT ?? 3001);
 const TOKEN = process.env.MEMORY_API_TOKEN;
@@ -14,8 +15,14 @@ async function main() {
   app.get('/health', (_req, res) => res.json({ ok: true }));
   app.use(requireBearerToken(TOKEN!));
 
-  // Later tasks add routes here, all receiving the same `graph` connection.
-  void graph;
+  app.post('/memory', async (req, res) => {
+    try {
+      const result = await writeMemory(graph, req.body);
+      res.json(result);
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'bad request' });
+    }
+  });
 
   app.listen(PORT, () => console.log(`memory-api listening on ${PORT}`));
 }
