@@ -185,8 +185,8 @@ export function buildMentorTools(params: BuildMentorToolsParams): { tools: BetaR
     },
     parse: (input) => input as { text: string; confidence: 'low' | 'medium' | 'high' },
     run: async ({ text, confidence }) => {
-      await writeMemory('MentorMemory', { text, confidence, conversationDate: params.todayDate });
-      return 'Saved.';
+      const saved = await writeMemory('MentorMemory', { text, confidence, conversationDate: params.todayDate });
+      return saved ? 'Saved.' : "Couldn't save that right now — memory isn't reachable.";
     },
   };
 

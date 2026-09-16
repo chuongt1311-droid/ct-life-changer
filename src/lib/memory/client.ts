@@ -20,19 +20,25 @@ function withTimeout(): { controller: AbortController; signal: AbortSignal } {
   return { controller, signal: controller.signal };
 }
 
-export async function writeMemory(label: 'DailyDigest' | 'WeeklyLetter' | 'MentorMemory', properties: Record<string, unknown>): Promise<void> {
+/** Returns true only when the write actually reached memory-api. Still
+ * never throws — fire-and-forget callers can keep ignoring the result,
+ * while callers that report back to CT (the `remember` tool, the backfill
+ * script) can tell a real save from a silent no-op. */
+export async function writeMemory(label: 'DailyDigest' | 'WeeklyLetter' | 'MentorMemory', properties: Record<string, unknown>): Promise<boolean> {
   const cfg = configured();
-  if (!cfg) return;
+  if (!cfg) return false;
   try {
     const { signal } = withTimeout();
-    await fetch(`${cfg.url}/memory`, {
+    const res = await fetch(`${cfg.url}/memory`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.token}` },
       body: JSON.stringify({ label, properties }),
       signal,
     });
+    return res.ok;
   } catch {
     // Fire-and-forget: a memory-api outage must never break the caller.
+    return false;
   }
 }
 
@@ -62,28 +68,37 @@ export interface MentorMemoryRow {
   createdAt: string;
 }
 
-export async function listMentorMemories(): Promise<MentorMemoryRow[]> {
+export type ListMentorMemoriesResult = { ok: true; memories: MentorMemoryRow[] } | { ok: false };
+
+/** `{ ok: false }` means we couldn't reach memory-api (or it isn't
+ * configured); `{ ok: true, memories: [] }` means it answered and CT
+ * genuinely has nothing saved. The settings page's whole purpose is
+ * transparency, so it must be able to tell those two apart. */
+export async function listMentorMemories(): Promise<ListMentorMemoriesResult> {
   const cfg = configured();
-  if (!cfg) return [];
+  if (!cfg) return { ok: false };
   try {
     const { signal } = withTimeout();
     const res = await fetch(`${cfg.url}/memory/mentor`, { headers: { Authorization: `Bearer ${cfg.token}` }, signal });
-    if (!res.ok) return [];
+    if (!res.ok) return { ok: false };
     const data = (await res.json()) as { memories: MentorMemoryRow[] };
-    return data.memories;
+    return { ok: true, memories: data.memories };
   } catch {
-    return [];
+    return { ok: false };
   }
 }
 
-export async function deleteMemory(id: string): Promise<void> {
+/** Returns true only when memory-api confirmed the delete. Still never
+ * throws, but a failed delete now says so, so the settings page can keep
+ * the row visible for CT to try again instead of pretending it's gone. */
+export async function deleteMemory(id: string): Promise<boolean> {
   const cfg = configured();
-  if (!cfg) return;
+  if (!cfg) return false;
   try {
     const { signal } = withTimeout();
-    await fetch(`${cfg.url}/memory/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${cfg.token}` }, signal });
+    const res = await fetch(`${cfg.url}/memory/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${cfg.token}` }, signal });
+    return res.ok;
   } catch {
-    // A failed delete leaves the memory visible for CT to try again — no
-    // silent data loss either way, and the settings page re-fetches after.
+    return false;
   }
 }

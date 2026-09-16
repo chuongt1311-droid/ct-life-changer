@@ -116,14 +116,26 @@ describe('buildMentorTools', () => {
   });
 
   it('remember writes a MentorMemory with the given confidence', async () => {
-    const writeMemoryMock = vi.fn();
+    const writeMemoryMock = vi.fn().mockResolvedValue(true);
     vi.doMock('@/lib/memory/client', () => ({ queryMemory: vi.fn(), writeMemory: writeMemoryMock }));
     vi.resetModules();
     const { buildMentorTools: buildMentorToolsMocked } = await import('./tools');
     const client = fakeClient({ settings: [settingsRow] });
     const { tools } = buildMentorToolsMocked({ client, ownerId: 'ct', messageId: 'm1', todayDate: '2026-09-15', now: new Date('2026-09-15T12:00:00Z') });
     const remember = tools.find((t) => t.name === 'remember')!;
-    await remember.run(remember.parse({ text: 'CT prefers mornings for deep work', confidence: 'medium' }));
+    const result = await remember.run(remember.parse({ text: 'CT prefers mornings for deep work', confidence: 'medium' }));
     expect(writeMemoryMock).toHaveBeenCalledWith('MentorMemory', expect.objectContaining({ text: 'CT prefers mornings for deep work', confidence: 'medium' }));
+    expect(result).toBe('Saved.');
+  });
+
+  it("remember tells the mentor it couldn't save when memory-api is unreachable", async () => {
+    vi.doMock('@/lib/memory/client', () => ({ queryMemory: vi.fn(), writeMemory: vi.fn().mockResolvedValue(false) }));
+    vi.resetModules();
+    const { buildMentorTools: buildMentorToolsMocked } = await import('./tools');
+    const client = fakeClient({ settings: [settingsRow] });
+    const { tools } = buildMentorToolsMocked({ client, ownerId: 'ct', messageId: 'm1', todayDate: '2026-09-15', now: new Date('2026-09-15T12:00:00Z') });
+    const remember = tools.find((t) => t.name === 'remember')!;
+    const result = await remember.run(remember.parse({ text: 'something', confidence: 'low' }));
+    expect(result).toMatch(/couldn't save/i);
   });
 });

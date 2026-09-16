@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { MentorMemoryRow } from '@/lib/memory/client';
 import { deleteMentorMemoryAction } from './actions';
 
-export function MemoryList({ initial }: { initial: MentorMemoryRow[] }) {
+export function MemoryList({ initial, unreachable = false }: { initial: MentorMemoryRow[]; unreachable?: boolean }) {
   const [memories, setMemories] = useState(initial);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -22,6 +22,9 @@ export function MemoryList({ initial }: { initial: MentorMemoryRow[] }) {
     }
   }
 
+  // "Nothing saved" and "couldn't reach the service" look identical from an
+  // empty list, so the page tells us which one it is.
+  if (unreachable) return <p className="empty">Couldn&apos;t reach the mentor&apos;s memory right now. Try again in a moment.</p>;
   if (memories.length === 0) return <p className="empty">The mentor hasn&apos;t saved anything about you yet.</p>;
 
   return (

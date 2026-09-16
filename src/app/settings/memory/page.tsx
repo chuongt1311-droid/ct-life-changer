@@ -17,7 +17,7 @@ export default async function MentorMemoryPage() {
     );
   }
 
-  const memories = await listMentorMemories();
+  const result = await listMentorMemories();
 
   return (
     <main className="shell" data-phase="day">
@@ -27,7 +27,7 @@ export default async function MentorMemoryPage() {
         </p>
       </header>
       <Placard>What the mentor has saved about you</Placard>
-      <MemoryList initial={memories} />
+      <MemoryList initial={result.ok ? result.memories : []} unreachable={!result.ok} />
     </main>
   );
 }
