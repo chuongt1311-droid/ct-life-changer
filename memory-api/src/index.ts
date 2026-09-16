@@ -1,9 +1,9 @@
 import express from 'express';
-import { requireBearerToken } from './auth';
-import { connectGraph } from './falkor';
-import { writeMemory } from './writeMemory';
-import { queryMemory } from './queryMemory';
-import { listMentorMemories, deleteMemory } from './mentorMemories';
+import { requireBearerToken } from './auth.js';
+import { connectGraph } from './falkor.js';
+import { writeMemory } from './writeMemory.js';
+import { queryMemory } from './queryMemory.js';
+import { listMentorMemories, deleteMemory } from './mentorMemories.js';
 
 const PORT = Number(process.env.MEMORY_API_PORT ?? 3001);
 const TOKEN = process.env.MEMORY_API_TOKEN;

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { GraphClient } from './falkor';
-import { listMentorMemories, deleteMemory } from './mentorMemories';
+import type { GraphClient } from './falkor.js';
+import { listMentorMemories, deleteMemory } from './mentorMemories.js';
 
 describe('listMentorMemories', () => {
   it('maps rows into MentorMemoryRow objects, newest first', async () => {

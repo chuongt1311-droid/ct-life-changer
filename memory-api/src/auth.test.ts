@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { requireBearerToken } from './auth';
+import { requireBearerToken } from './auth.js';
 
 function fakeReqRes(header?: string) {
   const req = { headers: { authorization: header } } as never;

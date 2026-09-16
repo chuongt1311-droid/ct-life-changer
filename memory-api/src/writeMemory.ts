@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type { GraphClient } from './falkor';
+import type { GraphClient } from './falkor.js';
 
 export type MemoryLabel = 'DailyDigest' | 'WeeklyLetter' | 'MentorMemory';
 const LABELS: readonly MemoryLabel[] = ['DailyDigest', 'WeeklyLetter', 'MentorMemory'];

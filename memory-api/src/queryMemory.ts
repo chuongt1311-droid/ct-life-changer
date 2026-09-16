@@ -1,4 +1,4 @@
-import type { GraphClient } from './falkor';
+import type { GraphClient } from './falkor.js';
 
 const STOPWORDS = new Set(['the', 'a', 'an', 'of', 'it', 'is', 'to', 'and', 'in', 'on', 'for', 'my', 'me', 'i', 'you', 'do', 'does', 'can', 'what']);
 

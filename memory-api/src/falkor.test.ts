@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { adaptGraphClient } from './falkor';
+import { adaptGraphClient } from './falkor.js';
 
 describe('adaptGraphClient', () => {
   it('wraps query() to convert direct params to QueryOptions.params', async () => {

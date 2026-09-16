@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { GraphClient } from './falkor';
-import { writeMemory } from './writeMemory';
+import type { GraphClient } from './falkor.js';
+import { writeMemory } from './writeMemory.js';
 
 function fakeGraph(): GraphClient & { calls: { cypher: string; params?: Record<string, unknown> }[] } {
   const calls: { cypher: string; params?: Record<string, unknown> }[] = [];

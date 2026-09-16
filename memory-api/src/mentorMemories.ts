@@ -1,4 +1,4 @@
-import type { GraphClient } from './falkor';
+import type { GraphClient } from './falkor.js';
 
 export interface MentorMemoryRow {
   id: string;

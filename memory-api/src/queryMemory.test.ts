@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { GraphClient } from './falkor';
-import { queryMemory } from './queryMemory';
+import type { GraphClient } from './falkor.js';
+import { queryMemory } from './queryMemory.js';
 
 function fakeGraph(matchRows: unknown[][], neighborRows: unknown[][] = []): GraphClient {
   return {
