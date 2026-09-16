@@ -474,6 +474,19 @@ input[type="range"] { width: 100%; }
 /* ---------- Mentor ---------- */
 
 .thread { display: grid; gap: var(--s5); margin: 0; padding: 0; }
+/* The composer (.thumb) is `position: sticky`, so it paints above ordinary
+   document flow (positioned elements always do, regardless of z-index) for
+   the entire scrollable range short of the document's true end — a sticky
+   footer covering the viewport's bottom edge while scrolling is normal and
+   expected. It becomes a bug only because the newest message can carry its
+   own interactive Confirm/Discard buttons: reserving trailing space in the
+   thread doesn't help (the danger band just relocates with it, same width),
+   so ChatThread.tsx auto-scrolls the newest message into view on every
+   update, and this margin is what makes that land clear of the composer
+   instead of at its very edge. var(--s8)*2 comfortably exceeds the
+   composer's own rendered height (label + single-row textarea + button,
+   ~110-120px). */
+.thread > .msg:last-child { scroll-margin-bottom: calc(var(--s8) * 2); }
 .msg { display: grid; gap: var(--s2); }
 .msg p { margin: 0; max-width: 68ch; }
 .msg.from-dept .body {
