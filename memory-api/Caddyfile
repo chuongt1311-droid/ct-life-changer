@@ -1,0 +1,4 @@
+# memory-api/Caddyfile — replace with your actual subdomain
+memory.yourdomain.com {
+  reverse_proxy memory-api:3001
+}

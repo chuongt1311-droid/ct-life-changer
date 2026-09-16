@@ -1,0 +1,41 @@
+# memory-api/docker-compose.yml
+services:
+  falkordb:
+    image: falkordb/falkordb:latest
+    restart: unless-stopped
+    environment:
+      - REDIS_ARGS=--requirepass ${FALKORDB_PASSWORD} --appendonly yes
+    volumes:
+      - falkordb-data:/data
+    # No `ports:` — reachable only from other containers on this compose
+    # network, never from the host's public interface.
+
+  memory-api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - falkordb
+    environment:
+      - MEMORY_API_TOKEN=${MEMORY_API_TOKEN}
+      - MEMORY_API_PORT=3001
+      - FALKORDB_HOST=falkordb
+      - FALKORDB_PORT=6379
+      - FALKORDB_PASSWORD=${FALKORDB_PASSWORD}
+    expose:
+      - '3001'
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - memory-api
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+
+volumes:
+  falkordb-data:
+  caddy-data:
