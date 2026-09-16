@@ -19,14 +19,35 @@ export async function POST(request: Request) {
 
   const generator = chat(client, createAnthropicClient(), params, date, message);
   const encoder = new TextEncoder();
+  // Driven from `start`, not `pull`: a client that disconnects mid-turn
+  // (navigates away before the reply finishes) stops the stream from being
+  // read, which stops `pull` from ever firing again — abandoning `chat()`
+  // before its final `logMentorMessage` write and leaving that turn's
+  // assistant message stuck as the empty placeholder written before
+  // streaming started, permanently. Draining the generator here instead
+  // keeps every turn's DB writes running to completion regardless of
+  // whether anyone is still listening; a failed `enqueue` after the client
+  // is gone just stops forwarding output; it doesn't stop the turn.
   const stream = new ReadableStream({
-    async pull(controller) {
-      const next = await generator.next();
-      if (next.done) {
-        controller.close();
-        return;
-      }
-      controller.enqueue(encoder.encode(JSON.stringify(next.value) + '\n'));
+    start(controller) {
+      void (async () => {
+        try {
+          for await (const event of generator) {
+            try {
+              controller.enqueue(encoder.encode(JSON.stringify(event) + '\n'));
+            } catch {
+              // Client disconnected — keep draining the generator so its
+              // side effects (the DB write) still complete.
+            }
+          }
+        } finally {
+          try {
+            controller.close();
+          } catch {
+            // Already closed/errored (e.g. the client disconnected).
+          }
+        }
+      })();
     },
   });
 
