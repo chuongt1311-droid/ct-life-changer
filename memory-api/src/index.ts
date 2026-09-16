@@ -3,6 +3,7 @@ import { requireBearerToken } from './auth';
 import { connectGraph } from './falkor';
 import { writeMemory } from './writeMemory';
 import { queryMemory } from './queryMemory';
+import { listMentorMemories, deleteMemory } from './mentorMemories';
 
 const PORT = Number(process.env.MEMORY_API_PORT ?? 3001);
 const TOKEN = process.env.MEMORY_API_TOKEN;
@@ -31,6 +32,23 @@ async function main() {
       if (!question) return res.status(400).json({ error: 'question is required' });
       const text = await queryMemory(graph, question, maxChars);
       res.json({ text });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'bad request' });
+    }
+  });
+
+  app.get('/memory/mentor', async (_req, res) => {
+    try {
+      res.json({ memories: await listMentorMemories(graph) });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'bad request' });
+    }
+  });
+
+  app.delete('/memory/:id', async (req, res) => {
+    try {
+      await deleteMemory(graph, req.params.id);
+      res.json({ ok: true });
     } catch (err) {
       res.status(400).json({ error: err instanceof Error ? err.message : 'bad request' });
     }
