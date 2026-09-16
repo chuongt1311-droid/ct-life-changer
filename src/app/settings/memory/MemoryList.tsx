@@ -7,18 +7,33 @@ import { deleteMentorMemoryAction } from './actions';
 export function MemoryList({ initial }: { initial: MentorMemoryRow[] }) {
   const [memories, setMemories] = useState(initial);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
 
   async function remove(id: string) {
     setBusyId(id);
-    await deleteMentorMemoryAction(id);
-    setMemories((list) => list.filter((m) => m.id !== id));
-    setBusyId(null);
+    setErrors([]);
+    try {
+      await deleteMentorMemoryAction(id);
+      setMemories((list) => list.filter((m) => m.id !== id));
+    } catch {
+      setErrors(['Something went wrong deleting this. Try again.']);
+    } finally {
+      setBusyId(null);
+    }
   }
 
   if (memories.length === 0) return <p className="empty">The mentor hasn&apos;t saved anything about you yet.</p>;
 
   return (
-    <ul className="sessions plain">
+    <>
+      {errors.length > 0 && (
+        <ul className="empty" role="alert">
+          {errors.map((e) => (
+            <li key={e}>{e}</li>
+          ))}
+        </ul>
+      )}
+      <ul className="sessions plain">
       {memories.map((m) => (
         <li key={m.id} data-rank="next">
           <span className="what">
@@ -30,6 +45,7 @@ export function MemoryList({ initial }: { initial: MentorMemoryRow[] }) {
           </button>
         </li>
       ))}
-    </ul>
+      </ul>
+    </>
   );
 }
