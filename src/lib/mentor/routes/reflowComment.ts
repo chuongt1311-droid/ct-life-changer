@@ -19,7 +19,12 @@ export async function reflowComment(
   if (cap.over) return { text: capReachedMessage(new Date()), fallback: true };
 
   const instruction = `CT just reflowed today's plan. Here's what changed: ${diffSummary}\nOne short comment, under ~60 words.`;
-  const input = await assembleMentorContext(client, { systemPrompt: loadSystemPrompt(), date, request: instruction });
+  const input = await assembleMentorContext(client, {
+    systemPrompt: loadSystemPrompt(),
+    date,
+    request: instruction,
+    memoryQuery: `changes to today's plan ${date}: ${diffSummary}`,
+  });
   const ctx = buildMentorContext(input);
 
   try {

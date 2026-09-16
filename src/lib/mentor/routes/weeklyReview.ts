@@ -31,7 +31,12 @@ export async function weeklyReview(
   const cap = await checkCap(client, params.ownerId, params.monthlyCapUsd, new Date());
   if (cap.over) return { ...weeklyReviewFallback(), letter: capReachedMessage(new Date()), fallback: true };
 
-  const input = await assembleMentorContext(client, { systemPrompt: loadSystemPrompt(), date: weekStart, request: WEEKLY_REVIEW_INSTRUCTION });
+  const input = await assembleMentorContext(client, {
+    systemPrompt: loadSystemPrompt(),
+    date: weekStart,
+    request: WEEKLY_REVIEW_INSTRUCTION,
+    memoryQuery: `weekly review for the week of ${weekStart}`,
+  });
   const ctx = buildMentorContext(input);
 
   try {

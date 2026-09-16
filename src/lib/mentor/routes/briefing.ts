@@ -25,7 +25,12 @@ export async function briefing(
   const cap = await checkCap(client, params.ownerId, params.monthlyCapUsd, new Date());
   if (cap.over) return { text: capReachedMessage(new Date()), fallback: true };
 
-  const input = await assembleMentorContext(client, { systemPrompt: loadSystemPrompt(), date, request: BRIEFING_INSTRUCTION });
+  const input = await assembleMentorContext(client, {
+    systemPrompt: loadSystemPrompt(),
+    date,
+    request: BRIEFING_INSTRUCTION,
+    memoryQuery: `today's briefing ${date}`,
+  });
   const ctx = buildMentorContext(input);
 
   try {

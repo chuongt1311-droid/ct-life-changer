@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { RepositoryClient } from '@/lib/db/repository';
+import { queryMemory } from '@/lib/memory/client';
 import { assembleMentorContext } from './assembleContext';
 
 vi.mock('@/lib/memory/client', () => ({ queryMemory: vi.fn().mockResolvedValue('retrieved text') }));
@@ -82,6 +83,23 @@ describe('assembleMentorContext', () => {
     const client = fakeClient({});
     const input = await assembleMentorContext(client, { systemPrompt: 'sys', date: '2026-09-16', request: 'hi' });
     expect(input.retrievedMemory).toBe('retrieved text');
+  });
+
+  it('searches memory on the request when no memoryQuery is given (the chat route)', async () => {
+    const client = fakeClient({});
+    await assembleMentorContext(client, { systemPrompt: 'sys', date: '2026-09-16', request: 'why am I so tired' });
+    expect(vi.mocked(queryMemory)).toHaveBeenCalledWith('why am I so tired');
+  });
+
+  it('searches memory on memoryQuery when given, not the fixed instruction prompt', async () => {
+    const client = fakeClient({});
+    await assembleMentorContext(client, {
+      systemPrompt: 'sys',
+      date: '2026-09-16',
+      request: 'Give CT their morning briefing: ...long fixed instruction...',
+      memoryQuery: "today's briefing 2026-09-16",
+    });
+    expect(vi.mocked(queryMemory)).toHaveBeenCalledWith("today's briefing 2026-09-16");
   });
 
   it('passes the system prompt, request, and chat history straight through', async () => {

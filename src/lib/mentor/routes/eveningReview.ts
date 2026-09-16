@@ -42,7 +42,12 @@ export async function eveningReview(
   const eveningCheckins = await repositories(client).checkins.list({ date, type: 'evening' } as never);
   const localCrisis = eveningCheckins.some((c) => checkCrisisKeywords(freeTextValues(c.sections)));
 
-  const input = await assembleMentorContext(client, { systemPrompt: loadSystemPrompt(), date, request: EVENING_REVIEW_INSTRUCTION });
+  const input = await assembleMentorContext(client, {
+    systemPrompt: loadSystemPrompt(),
+    date,
+    request: EVENING_REVIEW_INSTRUCTION,
+    memoryQuery: `evening review for ${date}`,
+  });
   const ctx = buildMentorContext(input);
 
   try {

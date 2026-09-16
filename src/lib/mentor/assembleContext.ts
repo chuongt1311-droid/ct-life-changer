@@ -8,6 +8,12 @@ export interface AssembleContextParams {
   systemPrompt: string;
   date: string;
   request: string;
+  /** What to search the memory graph for. `chat` leaves this unset, so
+   * retrieval runs on CT's real message. Every other route passes a short
+   * date/state-derived query instead — their `request` is a fixed
+   * instruction prompt, and searching on it would just match its own
+   * boilerplate rather than anything about this day or week. */
+  memoryQuery?: string;
   chatHistory?: { role: 'user' | 'assistant'; content: string }[];
 }
 
@@ -23,7 +29,7 @@ export async function assembleMentorContext(client: RepositoryClient, params: As
     repos.plans.list({ date: params.date } as never),
     repos.blocks.list({ date: params.date } as never),
     repos.checkins.list({ date: params.date } as never),
-    queryMemory(params.request),
+    queryMemory(params.memoryQuery ?? params.request),
   ]);
 
   const latestProfileVersion = [...profileVersions].sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
