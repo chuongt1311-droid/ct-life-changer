@@ -1,0 +1,17 @@
+# memory-api/.dockerignore
+#
+# DEPLOY.md has CT create memory-api/.env before the first build, so
+# without this the Dockerfile's `COPY . .` would bake those secrets into
+# an image layer. The same COPY would also stomp the container's
+# just-installed node_modules with the host's (Windows-native) ones.
+
+node_modules
+.env
+.env.*
+dist
+.git
+.gitignore
+
+# Build/dev noise that has no business in the image.
+npm-debug.log*
+*.log

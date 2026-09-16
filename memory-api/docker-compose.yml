@@ -7,8 +7,13 @@ services:
       - REDIS_ARGS=--requirepass ${FALKORDB_PASSWORD} --appendonly yes
     volumes:
       - falkordb-data:/data
-    # No `ports:` — reachable only from other containers on this compose
-    # network, never from the host's public interface.
+    # Bound to the VPS's loopback only — never a public port. Other
+    # containers reach it over the compose network; CT reaches it for a
+    # graphify import through an SSH tunnel (see DEPLOY.md), which lands
+    # on the VPS host's own localhost:6379. Dropping the `127.0.0.1:`
+    # prefix would publish it to the world.
+    ports:
+      - '127.0.0.1:6379:6379'
 
   memory-api:
     build: .
