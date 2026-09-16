@@ -5,6 +5,7 @@ import { repositories } from '@/lib/db/repositories';
 import { getWeeklyMetrics } from '@/lib/db/weeklyMetrics';
 import { weeklyReview } from '@/lib/mentor/routes/weeklyReview';
 import type { MentorRouteParams } from '@/lib/mentor/routes/briefing';
+import { writeMemory } from '@/lib/memory/client';
 
 export interface WeeklyReviewResult {
   letter: string;
@@ -52,6 +53,7 @@ export async function runWeeklyReview(
     changes: result.changes as unknown as Record<string, unknown>,
     profile_version_id: newVersion.id,
   });
+  void writeMemory('WeeklyLetter', { weekStart, text: result.letter });
 
   return result;
 }

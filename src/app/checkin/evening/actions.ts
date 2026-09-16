@@ -10,6 +10,7 @@ import { DEFAULT_SETTINGS } from '@/core/types';
 import { submitEveningCheckin, type EveningCheckinInput } from '@/lib/checkins/submitCheckin';
 import { generateTomorrowPlan } from '@/lib/planner/generateTomorrowPlan';
 import { eveningReview } from '@/lib/mentor/routes/eveningReview';
+import { writeMemory } from '@/lib/memory/client';
 
 export async function submitEveningCheckinAction(
   input: EveningCheckinInput,
@@ -40,6 +41,7 @@ export async function submitEveningCheckinAction(
     text: review.fallback ? null : review.digest,
     attempts: 1,
   });
+  if (!review.fallback) void writeMemory('DailyDigest', { date: planDate, text: review.digest });
 
   await generateTomorrowPlan(client, user.id, planDate);
 

@@ -9,6 +9,7 @@ import { ensureTodayPlan } from '@/lib/planner/ensureTodayPlan';
 import { assembleNudgeInput } from '@/lib/nudges/assembleNudgeInput';
 import { eveningReview } from '@/lib/mentor/routes/eveningReview';
 import { runWeeklyReview } from '@/lib/mentor/runWeeklyReview';
+import { writeMemory } from '@/lib/memory/client';
 
 export interface CronTickDeps {
   client: RepositoryClient;
@@ -88,6 +89,7 @@ export async function runCronTick(deps: CronTickDeps): Promise<CronTickResult> {
   if (digestRow && digestRow.text === null && digestRow.attempts < DIGEST_MAX_ATTEMPTS) {
     const review = await eveningReview(client, anthropic, { ownerId, model: settings.model, monthlyCapUsd: settings.monthlyCapUsd }, planDate);
     await repos.digests.upsert({ date: planDate, owner_id: ownerId, text: review.fallback ? null : review.digest, attempts: digestRow.attempts + 1 });
+    if (!review.fallback) void writeMemory('DailyDigest', { date: planDate, text: review.digest });
     digestRetried = true;
   }
 
