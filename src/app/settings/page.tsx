@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { isOwner } from '@/lib/auth/isOwner';
 import { repositories } from '@/lib/db/repositories';
@@ -34,6 +35,10 @@ export default async function SettingsPage() {
       <div className="stepback">
         <Placard>Export</Placard>
         <ExportLinks />
+        <Placard>Mentor memory</Placard>
+        <Link className="btn btn-quiet" href="/settings/memory">
+          View what the mentor has saved about you
+        </Link>
       </div>
     </main>
   );
