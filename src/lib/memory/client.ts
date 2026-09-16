@@ -12,14 +12,24 @@ function configured(): { url: string; token: string } | null {
   return { url, token };
 }
 
+function withTimeout(): { controller: AbortController; signal: AbortSignal } {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  // Clean up timeout on abort to prevent leaks
+  controller.signal.addEventListener('abort', () => clearTimeout(timeout));
+  return { controller, signal: controller.signal };
+}
+
 export async function writeMemory(label: 'DailyDigest' | 'WeeklyLetter' | 'MentorMemory', properties: Record<string, unknown>): Promise<void> {
   const cfg = configured();
   if (!cfg) return;
   try {
+    const { signal } = withTimeout();
     await fetch(`${cfg.url}/memory`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.token}` },
       body: JSON.stringify({ label, properties }),
+      signal,
     });
   } catch {
     // Fire-and-forget: a memory-api outage must never break the caller.
@@ -30,10 +40,12 @@ export async function queryMemory(question: string): Promise<string> {
   const cfg = configured();
   if (!cfg) return '';
   try {
+    const { signal } = withTimeout();
     const res = await fetch(`${cfg.url}/memory/query`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.token}` },
       body: JSON.stringify({ question }),
+      signal,
     });
     if (!res.ok) return '';
     const data = (await res.json()) as { text: string };
@@ -54,7 +66,8 @@ export async function listMentorMemories(): Promise<MentorMemoryRow[]> {
   const cfg = configured();
   if (!cfg) return [];
   try {
-    const res = await fetch(`${cfg.url}/memory/mentor`, { headers: { Authorization: `Bearer ${cfg.token}` } });
+    const { signal } = withTimeout();
+    const res = await fetch(`${cfg.url}/memory/mentor`, { headers: { Authorization: `Bearer ${cfg.token}` }, signal });
     if (!res.ok) return [];
     const data = (await res.json()) as { memories: MentorMemoryRow[] };
     return data.memories;
@@ -67,7 +80,8 @@ export async function deleteMemory(id: string): Promise<void> {
   const cfg = configured();
   if (!cfg) return;
   try {
-    await fetch(`${cfg.url}/memory/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${cfg.token}` } });
+    const { signal } = withTimeout();
+    await fetch(`${cfg.url}/memory/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${cfg.token}` }, signal });
   } catch {
     // A failed delete leaves the memory visible for CT to try again — no
     // silent data loss either way, and the settings page re-fetches after.
