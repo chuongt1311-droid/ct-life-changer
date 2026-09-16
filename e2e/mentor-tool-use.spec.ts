@@ -1,9 +1,21 @@
 import { test, expect } from '@playwright/test';
 import { createAdminSupabase } from '../src/lib/supabase/admin';
+import { repositories } from '../src/lib/db/repositories';
+import type { RepositoryClient } from '../src/lib/db/repository';
+import { settingsToDomain } from '../src/lib/db/settingsMapping';
+import { planClock } from '../src/core/time';
 
 test('confirming a mentor proposal actually changes the schedule', async ({ page }) => {
   const admin = createAdminSupabase();
-  const today = new Date().toISOString().slice(0, 10);
+  // `new Date().toISOString().slice(0, 10)` is a naive UTC date — it drifted
+  // from the app's own idea of "today" the moment the real calendar date
+  // rolled over mid-test-run (planClock uses a timezone-aware day boundary,
+  // not literal midnight UTC), causing this test to seed fixtures for a
+  // date the mentor page was never looking at. Compute it the same way the
+  // app does instead.
+  const settingsRow = await repositories(admin as unknown as RepositoryClient).settings.get();
+  const settings = settingsToDomain(settingsRow!);
+  const { planDate: today } = planClock(new Date(), settings.timezone);
   const ownerEmail = process.env.OWNER_EMAIL!;
   const { data: usersPage } = await admin.auth.admin.listUsers();
   const ownerId = usersPage!.users.find((u) => u.email?.toLowerCase() === ownerEmail.toLowerCase())!.id;

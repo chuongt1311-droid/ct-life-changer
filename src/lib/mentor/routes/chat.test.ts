@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { DEFAULT_SETTINGS } from '@/core/types';
 import { fakeClient } from '@/lib/testing/fakeClient';
+import type { RepositoryClient } from '@/lib/db/repository';
 import { chat } from './chat';
 
 const settingsRow = {
@@ -43,6 +44,82 @@ function fakeAnthropicError() {
   return { beta: { messages: { toolRunner } } };
 }
 
+/** `fakeClient` (unlike real Postgres) doesn't enforce foreign keys, so it
+ * couldn't have caught the real bug this guards against: a tool's proposal
+ * row references this turn's not-yet-logged assistant message, and real
+ * Postgres rejects that with error 23503 (confirmed by direct reproduction
+ * against the test project). This wraps `fakeClient` to enforce that one
+ * relationship the same way, so a regression here fails fast in a unit
+ * test instead of only being discoverable by clicking through in prod. */
+function withMentorProposalsForeignKey(client: ReturnType<typeof fakeClient>): RepositoryClient {
+  const originalFrom = client.from.bind(client);
+  return {
+    ...client,
+    from: (table: string) => {
+      const base = originalFrom(table);
+      if (table !== 'mentor_proposals') return base;
+      return {
+        ...base,
+        upsert: (row: Record<string, unknown>) => {
+          const exists = (client.tables.mentor_messages ?? []).some((m) => m.id === row.message_id);
+          if (!exists) {
+            return {
+              select: () => ({
+                single: async () => ({
+                  data: null,
+                  error: { message: `insert or update on table "mentor_proposals" violates foreign key constraint "mentor_proposals_message_id_fkey"` },
+                }),
+              }),
+            };
+          }
+          return base.upsert(row);
+        },
+      };
+    },
+  };
+}
+
+/** A fake Anthropic client that actually runs the tool the model "calls" —
+ * mirroring the real SDK's `generateToolResponse` (BetaToolRunner.js):
+ * parse the input, await `tool.run(...)`, turn a thrown error into an
+ * `is_error` tool_result instead of letting it escape. First iteration
+ * emits the tool_use and no text; second iteration is the model's
+ * follow-up text after seeing the tool result. */
+function fakeAnthropicWithToolCall(toolName: string, toolInput: unknown) {
+  const toolRunner = vi.fn((callArgs: { tools: { name: string; parse?: (i: unknown) => unknown; run: (i: unknown, ctx: unknown) => Promise<unknown> }[] }) => {
+    async function* runner() {
+      const tool = callArgs.tools.find((t) => t.name === toolName)!;
+      yield {
+        [Symbol.asyncIterator]: async function* () {
+          /* no text this iteration */
+        },
+        finalMessage: async () => ({
+          content: [{ type: 'tool_use', id: 'tu1', name: toolName, input: toolInput }],
+          usage: { input_tokens: 5, output_tokens: 5, cache_read_input_tokens: null, cache_creation_input_tokens: null },
+        }),
+      };
+
+      let replyText = 'Done.';
+      try {
+        const parsed = tool.parse ? tool.parse(toolInput) : toolInput;
+        await tool.run(parsed, { toolUse: { type: 'tool_use', id: 'tu1', name: toolName, input: toolInput } });
+      } catch (e) {
+        replyText = `Ran into: ${e instanceof Error ? e.message : String(e)}`;
+      }
+
+      async function* fakeEvents() {
+        yield { type: 'content_block_delta', delta: { type: 'text_delta', text: replyText } };
+      }
+      yield {
+        [Symbol.asyncIterator]: fakeEvents,
+        finalMessage: async () => ({ usage: { input_tokens: 5, output_tokens: 5, cache_read_input_tokens: null, cache_creation_input_tokens: null } }),
+      };
+    }
+    return { [Symbol.asyncIterator]: runner };
+  });
+  return { beta: { messages: { toolRunner } } };
+}
+
 async function collect(gen: AsyncGenerator<{ type: string; text?: string }, { fallback: boolean }, void>) {
   const events: { type: string; text?: string }[] = [];
   let next = await gen.next();
@@ -69,6 +146,26 @@ describe('chat with tools', () => {
     expect(assistantRows).toHaveLength(1);
     expect(assistantRows[0]!.content).toBe('Sounds good.');
     expect(client.tables.usage).toHaveLength(1);
+  });
+
+  it('logs the assistant message before running tools, so a successful proposal can reference it', async () => {
+    const client = withMentorProposalsForeignKey(
+      fakeClient({
+        settings: [settingsRow],
+        plans: [{ date: '2026-09-15', owner_id: 'ct', state: 'ready', flags: [], adjustments: [], overridden: false }],
+        blocks: [{ id: 'deep', owner_id: 'ct', date: '2026-09-15', title: 'Deep work', kind: 'task', anchor: false, priority: 3, start: 540, end: 600, min_minutes: 30, window_start: null, window_end: null, tags: [], checklist: [], recovery_variant: null, status: 'planned', source: 'template' }],
+      }),
+    );
+    const anthropic = fakeAnthropicWithToolCall('propose_schedule_edit', { date: '2026-09-15', edits: [{ type: 'resize', blockId: 'deep', durationMin: 90 }] });
+    const gen = chat(client, anthropic as never, { ownerId: 'ct', model: 'claude-sonnet-5', monthlyCapUsd: 12 }, '2026-09-15', 'Can you make deep work longer?');
+    const events: unknown[] = [];
+    for await (const event of gen) events.push(event);
+
+    // Before the fix: mentor_proposals.upsert failed with the simulated FK
+    // error, the tool caught it and told the model "Ran into: ...", and no
+    // proposal event or row was ever produced.
+    expect(events).toContainEqual({ type: 'text', text: 'Done.' });
+    expect((client as unknown as ReturnType<typeof fakeClient>).tables.mentor_proposals).toHaveLength(1);
   });
 
   it('yields the canned fallback and reports fallback:true when the tool runner errors', async () => {

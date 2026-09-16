@@ -57,10 +57,19 @@ export async function* chat(
   const settings = settingsToDomain(settingsRow!);
   const { planDate: todayDate } = planClock(new Date(), settings.timezone);
 
-  // Pre-generated: a tool's proposal row must reference this turn's
-  // assistant message id before that message is logged (logging only
-  // happens once the whole turn — including every tool call — is done).
+  // A tool's proposal row references this turn's assistant message id via
+  // `mentor_proposals.message_id`, a real foreign key — that row must
+  // already exist by the time a tool call succeeds, not just by the time
+  // the whole turn finishes. Log a placeholder now (empty content) so any
+  // tool call mid-turn always has something to point to; the final
+  // `logMentorMessage` below overwrites this same id with the real content
+  // once the turn actually completes (upsert-by-id, not a second row).
+  // Confirmed as a real bug, not a hypothetical one: propose_schedule_edit
+  // and propose_template_edit both failed with Postgres error 23503
+  // ("violates foreign key constraint") every time they reached a genuinely
+  // valid edit, before this fix existed.
   const assistantMessageId = crypto.randomUUID();
+  await logMentorMessage(client, { ownerId: params.ownerId, date, route: 'chat', role: 'assistant', content: '', stateAtTime: null, usageId: null, id: assistantMessageId });
   const { tools, proposals } = buildMentorTools({ client, ownerId: params.ownerId, messageId: assistantMessageId, todayDate, now: new Date() });
 
   try {
@@ -101,7 +110,12 @@ export async function* chat(
     await logMentorMessage(client, { ownerId: params.ownerId, date, route: 'chat', role: 'assistant', content: fullText, stateAtTime: input.today.state, usageId: usageRow.id, id: assistantMessageId });
     return { fallback: false };
   } catch {
-    yield { type: 'text', text: routeFallbackText('chat') };
+    const fallbackText = routeFallbackText('chat');
+    yield { type: 'text', text: fallbackText };
+    // Overwrite the placeholder with the real fallback text — otherwise it
+    // sits in mentor_messages as a permanently blank assistant turn and
+    // leaks into every future call's loadChatHistory.
+    await logMentorMessage(client, { ownerId: params.ownerId, date, route: 'chat', role: 'assistant', content: fallbackText, stateAtTime: null, usageId: null, id: assistantMessageId });
     return { fallback: true };
   }
 }
