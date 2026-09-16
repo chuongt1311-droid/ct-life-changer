@@ -38,4 +38,14 @@ describe('queryMemory', () => {
     // No real keywords survive filtering, so no CONTAINS query should even run.
     expect((graph.roQuery as ReturnType<typeof vi.fn>).mock.calls.length).toBe(0);
   });
+
+  it('propagates errors from graph.roQuery', async () => {
+    const graph: GraphClient = {
+      query: vi.fn(async () => ({ data: [] })),
+      roQuery: vi.fn(async () => {
+        throw new Error('FalkorDB connection failed');
+      }),
+    };
+    await expect(queryMemory(graph, 'test')).rejects.toThrow('FalkorDB connection failed');
+  });
 });

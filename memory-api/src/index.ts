@@ -26,10 +26,14 @@ async function main() {
   });
 
   app.post('/memory/query', async (req, res) => {
-    const { question, maxChars } = req.body as { question?: string; maxChars?: number };
-    if (!question) return res.status(400).json({ error: 'question is required' });
-    const text = await queryMemory(graph, question, maxChars);
-    res.json({ text });
+    try {
+      const { question, maxChars } = req.body as { question?: string; maxChars?: number };
+      if (!question) return res.status(400).json({ error: 'question is required' });
+      const text = await queryMemory(graph, question, maxChars);
+      res.json({ text });
+    } catch (err) {
+      res.status(400).json({ error: err instanceof Error ? err.message : 'bad request' });
+    }
   });
 
   app.listen(PORT, () => console.log(`memory-api listening on ${PORT}`));
