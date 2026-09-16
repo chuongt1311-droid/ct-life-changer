@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { DEFAULT_SETTINGS } from '@/core/types';
 import { fakeClient } from '@/lib/testing/fakeClient';
 import { buildMentorTools } from './tools';
@@ -96,5 +96,34 @@ describe('buildMentorTools', () => {
     expect(proposals).toHaveLength(1);
     expect(proposals[0]!.kind).toBe('template');
     expect((proposals[0]!.diff as { reason: string }[])[0]!.reason).toMatch(/60 to 90/);
+  });
+
+  it('search_memory returns the retrieved text', async () => {
+    vi.doMock('@/lib/memory/client', () => ({ queryMemory: vi.fn().mockResolvedValue('past pattern found'), writeMemory: vi.fn() }));
+    // vi.doMock only affects imports that happen after this call, and only
+    // for modules not already in the registry — the file-top
+    // `import { buildMentorTools } from './tools'` was already resolved
+    // (and cached, along with its import of '@/lib/memory/client') before
+    // this test ran. vi.resetModules() clears that cache so the dynamic
+    // re-import below re-evaluates './tools' against the mocked client.
+    vi.resetModules();
+    const { buildMentorTools: buildMentorToolsMocked } = await import('./tools');
+    const client = fakeClient({ settings: [settingsRow] });
+    const { tools } = buildMentorToolsMocked({ client, ownerId: 'ct', messageId: 'm1', todayDate: '2026-09-15', now: new Date('2026-09-15T12:00:00Z') });
+    const searchMemory = tools.find((t) => t.name === 'search_memory')!;
+    const result = await searchMemory.run(searchMemory.parse({ query: 'deep work' }));
+    expect(result).toContain('past pattern found');
+  });
+
+  it('remember writes a MentorMemory with the given confidence', async () => {
+    const writeMemoryMock = vi.fn();
+    vi.doMock('@/lib/memory/client', () => ({ queryMemory: vi.fn(), writeMemory: writeMemoryMock }));
+    vi.resetModules();
+    const { buildMentorTools: buildMentorToolsMocked } = await import('./tools');
+    const client = fakeClient({ settings: [settingsRow] });
+    const { tools } = buildMentorToolsMocked({ client, ownerId: 'ct', messageId: 'm1', todayDate: '2026-09-15', now: new Date('2026-09-15T12:00:00Z') });
+    const remember = tools.find((t) => t.name === 'remember')!;
+    await remember.run(remember.parse({ text: 'CT prefers mornings for deep work', confidence: 'medium' }));
+    expect(writeMemoryMock).toHaveBeenCalledWith('MentorMemory', expect.objectContaining({ text: 'CT prefers mornings for deep work', confidence: 'medium' }));
   });
 });

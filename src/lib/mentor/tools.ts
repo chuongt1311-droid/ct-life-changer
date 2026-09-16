@@ -9,6 +9,7 @@ import { planClock } from '@/core/time';
 import { settingsToDomain } from '@/lib/db/settingsMapping';
 import type { PlanEdit } from '@/core/planner/edits';
 import { blockKind, priority, templateBlockSchema, type TemplateRow } from '@/lib/db/schemas';
+import { queryMemory, writeMemory } from '@/lib/memory/client';
 
 /** The tools' `input_schema` only tells the model the outer shape (an array
  * of objects) — Anthropic's tool use doesn't enforce per-field types the way
@@ -156,5 +157,38 @@ export function buildMentorTools(params: BuildMentorToolsParams): { tools: BetaR
     },
   };
 
-  return { tools: [readSchedule, proposeScheduleEdit, proposeTemplateEdit], proposals };
+  const searchMemory: BetaRunnableTool<{ query: string }> = {
+    name: 'search_memory',
+    description: "Search CT's memory graph — past digests, weekly letters, your own past inferences, and anything CT has imported from their own notes or other projects. Use this before answering something that might already have a documented pattern or past decision behind it.",
+    input_schema: {
+      type: 'object',
+      properties: { query: { type: 'string', description: 'What to search for, in plain language' } },
+      required: ['query'],
+    },
+    parse: (input) => input as { query: string },
+    run: async ({ query }) => {
+      const text = await queryMemory(query);
+      return text || 'Nothing found in memory for that.';
+    },
+  };
+
+  const remember: BetaRunnableTool<{ text: string; confidence: 'low' | 'medium' | 'high' }> = {
+    name: 'remember',
+    description: "Save a fact you've inferred about CT to memory, so future conversations don't need to be re-told it. State your own confidence honestly — CT can see and delete anything you save here.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        text: { type: 'string' },
+        confidence: { type: 'string', enum: ['low', 'medium', 'high'] },
+      },
+      required: ['text', 'confidence'],
+    },
+    parse: (input) => input as { text: string; confidence: 'low' | 'medium' | 'high' },
+    run: async ({ text, confidence }) => {
+      await writeMemory('MentorMemory', { text, confidence, conversationDate: params.todayDate });
+      return 'Saved.';
+    },
+  };
+
+  return { tools: [readSchedule, proposeScheduleEdit, proposeTemplateEdit, searchMemory, remember], proposals };
 }
