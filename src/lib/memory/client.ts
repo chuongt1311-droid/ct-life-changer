@@ -35,9 +35,11 @@ export async function writeMemory(label: 'DailyDigest' | 'WeeklyLetter' | 'Mento
       body: JSON.stringify({ label, properties }),
       signal,
     });
+    if (!res.ok) console.error(`writeMemory: memory-api responded ${res.status}`);
     return res.ok;
-  } catch {
+  } catch (err) {
     // Fire-and-forget: a memory-api outage must never break the caller.
+    console.error('writeMemory: request failed', err instanceof Error ? err.message : String(err));
     return false;
   }
 }
@@ -53,10 +55,14 @@ export async function queryMemory(question: string): Promise<string> {
       body: JSON.stringify({ question }),
       signal,
     });
-    if (!res.ok) return '';
+    if (!res.ok) {
+      console.error(`queryMemory: memory-api responded ${res.status}`);
+      return '';
+    }
     const data = (await res.json()) as { text: string };
     return data.text;
-  } catch {
+  } catch (err) {
+    console.error('queryMemory: request failed', err instanceof Error ? err.message : String(err));
     return '';
   }
 }
