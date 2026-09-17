@@ -35,7 +35,7 @@ export async function writeMemory(label: 'DailyDigest' | 'WeeklyLetter' | 'Mento
       body: JSON.stringify({ label, properties }),
       signal,
     });
-    if (!res.ok) console.error(`writeMemory: memory-api responded ${res.status}`);
+    if (!res.ok) console.error(`writeMemory: memory-api responded ${res.status}`, await res.text().catch(() => ''));
     return res.ok;
   } catch (err) {
     // Fire-and-forget: a memory-api outage must never break the caller.
