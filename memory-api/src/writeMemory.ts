@@ -25,6 +25,29 @@ const NATURAL_KEY: Partial<Record<MemoryLabel, string>> = {
   WeeklyLetter: 'weekStart',
 };
 
+const IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+/** FalkorDB's inline-parameter mechanism can bind a parameter to a flat
+ * scalar or array value, but its parser rejects a parameter whose VALUE is
+ * itself a map/object — "Encountered unhandled type in inlined
+ * properties." — confirmed directly against a live FalkorDB instance, not
+ * assumed from docs. So instead of sending a whole properties object as
+ * one `$props` parameter, every property becomes its own top-level scalar
+ * parameter, referenced by name in a map literal built into the query
+ * text itself. Cypher map keys are identifiers, not values — they can
+ * never be bound as parameters — so they're validated against a strict
+ * identifier pattern before being interpolated, the same way
+ * `assertKnownLabel` already guards the label. */
+function assertValidKeys(props: Record<string, unknown>): void {
+  for (const key of Object.keys(props)) {
+    if (!IDENTIFIER.test(key)) throw new Error(`invalid property key: ${key}`);
+  }
+}
+
+function mapLiteral(keys: string[]): string {
+  return `{${keys.map((k) => `${k}: $${k}`).join(', ')}}`;
+}
+
 /** Chains DailyDigest → DailyDigest and WeeklyLetter → WeeklyLetter nodes
  * by date/weekStart order, for cheap "what happened around then"
  * traversal at query time. MentorMemory nodes aren't chained in v1 — see
@@ -51,9 +74,10 @@ async function linkToPrevious(graph: GraphClient, label: MemoryLabel, id: string
 
 export async function writeMemory(graph: GraphClient, input: WriteMemoryInput): Promise<{ id: string }> {
   assertKnownLabel(input.label);
+  assertValidKeys(input.properties);
   const id = randomUUID();
   const source = input.label === 'MentorMemory' ? 'mentor-inferred' : 'app';
-  const params = { id, source, createdAt: new Date().toISOString(), ...input.properties };
+  const params: Record<string, unknown> = { id, source, createdAt: new Date().toISOString(), ...input.properties };
 
   const keyProp = NATURAL_KEY[input.label];
   const keyValue = keyProp ? input.properties[keyProp] : undefined;
@@ -69,17 +93,19 @@ export async function writeMemory(graph: GraphClient, input: WriteMemoryInput): 
     // same node however many times it's written. Without this, re-running
     // the backfill duplicates every node, and a real check-in between
     // deploy and backfill gets a second node for the same date.
-    // ON MATCH deliberately leaves `id` and `createdAt` alone so existing
-    // edges and anything already holding the id stay valid.
-    const { id: _newId, createdAt: _newCreatedAt, ...updates } = params;
+    // ON MATCH deliberately leaves `id`/`createdAt` out of its SET clause
+    // so existing edges and anything already holding the id stay valid.
+    const { id: _newId, createdAt: _newCreatedAt, ...updateFields } = params;
+    const updateKeys = Object.keys(updateFields);
+    const setClause = updateKeys.map((k) => `n.${k} = $${k}`).join(', ');
     const result = await graph.query(
-      `MERGE (n:${input.label} {${keyProp}: $key}) ON CREATE SET n = $props ON MATCH SET n += $updates RETURN n.id`,
-      { key: keyValue, props: params, updates },
+      `MERGE (n:${input.label} {${keyProp}: $key}) ON CREATE SET n = ${mapLiteral(Object.keys(params))} ON MATCH SET ${setClause} RETURN n.id`,
+      { key: keyValue, ...params },
     );
     const existingId = result.data[0]?.[0];
     if (typeof existingId === 'string') effectiveId = existingId;
   } else {
-    await graph.query(`CREATE (n:${input.label} $props)`, { props: params });
+    await graph.query(`CREATE (n:${input.label} ${mapLiteral(Object.keys(params))})`, params);
   }
   // linkToPrevious called separately to maintain test compatibility
   await linkToPrevious(graph, input.label, effectiveId, input.properties);
