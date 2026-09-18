@@ -29,7 +29,9 @@ export interface VerifyOtpResult {
   error?: string;
 }
 
-/** Exchanges the 6-digit code from the sign-in email for a session —
+/** Exchanges the numeric code from the sign-in email for a session — its
+ * length is whatever Supabase/the SMTP provider generates, not a fixed
+ * value this app should assume or constrain —
  * verified by Supabase matching token+email server-side, with no
  * dependency on a code_verifier cookie from whatever browser context
  * requested the email. That dependency is exactly what breaks the

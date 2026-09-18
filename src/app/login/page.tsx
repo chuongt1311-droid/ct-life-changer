@@ -55,7 +55,7 @@ export default function LoginPage() {
         <h1 className="next-name">Life Changer</h1>
         <p className="next-note">
           {status === 'sent' || status === 'verifying'
-            ? 'Enter the 6-digit code from the email — same tab, no need to open anything else.'
+            ? 'Enter the code from the email — same tab, no need to open anything else.'
             : 'Sends a one-time sign-in code to your email. No password to remember or leak.'}
         </p>
       </section>
@@ -74,13 +74,12 @@ export default function LoginPage() {
       {status === 'sent' || status === 'verifying' ? (
         <div className="thumb">
           <div className="field">
-            <label htmlFor="otpCode">6-digit code</label>
+            <label htmlFor="otpCode">Sign-in code</label>
             <input
               id="otpCode"
               inputMode="numeric"
               autoComplete="one-time-code"
-              placeholder="123456"
-              maxLength={6}
+              placeholder="Code from the email"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               disabled={status === 'verifying'}
