@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
-import { sendMagicLink } from './actions';
+import { sendMagicLink, verifyOtpCode } from './actions';
 
 function UrlError() {
   const searchParams = useSearchParams();
@@ -15,10 +15,11 @@ function UrlError() {
 }
 
 export default function LoginPage() {
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'verifying' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState('');
 
-  async function handleClick() {
+  async function handleSend() {
     setStatus('sending');
     const result = await sendMagicLink();
     if (result.ok) {
@@ -26,6 +27,20 @@ export default function LoginPage() {
     } else {
       setStatus('error');
       setError(result.error ?? 'Something went wrong');
+    }
+  }
+
+  async function handleVerify() {
+    setStatus('verifying');
+    const result = await verifyOtpCode(code.trim());
+    if (result.ok) {
+      // A full navigation, not router.push — the session cookie
+      // verifyOtpCode just set needs to reach the next request the
+      // browser makes, and proxy.ts reads that from the request itself.
+      window.location.href = '/';
+    } else {
+      setStatus('sent');
+      setError(result.error ?? 'That code didn’t work — check it and try again.');
     }
   }
 
@@ -38,25 +53,50 @@ export default function LoginPage() {
       </header>
       <section className="next">
         <h1 className="next-name">Life Changer</h1>
-        <p className="next-note">Sends a one-time sign-in link to your email. No password to remember or leak.</p>
+        <p className="next-note">
+          {status === 'sent' || status === 'verifying'
+            ? 'Enter the 6-digit code from the email — same tab, no need to open anything else.'
+            : 'Sends a one-time sign-in code to your email. No password to remember or leak.'}
+        </p>
       </section>
       <div className="stepback">
-        {status === 'error' && (
+        {(status === 'error' || (status === 'sent' && error)) && (
           <p role="alert" className="note">
             {error}
           </p>
         )}
-        {status !== 'error' && (
+        {status === 'idle' && (
           <Suspense fallback={null}>
             <UrlError />
           </Suspense>
         )}
       </div>
-      <div className="thumb">
-        <button className="btn btn-main btn-wide" onClick={handleClick} disabled={status === 'sending' || status === 'sent'}>
-          {status === 'sent' ? 'Link sent — check your email' : 'Send me a sign-in link'}
-        </button>
-      </div>
+      {status === 'sent' || status === 'verifying' ? (
+        <div className="thumb">
+          <div className="field">
+            <label htmlFor="otpCode">6-digit code</label>
+            <input
+              id="otpCode"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              placeholder="123456"
+              maxLength={6}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              disabled={status === 'verifying'}
+            />
+          </div>
+          <button className="btn btn-main btn-wide" onClick={handleVerify} disabled={status === 'verifying' || code.trim().length === 0}>
+            {status === 'verifying' ? 'Checking…' : 'Confirm code'}
+          </button>
+        </div>
+      ) : (
+        <div className="thumb">
+          <button className="btn btn-main btn-wide" onClick={handleSend} disabled={status === 'sending'}>
+            {status === 'sending' ? 'Sending…' : 'Send me a sign-in code'}
+          </button>
+        </div>
+      )}
     </main>
   );
 }
