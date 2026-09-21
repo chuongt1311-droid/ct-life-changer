@@ -183,6 +183,19 @@ export const weeklyLetterRowSchema = z.object({
 });
 export type WeeklyLetterRow = z.infer<typeof weeklyLetterRowSchema>;
 
+// A separate table from weekly_letters, not an `attempts` column on it —
+// weekly_letters should only ever hold a real, finished letter. This
+// records that an attempt happened BEFORE the billed Anthropic call runs,
+// so a failure anywhere in that call (including in weekly_letters' own
+// write, which is exactly what happened once already) still counts toward
+// the cap instead of retrying every cron tick forever.
+export const weeklyReviewAttemptRowSchema = z.object({
+  week_start: z.string(),
+  owner_id: z.string(),
+  attempts: z.number(),
+});
+export type WeeklyReviewAttemptRow = z.infer<typeof weeklyReviewAttemptRowSchema>;
+
 export const profileVersionRowSchema = z.object({
   id: z.string(),
   owner_id: z.string(),

@@ -12,6 +12,7 @@ import {
   unplannedIndulgenceRowSchema,
   usageRowSchema,
   weeklyLetterRowSchema,
+  weeklyReviewAttemptRowSchema,
 } from '../schemas';
 import { createTableRepository, type RepositoryClient } from '../repository';
 
@@ -26,6 +27,7 @@ export function tableRepositories(client: RepositoryClient) {
     mentorProposals: createTableRepository(client, 'mentor_proposals', mentorProposalRowSchema),
     digests: createTableRepository(client, 'digests', digestRowSchema),
     weeklyLetters: createTableRepository(client, 'weekly_letters', weeklyLetterRowSchema),
+    weeklyReviewAttempts: createTableRepository(client, 'weekly_review_attempts', weeklyReviewAttemptRowSchema),
     profileVersions: createTableRepository(client, 'profile_versions', profileVersionRowSchema),
     pushSubscriptions: createTableRepository(client, 'push_subscriptions', pushSubscriptionRowSchema),
     nudgesSent: createTableRepository(client, 'nudges_sent', nudgeSentRowSchema),

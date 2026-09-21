@@ -27,6 +27,7 @@ export interface CronTickResult {
 }
 
 const DIGEST_MAX_ATTEMPTS = 3;
+const WEEKLY_REVIEW_MAX_ATTEMPTS = 3;
 
 /** The one thing /api/cron/tick calls, once a minute. Never throws for an
  * expected "nothing to do yet" state (no settings, no template) — those come
@@ -78,8 +79,17 @@ export async function runCronTick(deps: CronTickDeps): Promise<CronTickResult> {
     const lastSunday = addDays(planDate, -1);
     const existingLetter = await repos.weeklyLetters.get(lastSunday, 'week_start');
     if (!existingLetter) {
-      const result = await runWeeklyReview(client, anthropic, { ownerId, model: settings.model, monthlyCapUsd: settings.monthlyCapUsd }, lastSunday);
-      weeklyReviewRan = !result.fallback;
+      const attemptRow = await repos.weeklyReviewAttempts.get(lastSunday, 'week_start');
+      const attempts = attemptRow?.attempts ?? 0;
+      if (attempts < WEEKLY_REVIEW_MAX_ATTEMPTS) {
+        // Recorded before the billed call runs — a failure anywhere in
+        // runWeeklyReview, including in its own persistence step (the exact
+        // failure that once made this retry every minute forever), still
+        // counts toward the cap instead of being retried indefinitely.
+        await repos.weeklyReviewAttempts.upsert({ week_start: lastSunday, owner_id: ownerId, attempts: attempts + 1 });
+        const result = await runWeeklyReview(client, anthropic, { ownerId, model: settings.model, monthlyCapUsd: settings.monthlyCapUsd }, lastSunday);
+        weeklyReviewRan = !result.fallback;
+      }
     }
   }
 

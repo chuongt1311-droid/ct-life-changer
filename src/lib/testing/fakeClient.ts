@@ -16,6 +16,7 @@ const PRIMARY_KEY: Record<string, string> = {
   mentor_proposals: 'id',
   digests: 'date',
   weekly_letters: 'week_start',
+  weekly_review_attempts: 'week_start',
   profile_versions: 'id',
   push_subscriptions: 'id',
   nudges_sent: 'id',
