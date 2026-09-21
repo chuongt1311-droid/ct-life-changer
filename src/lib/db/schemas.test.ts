@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS, DEFAULT_THRESHOLDS } from '@/core/types';
-import { blockRowSchema, mentorProposalRowSchema, settingsRowSchema, templateRowSchema } from './schemas';
+import { blockRowSchema, mentorProposalRowSchema, settingsRowSchema, templateRowSchema, weeklyLetterRowSchema } from './schemas';
 
 describe('settingsRowSchema', () => {
   it('accepts a row shaped like DEFAULT_SETTINGS', () => {
@@ -83,6 +83,35 @@ describe('blockRowSchema', () => {
       source: 'template',
     };
     expect(() => blockRowSchema.parse(row)).toThrow();
+  });
+});
+
+describe('weeklyLetterRowSchema', () => {
+  // Regression test: `changes` was previously typed as z.record(...), which
+  // rejects an array outright — but runWeeklyReview.ts always builds this
+  // row from WeeklyReviewResult.changes, an array of exactly this shape.
+  // That mismatch meant weeklyLetters.upsert() threw on every real write,
+  // and because the cron tick that calls it has no retry cap, it silently
+  // re-ran the (real, billed) Anthropic call every single minute forever.
+  it('accepts the row shape runWeeklyReview.ts actually produces', () => {
+    const row = {
+      week_start: '2026-09-14',
+      owner_id: 'ct',
+      letter: 'This week you...',
+      metrics: { s1: 1, s2: 2, s3: 3, s4: 4 },
+      changes: [{ section: 'goalsPhysical', newText: 'Run 3x/week', reason: 'You mentioned this twice.' }],
+      profile_version_id: 'v1',
+    };
+    expect(weeklyLetterRowSchema.parse(row)).toEqual(row);
+  });
+
+  it('rejects changes as a plain object, not an array', () => {
+    const row = {
+      week_start: '2026-09-14', owner_id: 'ct', letter: 'x', metrics: {},
+      changes: { section: 'goalsPhysical', newText: 'x', reason: 'x' },
+      profile_version_id: null,
+    };
+    expect(() => weeklyLetterRowSchema.parse(row)).toThrow();
   });
 });
 

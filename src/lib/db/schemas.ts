@@ -172,7 +172,13 @@ export const weeklyLetterRowSchema = z.object({
   owner_id: z.string(),
   letter: z.string(),
   metrics: z.record(z.string(), z.unknown()),
-  changes: z.record(z.string(), z.unknown()),
+  // Matches profileVersionRowSchema.changes exactly — runWeeklyReview always
+  // passes the array WeeklyReviewResult.changes produces, never a map. The
+  // previous z.record(...) here rejected every real write with a ZodError,
+  // and because nothing caught it and weekly review has no retry cap (unlike
+  // the evening digest's DIGEST_MAX_ATTEMPTS), the cron tick re-ran the full
+  // Anthropic call every single minute, forever, without ever persisting.
+  changes: z.array(z.object({ section: z.string(), newText: z.string(), reason: z.string() })),
   profile_version_id: z.string().nullable(),
 });
 export type WeeklyLetterRow = z.infer<typeof weeklyLetterRowSchema>;

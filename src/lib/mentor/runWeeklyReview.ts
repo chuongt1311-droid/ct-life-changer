@@ -50,7 +50,7 @@ export async function runWeeklyReview(
     owner_id: params.ownerId,
     letter: result.letter,
     metrics: metrics as unknown as Record<string, unknown>,
-    changes: result.changes as unknown as Record<string, unknown>,
+    changes: result.changes,
     profile_version_id: newVersion.id,
   });
   void writeMemory('WeeklyLetter', { weekStart, text: result.letter });
